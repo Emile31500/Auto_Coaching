@@ -1,5 +1,5 @@
 const express = require('express');
-const sequelize = require('db.js');
+const sequelize = require('./db.js');
 // Use these variables in your application
 
 const app = express();
