@@ -1,9 +1,15 @@
 {
   "dependencies": {
+    "authenticate-user.js": "^1.0.1",
+    "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
+    "hash-password-pbkdf2": "^1.0.0",
     "mysql2": "^3.6.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "process": "^0.11.10",
     "sequelize": "^6.33.0",

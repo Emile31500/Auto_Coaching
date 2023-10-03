@@ -15,10 +15,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Food.init({
     name: DataTypes.STRING,
-    carbohydrate: DataTypes.INTERGER,
-    proteine: DataTypes.INTERGER,
-    fat: DataTypes.INTERGER,
-    trans_fat: DataTypes.INTERGER,
+    carbohydrate: DataTypes.INTEGER,
+    proteine: DataTypes.INTEGER,
+    fat: DataTypes.INTEGER,
+    trans_fat: DataTypes.INTEGER,
     is_meat: DataTypes.BOOLEAN,
     is_milk: DataTypes.BOOLEAN,
     is_egg: DataTypes.BOOLEAN,
