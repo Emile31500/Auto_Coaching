@@ -12,11 +12,24 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    /*static async authJWT(){
+
+      const authToken = jwt.sign({ __id: this.id }, 'privateKey');
+      this.authToken = authToken;
+      await this.save();
+      return authToken;
+
+    }*/
+
   }
+
   User.init({
     name: DataTypes.STRING,
     email: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    authToken:  DataTypes.STRING,
+    salt: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'User',

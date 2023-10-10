@@ -1,40 +1,51 @@
-
 const express = require('express');
+const session = require('express-session');
+const dotenv = require('dotenv').config();
+
 
 const app = express();
 
 const { sequelize } = require('./models'); 
 const { User } = require('./models/');
-const pbkdf2 = require("hash-password-pbkdf2")
+const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser');
-var passport = require('passport');
-var session = require('express-session');
+const pbkdf2 = require("hash-password-pbkdf2")
+var router = express.Router();
 
-var LocalStrategy = require('passport-local').Strategy
-
-
+app.set('view engine', 'ejs');
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 
+app.use(session({
+  secret: process.env.SESSION_SECRET, // Replace with a secret key for session encryption
+  resave: false,
+  saveUninitialized: true,
+}));
+
 app.use(bodyParser.json());
 
-app.post('/users', async (req, res) => {
+
+app.post('/users/create/', async (req, res) => {
+
   let data;
 
   if (data = req.body){
 
     const hashedPassword = pbkdf2.hashSync(data.password);
-
+    
     const newUser = User.create({
       name: data.name,
       email: data.email,
       password: hashedPassword
     });
 
-      res.statusCode = 201
-      res.json({"status" : 201})
+    const authToken = await newUser.authJWT();
+    req.session.token = authToken;
+
+    res.statusCode = 201
+    res.redirect('auth-requi');
 
   } else {
 
@@ -45,51 +56,69 @@ app.post('/users', async (req, res) => {
 
 });
 
+app.post('/login', async (req, res, next) => {
 
-passport.use(new LocalStrategy(
-  async (username, password, done) => {
-    try {
-      const user = await User.findOne({ where: { email: username } });
+  let data;
 
-      if (!user) {
-        return done(null, false, { message: 'User not found' });
-      }
+  if (data = req.body){
 
-      const isPasswordOk = pbkdf2.validateSync(password, user.password); 
+    user = await User.findOne( {where:  {email: data.email}});
 
-      if (isPasswordOk) {
-        return done(null, user); 
-      } else {
-        return done(null, false, { message: 'Incorrect password' }); 
-      }
-    } catch (error) {
+    if (pbkdf2.validateSync(data.password, user.password)) {
+
+      const authToken = jwt.sign({ __id: user.id }, process.env.JWT_SECRET);
+      user.authToken = authToken;
+      await user.save();
       
-      return done(error); 
+      //const authToken = await user.authJWT();
+      req.session.token = authToken;
+      res.redirect('auth-requi');
+
+    } else {
+      
+      res.render('login');
+    
     }
   }
-));
+});
 
 
-app.use(passport.initialize());
-app.use(passport.session()); 
-app.use(session({
-  secret: 'IYFhgfdddupMMIOUbhbvgCFDCDFRFGVGFddEREdfDDErFcfdZegrypNHukgfxdYUuINpkpoGTitrDUnjPpItuifViuHBJUgdeysZ6EEZ2ZsEQRXFDVGHJhgkiIJNuiHx',
-  resave: false,
-  saveUninitialized: false,
-}));
+const authentication = async function (req, res, next) {
 
-app.post('/login', async (req, res, next) => {
   try {
 
-    await passport.authenticate('local', {
-      successRedirect: '/',
-      failureRedirect: '/login',
-      failureFlash: true,
-    })(req, res, next);
+    const authToken = req.session.token;
+    console.log(authToken);
+    const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
+    
+    if (!decodedToken) throw new Error
 
-  } catch (error) {
+    const user = await User.findOne({where: {'authToken': authToken}});
+    
+    if(!user) throw new Error
 
-    console.error('Authentication error:', error);
+    next();
+  } catch (e) {
+
+    res.status(401).send('Vos mères c\'est des dinosaures');
 
   }
+
+}
+
+app.get('/auth-requi', authentication, function (req, res, next) {
+
+  res.send({'key': 'value'});
+
+});
+
+
+app.get('/login', function(req, res, next) {
+
+  res.render('login');
+
+});
+
+app.get('/signup', function(req, res, next) {
+  res.render('signup');
 });
