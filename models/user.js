@@ -2,26 +2,25 @@
 const {
   Model
 } = require('sequelize');
+
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv').config();
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
       // define association here
     }
 
-    /*static async authJWT(){
+    async getAuthenticationToken(){
 
-      const authToken = jwt.sign({ __id: this.id }, 'privateKey');
+      const authToken = jwt.sign({ __id: user.id }, process.env.JWT_SECRET);
       this.authToken = authToken;
       await this.save();
       return authToken;
 
-    }*/
-
+    }
   }
 
   User.init({
