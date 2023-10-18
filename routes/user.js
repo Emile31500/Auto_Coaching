@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router()
-const parserJson = require('../middlewares/parserJson');
+var parserJson = require('../middlewares/parserJson');
 var layout = require('express-ejs-layouts');
+const { User } = require('../models');
+const pbkdf2 = require("hash-password-pbkdf2")
+
 
 
 router.get('/profile', (req, res) => {
@@ -13,7 +16,7 @@ router.get('/profile', (req, res) => {
 
 router.get('/login', function(req, res, next) {
 
-    res.render('../views/login',  { layout: false });
+    res.render('../views/login',  { layout: '../views/main' });
 
 });
   
@@ -56,7 +59,6 @@ router.post('/login', parserJson, async (req, res, next) => {
 
 if (req.body){
 
-    
     user = await User.findOne({where:  {email: req.body.email}});
 
     if (pbkdf2.validateSync(req.body.password, user.password)) {

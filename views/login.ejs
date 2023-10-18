@@ -1,12 +1,19 @@
-<h1>Sign in</h1>
-<form action="/login" method="POST">
-    <section>
-        <label for="email">Username</label>
-        <input value="emile00013@gmail.com" id="email" name="email" type="text" autocomplete="email" required autofocus>
-    </section>
-    <section>
-        <label for="current-password">Password</label>
-        <input value="P4$$w0rd" id="current-password" name="password" type="password" autocomplete="current-password" required>
-    </section>
-    <input type="submit">
-</form>
+<% title = "Child Template" %>
+
+<%- contentFor('main') %>
+<h2 class="my-5">Sign in</h2>
+<form>
+    <p>
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+    </p>
+    <p>
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" placeholder="Password">
+    </p>
+    <p class="form-check">
+      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+      <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </p>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>

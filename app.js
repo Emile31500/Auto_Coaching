@@ -3,10 +3,12 @@ const session = require('express-session');
 const dotenv = require('dotenv').config();
 
 const app = express();
+<<<<<<< Updated upstream
+=======
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser');
-const pbkdf2 = require("hash-password-pbkdf2")
 var router = express.Router();
+>>>>>>> Stashed changes
 
 const { sequelize } = require('./models'); 
 const { User } = require('./models');
