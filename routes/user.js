@@ -22,7 +22,7 @@ router.get('/login', function(req, res, next) {
   
 router.get('/signup', function(req, res, next) {
 
-    res.render('../views/signup');
+    res.render('../views/signup',  { layout: '../views/main' });
 
 });
 
@@ -70,7 +70,7 @@ if (req.body){
 
     } else {
     
-    res.render('../views/login');
+    res.render('../views/login',  { layout: '../views/main' });
     
     }
 }
