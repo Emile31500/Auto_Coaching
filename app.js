@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 var router = express.Router();
 
 const { sequelize } = require('./models'); 
-const { User } = require('./models');
+// const { User } = require('./models');
 // const authenticationChecker = require('./middlewares/authenticationChecker');
 var layout = require('express-ejs-layouts');
 

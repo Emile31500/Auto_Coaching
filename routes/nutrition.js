@@ -1,9 +1,12 @@
 const express = require('express');
+const {Food} = require('../models/');
+
 const router = express.Router()
 
-router.get('/nutrition', (req, res) => {
+router.get('/nutrition', async (req, res) => {
     
-    res.render('../views/nutrition',  { layout: '../views/main' });
+    var food = await Food.findAll();
+    res.render('../views/nutrition',  { food: food, layout: '../views/main' });
 
 })
 

@@ -2,4 +2,73 @@
 
 <%- contentFor('main') %>
 <h2 class="my-5">Nutrition</h2>
-<p>Content</p>
+<div class="col">
+    <h3 class="my-5"> Besoins </h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">Besoin</th>
+          <th scope="col">Mangé</th>
+          <th scope="col">En pourcentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Energie</th>
+          <td> kcal </td>
+          <td> kcal </td>
+          <td> % </td>
+        </tr>
+        <tr>
+          <th scope="row">Proteine</th>
+          <td> g </td>
+          <td> g </td>
+          <td> % </td>
+        </tr>
+        <tr>
+          <th scope="row">Lipide</th>
+          <td> g </td>
+          <td> g </td>
+          <td> % </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 class="my-5 ">Aliments </h3>
+    <table class="table table-striped my-3">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Nom </th>
+            <th scope="col">Kcalorie</th>
+            <th scope="col">Glucide</th>
+            <th scope="col">Proteine</th>
+            <th scope="col" colspan="2">Lipide</th>
+          </tr>
+        </thead>
+        <tbody>
+
+            <% for(var i=0; i<food.length; i++) {%>
+                <tr>
+                    <th scope="row"><%= food[i].name %></th>
+                    <td> <%= ((food[i].carbohydrate + food[i].proteine) *4 + food[i].fat*8) %> kcal </td>
+                    <td> <%= food[i].carbohydrate %> g </td>
+                    <td> <%= food[i].proteine %> g </td>
+                    <td> <%= food[i].fat %> g </td>
+                    <td>
+                      <form action="food/eat" method="post">
+                        <div class="row"  style="max-width: 200px;">
+                          <input type="number" name="idAliment" disabled hidden value=<%= food[i].id %> >
+                          <div class="col">
+                            <input type="number" class="form-control" placeholder="en gramme">
+                          </div>
+                          <div class="col-3">
+                            <button class="btn btn-primary">+</button>
+                          </div>
+                        </div>
+                      </form>
+                    </td>
+                  </tr>
+             <% } %>
+        </tbody>
+      </table>
+</div>
