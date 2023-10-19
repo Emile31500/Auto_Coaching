@@ -34,6 +34,8 @@
         </tr>
       </tbody>
     </table>
+    <div class="alert alert-success my-3 d-none" id="nutrition-alert" role="alert">
+    </div>
     <h3 class="my-5 ">Aliments </h3>
     <table class="table table-striped my-3">
         <thead class="table-dark">
@@ -46,29 +48,60 @@
           </tr>
         </thead>
         <tbody>
-
-            <% for(var i=0; i<food.length; i++) {%>
-                <tr>
-                    <th scope="row"><%= food[i].name %></th>
-                    <td> <%= ((food[i].carbohydrate + food[i].proteine) *4 + food[i].fat*8) %> kcal </td>
-                    <td> <%= food[i].carbohydrate %> g </td>
-                    <td> <%= food[i].proteine %> g </td>
-                    <td> <%= food[i].fat %> g </td>
-                    <td>
-                      <form action="food/eat" method="post">
-                        <div class="row"  style="max-width: 200px;">
-                          <input type="number" name="idAliment" disabled hidden value=<%= food[i].id %> >
-                          <div class="col">
-                            <input type="number" class="form-control" placeholder="en gramme">
-                          </div>
-                          <div class="col-3">
-                            <button class="btn btn-primary">+</button>
-                          </div>
-                        </div>
-                      </form>
-                    </td>
-                  </tr>
-             <% } %>
+          <% for(var i=0; i<food.length; i++) {%>
+            <tr>
+              <th scope="row"><%= food[i].name %></th>
+              <td> <%= ((food[i].carbohydrate + food[i].proteine) *4 + food[i].fat*8) %> kcal </td>
+              <td> <%= food[i].carbohydrate %> g </td>
+              <td> <%= food[i].proteine %> g </td>
+              <td> <%= food[i].fat %> g </td>
+              <td>
+                <form action="/food/eat" class="alimentForms" method="post">
+                  <div class="row"  style="max-width: 200px;">
+                    <input type="number" name="foodId" hidden value=<%= food[i].id %> >
+                    <div class="col">
+                      <input type="number" value="5" name="weight" class="form-control" placeholder="en gramme">
+                    </div>
+                    <div class="col-3">
+                      <button class="btn btn-primary">+</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          <% } %>
         </tbody>
       </table>
 </div>
+<script>
+  let alimentForms = document.querySelectorAll('.alimentForms');
+  let nutrition_alert = document.querySelector('#nutrition-alert');
+
+  alimentForms.forEach(form => {
+
+    form.addEventListener("submit", function(e){
+
+      e.preventDefault();
+      data = new FormData(this);
+
+      let res = fetch('/food/eat', {
+          method: 'POST',
+          body: {
+            foodId: data.get("foodId"),
+            weight: data.get("weight")
+          }
+      }).then((response) => {
+
+        if(response){
+
+          nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
+          nutrition_alert.classList.remove('d-none');
+          nutrition_alert.classList.remove('d-block');
+
+        }
+
+      })
+    });
+  });
+
+</script>
