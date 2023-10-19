@@ -16,7 +16,9 @@ router.get('/profile', (req, res) => {
 
 router.get('/login', function(req, res, next) {
 
-    res.render('../views/login',  { layout: '../views/main' });
+ //   res.render('../views/login',  { layout: '../views/main' });
+    res.render('../views/login',  { error: false, layout: '../views/main' });
+
 
 });
   
@@ -57,23 +59,22 @@ router.post('/users/create/', async (req, res) => {
 
 router.post('/login', parserJson, async (req, res, next) => {
 
-if (req.body){
+    if (req.body){
 
-    user = await User.findOne({where:  {email: req.body.email}});
+        user = await User.findOne({where:  {email: req.body.email}});
 
-    if (pbkdf2.validateSync(req.body.password, user.password)) {
+        if (pbkdf2.validateSync(req.body.password, user.password)) {
 
-    const authToken = await user.getAuthenticationToken();
-    req.session.token = authToken;
-    res.redirect('/home');
+            const authToken = await user.getAuthenticationToken();
+            req.session.token = authToken;
+            res.redirect('/home');
 
-
-    } else {
-    
-    res.render('../views/login',  { layout: '../views/main' });
-    
+        } else {
+        
+            res.render('../views/login',  { error: true, message: "Incorrect password or login", layout: '../views/main' });
+        
+        }
     }
-}
 });
   
  module.exports = router
