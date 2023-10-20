@@ -1,15 +1,33 @@
 const express = require('express');
-const { AteFood, User } = require('../models');
+const { AteFood, User, Food } = require('../models');
 var parserJson = require('../middlewares/parserJson');
+var authenticationChecker = require('../middlewares/authenticationChecker')
 const session = require('express-session');
+
 
 
 
 const router = express.Router()
 
-router.post('/food/eat', parserJson, async (req, res, next) => {
+
+router.post('/food', parserJson, async (req, res, next) => {
 
     if (req.body && req.session.token){
+
+        food = await Food.create(req.body);
+
+        res.send(food);
+
+    }
+
+});
+
+
+router.post('/food/eat', authenticationChecker, parserJson, async (req, res, next) => {
+
+    if (req.body && req.session.token){
+
+        console.log(req.body);
 
         var user = await User.findOne({where: {authToken:  req.session.token}});
 
@@ -20,19 +38,22 @@ router.post('/food/eat', parserJson, async (req, res, next) => {
         let hours = date_ob.getHours();
         let minutes = date_ob.getMinutes();
         let seconds = date_ob.getSeconds();
-        let currentDate = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
+        let currentDate = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds 
 
-        ateFood = AteFood.create({
-            userId: user.Id,
-            foodId: req.body.foodId,
-            weight: req.body.weight,
-            createdAt: currentDate,
-            updatedAt: currentDate
+        ateFood = AteFood.create(req.body);
 
-        });
+        ateFood.userId = user.Id;
+        ateFood.createdAt = currentDate;
+        ateFood.updatedAt = currentDate;
         
         res.statusCode = 201;
         res.send(ateFood);
+
+    } else {
+
+        res.statusCode = 401;
+        res.send({"message" : "data required unprovided"});
+
     }
 
 })
