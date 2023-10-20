@@ -9,8 +9,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
+      kcalorie: {
+        type: Sequelize.FLOAT
       },
       carbohydrate: {
         type: Sequelize.FLOAT
@@ -23,18 +23,6 @@ module.exports = {
       },
       trans_fat: {
         type: Sequelize.FLOAT
-      },
-      is_meat: {
-        type: Sequelize.BOOLEAN
-      },
-      is_milk: {
-        type: Sequelize.BOOLEAN
-      },
-      is_egg: {
-        type: Sequelize.BOOLEAN
-      },
-      is_veggie: {
-        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,

@@ -34,7 +34,7 @@
         </tr>
       </tbody>
     </table>
-    <div class="alert alert-success my-3 d-none" id="nutrition-alert" role="alert">
+    <div class="alert my-3 d-none" id="nutrition-alert" role="alert">
     </div>
     <h3 class="my-5 ">Aliments </h3>
     <table class="table table-striped my-3">
@@ -51,7 +51,7 @@
           <% for(var i=0; i<food.length; i++) {%>
             <tr>
               <th scope="row"><%= food[i].name %></th>
-              <td> <%= ((food[i].carbohydrate + food[i].proteine) *4 + food[i].fat*8) %> kcal </td>
+              <td> <%= ((food[i].carbohydrate + food[i].proteine) *4 + food[i].fat*9) %> kcal </td>
               <td> <%= food[i].carbohydrate %> g </td>
               <td> <%= food[i].proteine %> g </td>
               <td> <%= food[i].fat %> g </td>
@@ -63,7 +63,7 @@
                       <input type="number" value="5" name="weight" class="form-control" placeholder="en gramme">
                     </div>
                     <div class="col-3">
-                      <button class="btn btn-primary">+</button>
+                      <input type="submit" class="btn btn-primary" value="+"/>
                     </div>
                   </div>
                 </form>
@@ -79,29 +79,67 @@
 
   alimentForms.forEach(form => {
 
-    form.addEventListener("submit", function(e){
+    form.addEventListener("submit", async function(e){
 
       e.preventDefault();
       data = new FormData(this);
 
-      let res = fetch('/food/eat', {
+      var raw = JSON.stringify({
+            "foodId": parseInt(data.get("foodId")),
+            "weight": parseInt(data.get("weight"))
+          })
+      
+      fetch('/food/eat', {
           method: 'POST',
-          body: {
-            foodId: data.get("foodId"),
-            weight: data.get("weight")
-          }
-      }).then((response) => {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: raw
 
-        if(response){
+      }).then(response => {
+
+        if(response.status == 201){
 
           nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
+          nutrition_alert.classList.add('alert-success');
+          nutrition_alert.classList.remove('alert-danger');
           nutrition_alert.classList.remove('d-none');
-          nutrition_alert.classList.remove('d-block');
+
+        } else {
+
+          nutrition_alert.innerHTML = "Erreur : " // + response.message;
+
+          nutrition_alert.classList.remove('d-none');
+          nutrition_alert.classList.remove('alert-success');
+          nutrition_alert.classList.add('alert-danger');
 
         }
 
-      })
+        return response.json();
+
+      }).then(data => {
+        
+        if(data['message'] != undefined) {
+
+          nutrition_alert.innerHTML = '<b>Erreure :</b> <br>' + data['message']+ '';
+
+
+        }
+
+      }).catch(error => {
+
+        nutrition_alert.innerHTML = "Erreur : " // + error.message;
+        nutrition_alert.classList.remove('d-none');
+        nutrition_alert.classList.remove('alert-success');
+        nutrition_alert.classList.add('alert-danger');
+
+      });
     });
   });
 
+
+  function calculateEatingAliemnts(){
+
+    
+  }
 </script>

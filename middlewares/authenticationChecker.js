@@ -18,7 +18,8 @@ const authenticationChecker = async function (req, res, next) {
         next();
     } catch (e) {
   
-        res.status(401).send('Vos mères c\'est des dinosaures');
+        res.statusCode = 401;
+        res.send({"message" : "authentication required"});
   
     }
 }
