@@ -7,9 +7,7 @@ const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser');
 var router = express.Router();
 
-const { sequelize } = require('./models'); 
-// const { User } = require('./models');
-// const authenticationChecker = require('./middlewares/authenticationChecker');
+const { sequelize } = require('./models');
 var layout = require('express-ejs-layouts');
 
 const home = require('./routes/home')
