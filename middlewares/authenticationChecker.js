@@ -12,10 +12,17 @@ const authenticationChecker = async function (req, res, next) {
   
         const user = await User.findOne({where: {'authToken': authToken}});
       
-        if(!user) throw new Error
+        if(!user) {
         
-        req.user = user;
-        next();
+            throw new Error
+        
+        } else {
+
+            req.user = user;
+            next();
+
+        }
+        
     } catch (e) {
   
         res.statusCode = 401;

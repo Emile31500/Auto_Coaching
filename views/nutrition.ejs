@@ -17,19 +17,19 @@
         <tr>
           <th scope="row">Energie</th>
           <td> kcal </td>
-          <td> kcal </td>
+          <td> <span id="kcalAteAbs"></span> kcal </td>
           <td> % </td>
         </tr>
         <tr>
           <th scope="row">Proteine</th>
           <td> g </td>
-          <td> g </td>
+          <td> <span id="protAteAbs"></span> g </td>
           <td> % </td>
         </tr>
         <tr>
           <th scope="row">Lipide</th>
           <td> g </td>
-          <td> g </td>
+          <td> <span id="fatAteAbs"></span> g </td>
           <td> % </td>
         </tr>
       </tbody>
@@ -51,7 +51,7 @@
           <% for(var i=0; i<food.length; i++) {%>
             <tr>
               <th scope="row"><%= food[i].name %></th>
-              <td> <%= ((food[i].carbohydrate + food[i].proteine) *4 + food[i].fat*9) %> kcal </td>
+              <td> <%=  parseFloat(food[i].carbohydrate *4+ food[i].proteine *4 + food[i].fat*9).toFixed(1)  %> kcal </td>
               <td> <%= food[i].carbohydrate %> g </td>
               <td> <%= food[i].proteine %> g </td>
               <td> <%= food[i].fat %> g </td>
@@ -60,7 +60,7 @@
                   <div class="row"  style="max-width: 200px;">
                     <input type="number" name="foodId" hidden value=<%= food[i].id %> >
                     <div class="col">
-                      <input type="number" value="5" name="weight" class="form-control" placeholder="en gramme">
+                      <input type="number" name="weight" class="form-control" placeholder="g / ml">
                     </div>
                     <div class="col-3">
                       <input type="submit" class="btn btn-primary" value="+"/>
@@ -74,8 +74,130 @@
       </table>
 </div>
 <script>
+  
   let alimentForms = document.querySelectorAll('.alimentForms');
   let nutrition_alert = document.querySelector('#nutrition-alert');
+  let protAteAbs = document.querySelector("#protAteAbs");
+  let kcalAteAbs = document.querySelector("#kcalAteAbs");
+  let fatAteAbs = document.querySelector("#fatAteAbs");
+  let ttlMacro, ttlMacroPromise;
+
+  async function getEatingAliment(){
+      
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let scndDate = ("0" + (date_ob.getDate()+1)).slice(-2);
+    let month = ("0" + (date_ob.getMonth()+1)).slice(-2);
+    let year = date_ob.getFullYear();
+
+    let currentDate = year + "-" + month + "-" + date + ' 00:00:00';
+    let endDate = year + "-" + month + "-" + scndDate + ' 00:00:00';
+    let url = "/food/eat?dateStart=" + currentDate + "&dateEnd=" + endDate;
+
+    const promise = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).catch(error => {
+
+      console.log('error');
+
+    });
+
+    let data = await promise.json();
+    return data;
+
+  }
+  
+  function calculateAteFood(){
+    let ttlProt = 0, ttlCarbo = 0, ttlFat = 0, ttlTransFat = 0, ttlEnergie = 0;
+    getEatingAliment().then(eatenAliments => { 
+
+      if (eatenAliments) {
+
+        ttlMacroPromise = eatenAliments.forEach(eatenAliment => {
+
+          let promise = getThisFood(eatenAliment.foodId).then(food => { 
+            if (food) {
+
+              ttlProt += food.proteine * (eatenAliment.weight / 100)
+              ttlFat += food.fat * (eatenAliment.weight / 100)
+              ttlTransFat += food.trans_fat * (eatenAliment.weight / 100)
+              ttlCarbo += food.carbohydrate * (eatenAliment.weight / 100)
+              ttlEnergie = ttlFat*9 + ttlCarbo*4 + ttlProt*4;
+
+              let data = JSON.stringify({ 
+                      "energie": ttlEnergie,
+                      "proteine": ttlProt,
+                      "carbohydrate": ttlCarbo,
+                      "fat": ttlFat
+                    });
+
+              printMacroOnDashbord(data);
+            
+            } else {
+              console.log('No data or an error occurred.');
+            }
+
+            }).catch(error => {
+              console.error('An unexpected error occurred:', error);
+          });
+
+          let res = promise;
+          return res;
+
+        });
+
+      } else {
+
+        console.log('No data or an error occurred.');
+
+      }
+
+    }).catch(error => {console.error('An unexpected error occurred:', error);});
+  
+  }
+
+  calculateAteFood();
+
+  async function getThisFood(id)
+  {
+      try {
+        const response = await fetch('/food?id=' + id, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not OK');
+        }
+
+        const data = await response.json();
+        return data;
+
+      } catch (error) {
+
+        console.error('Error:', error);
+        return null;
+
+      }
+  }
+
+  function printMacroOnDashbord(ttlMacro)
+  {
+
+    ttlMacro = JSON.parse(ttlMacro)
+
+    protAteAbs.innerHTML = Math.round((ttlMacro.proteine) * 10) / 10;
+    kcalAteAbs.innerHTML = Math.round((ttlMacro.energie) * 10) / 10;;
+    fatAteAbs.innerHTML = Math.round((ttlMacro.fat) * 10) / 10;;
+
+    return true;
+
+  }
 
   alimentForms.forEach(form => {
 
@@ -88,7 +210,7 @@
             "foodId": parseInt(data.get("foodId")),
             "weight": parseInt(data.get("weight"))
           })
-      
+          
       fetch('/food/eat', {
           method: 'POST',
           headers: {
@@ -98,24 +220,33 @@
 
       }).then(response => {
 
-        if(response.status == 201){
-
+          calculateAteFood();
           nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
           nutrition_alert.classList.add('alert-success');
           nutrition_alert.classList.remove('alert-danger');
           nutrition_alert.classList.remove('d-none');
 
-        } else {
+          if(response.status == 201){
 
-          nutrition_alert.innerHTML = "Erreur : " // + response.message;
+            let interv = setInterval(function (){
 
-          nutrition_alert.classList.remove('d-none');
-          nutrition_alert.classList.remove('alert-success');
-          nutrition_alert.classList.add('alert-danger');
+              nutrition_alert.classList.add('d-none');
+              clearInterval(interv);
 
-        }
+            }, 2000);
+            
 
-        return response.json();
+          } else {
+
+            nutrition_alert.innerHTML = "Erreur : " // + response.message;
+
+            nutrition_alert.classList.remove('d-none');
+            nutrition_alert.classList.remove('alert-success');
+            nutrition_alert.classList.add('alert-danger');
+
+          }
+
+          return response.json();
 
       }).then(data => {
         
@@ -137,9 +268,4 @@
     });
   });
 
-
-  function calculateEatingAliemnts(){
-
-    
-  }
 </script>
