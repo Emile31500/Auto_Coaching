@@ -101,19 +101,13 @@ router.post('/food/eat', authenticationChecker, parserJson, async (req, res, nex
     if (req.body && req.session.token){
 
         var user = await User.findOne({where: {authToken:  req.session.token}});
-        
-        let date_ob = new Date();
-        let date = ("0" + date_ob.getDate()).slice(-2);
-        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-        let year = date_ob.getFullYear();
-        let currentDate = year + "-" + month + "-" + date
 
         ateFood = AteFood.create({
             userId : user.id,
             weight : req.body.weight,
             foodId : req.body.foodId,
-            createdAt : currentDate,
-            updatedAt : currentDate
+            createdAt : res.body.createdAt,
+            updatedAt : res.body.createdAt
 
         });
         

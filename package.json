@@ -11,7 +11,7 @@
     "fs": "^0.0.1-security",
     "hash-password-pbkdf2": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.6.1",
+    "mysql2": "^3.0.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",

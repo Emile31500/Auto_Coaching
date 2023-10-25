@@ -14,7 +14,7 @@ router.get('/profile', (req, res) => {
 })
 
 
-router.get('/login', function(req, res, next) {
+router.get('/login', async function(req, res, next) {
 
  //   res.render('../views/login',  { layout: '../views/main' });
     res.render('../views/login',  { error: false, layout: '../views/main' });
