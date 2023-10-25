@@ -4,6 +4,22 @@
 <h2 class="my-5">Nutrition</h2>
 <div class="col">
     <h3 class="my-5"> Besoins </h3>
+
+    <form id="ateAlimentsForm" class="row">
+      <p>
+        <div class="col-1">
+          <label class="" for="dateAteAliments">Date : </label>
+        </div>
+        <div class="col-2">
+          <input type="date" class="form-control " id="dateAteAliments"/>
+        </div>
+      </p>
+      <p>
+      <input type="submit" class="btn btn-primary" id="dateAteAlimentsSubmit"> 
+      </p>
+
+    </form> 
+
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -44,7 +60,8 @@
             <th scope="col">Kcalorie</th>
             <th scope="col">Glucide</th>
             <th scope="col">Proteine</th>
-            <th scope="col" colspan="2">Lipide</th>
+            <th scope="col">Lipide</th>
+            <th scope="col"><input type="date" id="ateFoodDate" class="form-control"/></th>
           </tr>
         </thead>
         <tbody>
@@ -80,19 +97,54 @@
   let protAteAbs = document.querySelector("#protAteAbs");
   let kcalAteAbs = document.querySelector("#kcalAteAbs");
   let fatAteAbs = document.querySelector("#fatAteAbs");
+  let ateAlimentsForm = document.querySelector("#ateAlimentsForm");
+  let dateAteAliments = document.querySelector("#dateAteAliments"); 
   let ttlMacro, ttlMacroPromise;
+    
+  function getTodayDate(date = undefined) {
 
-  async function getEatingAliment(){
+    let date_ob;
+
+    if (date){
+
+      date_ob = new Date(date);
       
-    let date_ob = new Date();
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let scndDate = ("0" + (date_ob.getDate()+1)).slice(-2);
+    } else {
+
+      date_ob = new Date();
+
+    }
+
+    let day = ("0" + date_ob.getDate()).slice(-2);
     let month = ("0" + (date_ob.getMonth()+1)).slice(-2);
     let year = date_ob.getFullYear();
 
-    let currentDate = year + "-" + month + "-" + date + ' 00:00:00';
-    let endDate = year + "-" + month + "-" + scndDate + ' 00:00:00';
-    let url = "/food/eat?dateStart=" + currentDate + "&dateEnd=" + endDate;
+    return (year + "-" + month + "-" + day + ' 00:00:00');
+
+  }
+
+  const currentDate = getTodayDate();
+
+  ateAlimentsForm.addEventListener('submit', function (event) {
+    
+    event.preventDefault()
+
+    let currentDate = getTodayDate(dateAteAliments.value)
+    
+    calculateAteFood(currentDate);
+
+
+  });
+
+  async function getEatingAliment(daySearched){
+    
+
+    let currentDate = getTodayDate(daySearched);
+
+    let endDate = new Date(currentDate).getFullYear() + "-" + (new Date (currentDate).getMonth()+1) + "-" + (new Date (currentDate).getDate()+1) + ' 00:00:00';
+    console.log(endDate);    
+    
+    let url = "/food/eat?dateStart=" + daySearched + "&dateEnd=" + endDate;
 
     const promise = await fetch(url, {
       method: 'GET',
@@ -110,9 +162,16 @@
 
   }
   
-  function calculateAteFood(){
+  function calculateAteFood(currentDate){
+
+    if (!currentDate){
+
+      currentDate = getTodayDate();
+
+    }
+
     let ttlProt = 0, ttlCarbo = 0, ttlFat = 0, ttlTransFat = 0, ttlEnergie = 0;
-    getEatingAliment().then(eatenAliments => { 
+    getEatingAliment(currentDate).then(eatenAliments => { 
 
       if (eatenAliments) {
 
@@ -159,7 +218,7 @@
   
   }
 
-  calculateAteFood();
+  calculateAteFood(currentDate);
 
   async function getThisFood(id)
   {
@@ -206,9 +265,19 @@
       e.preventDefault();
       data = new FormData(this);
 
+      let ateFoodDate = document.querySelector('#ateFoodDate').value
+
+      if (!ateFoodDate) {
+
+        ateFoodDate = currentDate;
+
+      }
+
       var raw = JSON.stringify({
             "foodId": parseInt(data.get("foodId")),
-            "weight": parseInt(data.get("weight"))
+            "weight": parseInt(data.get("weight")),
+            "createdAt": currentDate,
+            "updatedAt": currentDate
           })
           
       fetch('/food/eat', {
@@ -220,7 +289,7 @@
 
       }).then(response => {
 
-          calculateAteFood();
+          calculateAteFood(currentDate);
           nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
           nutrition_alert.classList.add('alert-success');
           nutrition_alert.classList.remove('alert-danger');

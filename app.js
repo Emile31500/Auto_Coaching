@@ -15,7 +15,10 @@ const train = require('./routes/train')
 const nutrition = require('./routes/nutrition')
 const user = require('./routes/user')
 const food = require('./routes/food')
+const authenticationChecker = require('./middlewares/authenticationChecker');
 
+const { User } = require('./models');
+const pbkdf2 = require("hash-password-pbkdf2")
 
 app.set('view engine', 'ejs');
 app.use(layout);
@@ -34,6 +37,8 @@ app.use(train);
 app.use(food);
 
 
-app.listen(3000, () => {
+app.listen(3000, async () => {
+  
   console.log('Server is running on port 3000');
+
 });
