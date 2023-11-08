@@ -1,0 +1,53 @@
+<% title = "Détais de la diette de ce jour" %>
+
+<%- contentFor('main') %>
+<h2 class="my-5">Détais de la diette de ce jour :</h2>
+<h3 id="date" ><%= date %></h3>
+<table class="my-3">
+    <thead>
+        <th scope="col">Nom : </th>
+        <th scope="col">Poids / volume : </th>
+        <th scope="col"> : </th>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+<div id="responseFoddAteRequest" class="my-3 alert d-none">
+
+</div>
+<script>
+
+    let responseFoddAteRequest = document.querySelector('#responseFoddAteRequest');
+    let date = document.querySelector('#date').innerHTML;
+
+    fetch(('/api/food/ate?date=' + date), {
+
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json'
+      }
+
+    }).then(response => {
+
+        return response.json();
+
+    }).then(data => {
+
+        if(data[0] != undefined){
+
+            responseFoddAteRequest.classList.add('d-none');
+
+
+        } else {
+
+            responseFoddAteRequest.classList.remove('d-none');
+            responseFoddAteRequest.classList.add('alert-warning');
+            responseFoddAteRequest.innerHTML = "Warning : No data yet for this day";
+
+        }
+
+
+    });
+
+</script>

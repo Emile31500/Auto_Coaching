@@ -15,6 +15,8 @@ const train = require('./routes/train')
 const nutrition = require('./routes/nutrition')
 const user = require('./routes/user')
 const food = require('./routes/food')
+const foodAte = require('./routes/foodate');
+
 const authenticationChecker = require('./middlewares/authenticationChecker');
 
 const { User } = require('./models');
@@ -35,6 +37,7 @@ app.use(nutrition);
 app.use(user);
 app.use(train);
 app.use(food);
+app.use(foodAte);
 
 
 app.listen(3000, async () => {

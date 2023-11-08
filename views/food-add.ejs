@@ -1,0 +1,135 @@
+<% title = "Child Template" %>
+
+<%- contentFor('main') %>
+<h2 class="my-5">Nutrition</h2>
+<div class="col">
+    <form id="addFoodForms">
+        <p>
+            <label for="Name"> Nom : </label><br>
+            <input type="text" class="form-control" id="name"/>
+        </p>
+        <p>
+            <label for="proteine"> Protéine : </label><br>
+            <input type="text" class="form-control" id="proteine"/>
+        </p>
+        <p>
+            <label for="carbohydrate"> Glucide : </label><br>
+            <input type="text" class="form-control" id="carbohydrate"/>
+        </p>
+        <p>
+            <label for="fat"> Lipide : </label><br>
+            <input type="text" class="form-control" id="fat"/>
+        </p>
+        <p>
+            <label for="trans_fat"> Lipide saturé : </label><br>
+            <input type="text" class="form-control" id="trans_fat"/>
+        </p>
+        <p>
+            Contient de la viande/poisson :<br>
+            Oui : <input required value="true" class="isMeat" name="isMeat" id="isMeat" type="radio"> Non : <input required  class="isMeat" name="isMeat" id="isMeat" type="radio">
+        </p>
+
+        <p>
+            Contient des oeufs :<br>
+            Oui : <input required value="true" class="isEgg" name="isEgg" type="radio"> Non : <input required  class="isEgg" name="isEgg" type="radio">
+        </p>
+
+        <p>
+            Contient des produits laitier :<br>
+            Oui : <input required value="true" class="isMilk" name="isMilk" type="radio"> Non : <input required  class="isMilk" name="isMilk" type="radio">
+        </p>
+        <p>
+            <div class="alert d-none" id="addingFoodMessageElement">
+
+            </div>
+        </p>
+        <p>
+            <input type="submit" class="btn btn-primary"/>
+        </p>
+    </form>
+</div>
+
+<script>
+
+    let addingFoodMessageElement = document.querySelector("#addingFoodMessageElement")
+    let addFoodForms = document.querySelector("#addFoodForms");
+    let name = document.querySelector("#name")
+    let carbohydrate = document.querySelector("#carbohydrate")
+    let proteine = document.querySelector("#proteine")
+    let fat = document.querySelector("#fat")
+    let trans_fat = document.querySelector("#trans_fat")
+    let isEggEl = document.querySelectorAll(".isEgg")
+    let isMeatEl = document.querySelectorAll(".isMeat")
+    let isMilkEl = document.querySelectorAll(".isMilk")
+    let isMeat, isMilk, isEgg, isVeggie;
+
+    addFoodForms.addEventListener('submit', function(event){
+
+        event.preventDefault();
+
+        isMeat = settingRadioValue(isMeatEl);
+        isMilk = settingRadioValue(isMilkEl);
+        isEgg = settingRadioValue(isEggEl);
+        isVeggie = !(isEgg || isMeat || isMilk)
+
+        fetch('/food', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/JSON'
+            },
+            body: JSON.stringify({
+                name: name.value,
+                carbohydrate: carbohydrate.value,
+                proteine: proteine.value,
+                fat: fat.value,
+                trans_fat: trans_fat.value,
+                isEgg: isEgg,
+                isMilk: isMilk, 
+                isMeat: isMeat, 
+                isVeggie: !(isMeat || isEgg || isMilk)
+
+            })
+
+        }).then(response => {
+
+            addingFoodMessageElement.innerHTML = "Votre aliment a bien été créé";
+            addingFoodMessageElement.classList.add('alert-success');
+            addingFoodMessageElement.classList.remove('alert-danger');
+            addingFoodMessageElement.classList.remove('d-none');
+
+            if(response.status == 201){
+
+                let interv = setInterval(function (){
+
+                    addingFoodMessageElement.classList.add('d-none');
+                    clearInterval(interv);
+
+                }, 2000);
+            }
+        });
+    });
+
+    function settingRadioValue(checkElement){
+
+        for (let i = 0; i < checkElement.length; i++) {
+
+            if (checkElement[i].checked){
+
+                checkValue = checkElement[i].value
+                
+                if (checkValue == 'true') {
+
+                    checkValue = true;
+                
+                } else {
+
+                    checkValue = false;
+
+                } 
+
+                return checkValue
+
+            }
+        }
+    }
+</script>

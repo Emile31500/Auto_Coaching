@@ -6,8 +6,7 @@ const { Op } = require('sequelize');
 const session = require('express-session');
 const http = require('http');
 const url = require('url');
-
-const router = express.Router()
+const router = express.Router();
 
 
 router.get('/food', authenticationChecker, parserJson, async(req, res, next) => {
@@ -31,6 +30,14 @@ router.get('/food', authenticationChecker, parserJson, async(req, res, next) => 
     
 
 });
+
+
+router.get('/food/add', async(req, res, next) => {
+
+    res.render('../views/food-add',  {layout: '../views/main' });
+    
+});
+
 
 router.get('/food/eat', authenticationChecker, parserJson, async(req, res, next) => {
 
@@ -89,7 +96,18 @@ router.post('/food', parserJson, async (req, res, next) => {
 
         food = await Food.create(req.body);
 
-        res.send(food);
+        if (food){
+
+            res.statusCode = 201
+            res.send(food);
+
+        } else {
+
+            res.statusCode = 401
+            res.send({"message" : "Food not created"});
+
+        }
+
 
     }
 
@@ -101,15 +119,13 @@ router.post('/food/eat', authenticationChecker, parserJson, async (req, res, nex
     if (req.body && req.session.token){
 
         var user = await User.findOne({where: {authToken:  req.session.token}});
+        
+        console.log(req.body.createdAt);
+        console.log(req.body.updatedAt);
 
-        ateFood = AteFood.create({
-            userId : user.id,
-            weight : req.body.weight,
-            foodId : req.body.foodId,
-            createdAt : res.body.createdAt,
-            updatedAt : res.body.createdAt
 
-        });
+        req.body.userId = user.id;
+        ateFood = AteFood.create(req.body);
         
         res.statusCode = 201;
         res.send(ateFood);
