@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router()
 var parserJson = require('../middlewares/parserJson');
+var authenticationChecker = require('../middlewares/authenticationChecker');
 var layout = require('express-ejs-layouts');
 const { User } = require('../models');
 const pbkdf2 = require("hash-password-pbkdf2")
 
 
 
-router.get('/profile', (req, res) => {
+router.get('/profile', authenticationChecker, (req, res) => {
 
-    res.render('../views/profile',  { layout: '../views/main' });
+    const user = req.user;
+
+    res.render('../views/profile',  { user: user, layout: '../views/main' });
 
 })
 
@@ -47,6 +50,38 @@ router.post('/users/create/', async (req, res) => {
 
         res.statusCode = 201
         res.redirect('auth-requi');
+
+    } else {
+
+        res.statusCode = 400;
+        res.json({"status" : 400});
+
+    }
+
+});
+
+router.post('/api/users/update/', authenticationChecker, async (req, res) => {
+
+    let user = req.user;
+
+    if (data = req.body){
+
+        const hashedPassword = pbkdf2.hashSync(data.password);
+        
+        user.name = data.name;
+        user.email = data.email;
+        user.password = hashedPassword;
+
+        const authToken = await user.getAuthenticationToken();
+        req.session.token = authToken;
+
+        user.save();
+        res.statusCode = 201;
+        
+        res.send({
+                    "code":201,
+                    "message":"user created"
+                });
 
     } else {
 

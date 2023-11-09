@@ -2,4 +2,214 @@
 
 <%- contentFor('main') %>
 <h2 class="my-5">Profile</h2>
-<p>Content</p>
+
+<ul class="list-group list-group-horizontal" id="menuOnglet d-inline">
+    <li class="list-group-item active boutonOnglet" onglet="ongletPerformance">Performance</li>
+    <li class="list-group-item boutonOnglet" onglet="ongletMensuraions">Mensurations</li>
+    <li class="list-group-item boutonOnglet" onglet="ongletCompte">Compte</li>
+</ul>
+<div class="border border rounded-bottom p-3 ongletsProfile d-block" id="ongletPerformance">
+    <table>
+        <h3 class="my-3">Performance : </h3>
+        <tr>
+            <th> Squat : </th>
+            <td> <span id="perfZoneS"></span> kg </td>
+        </tr>
+        <tr>
+            <th> Développé couché : </th>
+            <td> <span id="perfZoneB"></span> kg </td>
+        </tr>
+        <tr>
+            <th> Soulevé de terre : </th>
+            <td> <span id="perfZoneD"></span> kg </td>
+        </tr>
+    </table>
+</div>
+
+<div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletMensuraions">
+    <table class="table table-bordered">
+        <h3 class="my-3">Mensurations : </h3>
+        <tr>
+            <th> Poids : </th>
+            <td> <span id="poidsZone"></span> kg </td>
+            <th> Tour d'épaule : </th>
+            <td> <span id="suroundSoulders"> </span> cm </td>
+        </tr>
+        <tr>
+            <th> Taille : </th>
+            <td> <span id="tailleZone"></span> cm </td>
+            <th> Tour de bras : </th>
+            <td> <span id="suroundArms"> </span> cm </td>
+        </tr>
+        <tr>
+            <th> Tour de taille : </th>
+            <td> <span id="suroundWaist"> </span> cm </td>
+            <th> Tour de torse : </th>
+            <td> <span id="suroundChest"> </span> cm </td>
+        </tr>
+        <tr>
+            
+        </tr>
+        
+    </table>
+    <form>
+        <h3 class="my-3"> Nouvelle mensuration : </h3>
+        <div class="row my-1">
+            <div class="col-2">
+                <label for="weight">
+                    Poids 
+                </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control " type="number" id="weight"/>
+            </div>
+            <div class="col-2">
+                <label for="size">
+                    Taille
+                </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control " type="number" id="size"/>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div class="col-2">
+                <label for="suroundSoulders">
+                    Tour d'épaule
+                </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control " type="number" id="suroundSoulders"/>
+            </div>
+            <div class="col-2">
+                <label for="size">
+                    Tour de taille 
+                </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control " type="number" id="suroundWaist"/>
+            </div>  
+        </div>
+        <div class="row my-1">
+            <div class="col-2">
+                <label for="suroundSoulders">
+                    Tour de bras
+                </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control " type="number" id="suroundArms"/>
+            </div>
+            <div class="col-2">
+                <label for="size">
+                    Tour de torse 
+                </label>
+            </div>
+            <div class="col-3">
+                <input class="form-control " type="number" id="suroundchest"/>
+            </div>  
+        </div>
+
+        <input type="submit" class="btn btn-primary"/>
+    </form>
+</div>
+<div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletCompte">
+    <h3 class="my-3">Compte : </h3>
+    <form id="userForm" class="my-3">
+        <p>
+            <label for="email"> Email : </label>
+            <input class="form-control" type="email" value='<%= user.email %>' id="email" required>
+        </p>
+        <p>
+            <label for="name"> Nom : </label>
+            <input class="form-control" type="text" value='<%= user.name %>' id="name" required>
+        </p>
+        <p>
+            <label for="password"> Mot de passe : </label>
+            <input class="form-control" type="password" id="password" required>
+        </p>
+        <p>
+            <label for="confirmpassword"> Confirmer le mot de passe : </label>
+            <input class="form-control" type="password" id="confirmpassword" required>
+        </p>   
+        <input type="submit" class="btn btn-primary" value="Mettre à jour"/>
+    </form>  
+
+    <div id="ongletCompteAlert" class="alert d-none"></div>
+
+</div>
+<script>
+    let userForm = document.getElementById("userForm");
+    let email = document.getElementById("email");
+    let name = document.getElementById("name");
+    let confirmpassword = document.getElementById("confirmpassword");
+    let password = document.getElementById("password");
+    let ongletCompteAlert = document.getElementById("ongletCompteAlert");
+
+    userForm.addEventListener('submit', function(event){
+
+        event.preventDefault();
+
+        const raw = JSON.stringify({
+            'email': email.value,
+            'name': name.value,
+            'password': password.value,
+        });
+
+        fetch('/api/users/update', {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: raw,
+        }).then(response => response.json())
+        .then(data => {
+            
+            
+            if(data.code != 201){
+
+                ongletCompteAlert.classList.remove('alert-danger');
+                ongletCompteAlert.classList.remove('d-none');
+                ongletCompteAlert.classList.add('alert-success');
+                ongletCompteAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+
+            } else {
+
+                ongletCompteAlert.classList.remove('alert-danger');
+                ongletCompteAlert.classList.remove('d-none');
+                ongletCompteAlert.classList.add('alert-success');
+                ongletCompteAlert.innerHTML = "Paramètres du compre mis à jour";
+
+            }
+
+        })
+        .catch(error => console.log('error', error));
+
+    });
+
+    let boutonOnglet = document.querySelectorAll(".boutonOnglet");
+
+    boutonOnglet.forEach(bouton => {
+
+
+        bouton.addEventListener('click', function(){
+            
+            document.querySelector(".boutonOnglet.active").classList.remove('active')
+
+            bouton.classList.add('active');
+            let ongletId = bouton.getAttribute('onglet');
+            let onglet = document.querySelector('#' + ongletId);
+            let ongletsProfille = document.querySelectorAll('.ongletsProfile');
+
+            ongletsProfille.forEach(ongletProfille => {
+
+                ongletProfille.classList.add('d-none');
+
+            });
+
+            onglet.classList.add('d-block');
+            onglet.classList.remove('d-none');
+
+
+        });
+
+    })
+
+</script>
