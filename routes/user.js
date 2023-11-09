@@ -98,16 +98,24 @@ router.post('/login', parserJson, async (req, res, next) => {
 
         user = await User.findOne({where:  {email: req.body.email}});
 
-        if (pbkdf2.validateSync(req.body.password, user.password)) {
+        if (user) {
 
-            const authToken = await user.getAuthenticationToken();
-            req.session.token = authToken;
-            res.redirect('/home');
+            if (pbkdf2.validateSync(req.body.password, user.password)) {
+
+                const authToken = await user.getAuthenticationToken();
+                req.session.token = authToken;
+                res.redirect('/home');
+            
+            } else {
+            
+                res.render('../views/login',  { error: true, message: "Incorrect password or login", layout: '../views/main' });
+            
+            }
 
         } else {
-        
+
             res.render('../views/login',  { error: true, message: "Incorrect password or login", layout: '../views/main' });
-        
+
         }
     }
 });
