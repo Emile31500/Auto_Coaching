@@ -24,6 +24,57 @@
             <td> <span id="perfZoneD"></span> kg </td>
         </tr>
     </table>
+    <table class="my-3 table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Soulevé de terre
+                </th>
+                <th>
+                    Développé couché
+                </th>
+                <th>
+                    Squat
+                </th>
+                <th>
+                    Jour
+                </th>   
+            </tr>
+        </thead>
+        <tbody id="performanceTableBody">
+
+        </tbody>
+    </table>
+    <form id="performanceForm" class="my-5">
+        <p>
+            <label for="benchPress">
+                Développé couché : 
+            </label>
+            <input type="number" class="form-control" name="benchPress" id="benchPress"/>
+        </p>
+        <p>
+            <label for="deadLift">
+                Soulevé de terre : 
+            </label>
+            <input type="number" class="form-control" name="deadLift" id="deadLift"/>
+        </p>
+        <p>
+            <label for="squat">
+                Squat : 
+             </label>
+             <input type="number" class="form-control" name="squat" id="squat"/>
+        </p>
+        <p>
+            <label for="date">
+                Date : 
+             </label>
+             <input type="date" class="form-control" name="date" id="date"/>
+        </p>
+        <input type="submit" class="btn btn-primary"/>
+    </form>
+    <div class="alert d-none" id="ongletPerformanceAlert">
+
+    </div>
 </div>
 
 <div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletMensuraions">
@@ -211,5 +262,83 @@
         });
 
     })
+
+</script>
+<script>
+
+    let performanceTableBody = document.querySelector('#performanceTableBody');
+
+    async function fetchData() {
+
+        let row = '';
+
+        const promise = await fetch('/api/performance', {
+            methode: 'GET',
+            headers: {'Content-type': 'application/json'}
+        }).catch(error => console.log('error', error));
+
+        let res = await promise.json();
+        console.log(res);
+
+        res.data.forEach(performance => {
+
+            row += '<tr><td>' + performance.rmDeadlift + ' kg </td><td>' + performance.rmBench + ' kg </td><td>' + performance.rmSquat + ' kg </td><td>' + performance.createdAt.slice(0, 10) + '</td></tr>'
+             
+        })
+
+        performanceTableBody.innerHTML = row;
+
+    }
+    fetchData();
+
+    let performanceForm = document.querySelector('#performanceForm');
+    let squat = document.querySelector('#squat');
+    let benchPress = document.querySelector('#benchPress');
+    let deadLift = document.querySelector('#deadLift');
+    let date = document.querySelector('#date');
+    let ongletPerformanceAlert = document.querySelector('#ongletPerformanceAlert');
+
+    performanceForm.addEventListener('submit', async function(event){
+
+        event.preventDefault();
+
+        const rawData = JSON.stringify({
+            "rmSquat": squat.value,
+            "rmBench": benchPress.value,
+            "rmDeadlift": deadLift.value,
+            "createdAt": date.value,
+            "updatedAt": date.value
+        })
+
+        fetch('/api/performance', {
+            method: "POST",
+            headers: {"Content-type": "application/json"},
+            body: rawData
+        }).then(response => response.json())
+        .then(data => {
+            
+            
+            if(data.code != 201){
+
+                ongletPerformanceAlert.classList.remove('alert-danger');
+                ongletPerformanceAlert.classList.remove('d-none');
+                ongletPerformanceAlert.classList.add('alert-success');
+                ongletPerformanceAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+
+            } else {
+
+                ongletPerformanceAlert.classList.remove('alert-danger');
+                ongletPerformanceAlert.classList.remove('d-none');
+                ongletPerformanceAlert.classList.add('alert-success');
+                ongletPerformanceAlert.innerHTML = data.message;
+
+            }
+
+        })
+        .catch(error => console.log('error', error));
+
+    });
+
+  
 
 </script>
