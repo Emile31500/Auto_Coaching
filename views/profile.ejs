@@ -82,37 +82,50 @@
         <h3 class="my-3">Mensurations : </h3>
         <tr>
             <th> Poids : </th>
-            <td> <span id="poidsZone"></span> kg </td>
+            <td> <span id="weightZone"></span> kg </td>
             <th> Tour d'épaule : </th>
-            <td> <span id="suroundSoulders"> </span> cm </td>
+            <td> <span id="suroundSouldersZone"> </span> cm </td>
         </tr>
         <tr>
             <th> Taille : </th>
-            <td> <span id="tailleZone"></span> cm </td>
+            <td> <span id="sizeZone"></span> cm </td>
             <th> Tour de bras : </th>
-            <td> <span id="suroundArms"> </span> cm </td>
+            <td> <span id="suroundArmsZone"> </span> cm </td>
         </tr>
         <tr>
             <th> Tour de taille : </th>
-            <td> <span id="suroundWaist"> </span> cm </td>
+            <td> <span id="suroundWaistZone"> </span> cm </td>
             <th> Tour de torse : </th>
-            <td> <span id="suroundChest"> </span> cm </td>
+            <td> <span id="suroundChestZone"> </span> cm </td>
         </tr>
         <tr>
             
         </tr>
         
     </table>
-    <form>
-        <h3 class="my-3"> Nouvelle mensuration : </h3>
-        <div class="row my-1">
+    <table class="table my-3" id="measurmentTable">
+        <thead>
+          <tr>
+            <th scope="col">Poids</th>
+            <th scope="col">Taille</th>
+            <th scope="col">Epaule</th>
+            <th scope="col">Torse</th>
+            <th scope="col">Bras</th>
+            <th scope="col">Taille (tours)</th>
+          </tr>
+        </thead>
+        <tbody id="measurmentTableBody">
+        </tbody>
+      </table>
+    <form class="my-5" id="measurmentForm">
+        <div class="my-3 row my-1" >
             <div class="col-2">
                 <label for="weight">
                     Poids 
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control " type="number" id="weight"/>
+                <input class="form-control" value="64" type="number" step="0.1" id="weight"/>
             </div>
             <div class="col-2">
                 <label for="size">
@@ -120,7 +133,7 @@
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control " type="number" id="size"/>
+                <input class="form-control" value="173" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id="size"/>
             </div>
         </div>
         <div class="row my-1">
@@ -130,7 +143,7 @@
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control " type="number" id="suroundSoulders"/>
+                <input class="form-control" value="120" type="number" step="0.1" id="suroundSoulders"/>
             </div>
             <div class="col-2">
                 <label for="size">
@@ -138,7 +151,7 @@
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control " type="number" id="suroundWaist"/>
+                <input class="form-control" value="80" type="number" step="0.1" id="suroundWaist"/>
             </div>  
         </div>
         <div class="row my-1">
@@ -148,7 +161,7 @@
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control " type="number" id="suroundArms"/>
+                <input class="form-control" value="32" type="number" step="0.1" id="suroundArms"/>
             </div>
             <div class="col-2">
                 <label for="size">
@@ -156,12 +169,15 @@
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control " type="number" id="suroundchest"/>
+                <input class="form-control " type="number" step="0.1" value="120" id="suroundChest"/>
             </div>  
         </div>
 
         <input type="submit" class="btn btn-primary"/>
     </form>
+
+    <div id="ongletMeasurmentAlert" class="alert d-none"></div>
+
 </div>
 <div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletCompte">
     <h3 class="my-3">Compte : </h3>
@@ -189,6 +205,100 @@
 
 </div>
 <script>
+
+    let performanceTableBody = document.querySelector('#performanceTableBody');
+    let perfZoneB = document.querySelector('#perfZoneB');
+    let perfZoneD = document.querySelector('#perfZoneD')
+    let perfZoneS = document.querySelector('#perfZoneS')
+
+    async function fetchData() {
+        
+        const promise = await fetch('/api/performance', {
+            methode: 'GET',
+            headers: {'Content-type': 'application/json'}
+        }).catch(error => console.log('error', error));
+
+        let res = await promise.json();
+        
+        if (res.code == 200) {
+
+            const lastPerf = res.data[0]
+
+            perfZoneS.innerHTML = lastPerf.rmBench;
+            perfZoneB.innerHTML = lastPerf.rmSquat;
+            perfZoneD.innerHTML = lastPerf.rmDeadlift;
+            
+            let rowPerf = '';
+
+            res.data.forEach(performance => {
+
+                rowPerf += '<tr><td>' + performance.rmDeadlift + ' kg </td><td>' + performance.rmBench + ' kg </td><td>' + performance.rmSquat + ' kg </td><td>' + performance.createdAt.slice(0, 10) + '</td></tr>';
+              
+            })
+
+            performanceTableBody.innerHTML = rowPerf;
+
+        } else {
+
+            alert("404");
+
+        }
+    }
+
+    fetchData();
+
+    let performanceForm = document.querySelector('#performanceForm');
+    let squat = document.querySelector('#squat');
+    let benchPress = document.querySelector('#benchPress');
+    let deadLift = document.querySelector('#deadLift');
+    let date = document.querySelector('#date');
+    let ongletPerformanceAlert = document.querySelector('#ongletPerformanceAlert');
+
+    performanceForm.addEventListener('submit', async function(event){
+
+        event.preventDefault();
+
+        const rawData = JSON.stringify({
+            "rmSquat": squat.value,
+            "rmBench": benchPress.value,
+            "rmDeadlift": deadLift.value,
+            "createdAt": date.value,
+            "updatedAt": date.value
+        })
+
+        fetch('/api/performance', {
+            method: "POST",
+            headers: {"Content-type": "application/json"},
+            body: rawData
+        }).then(response => response.json())
+        .then(data => {
+            
+            
+            if(data.code != 201){
+
+                ongletPerformanceAlert.classList.remove('alert-danger');
+                ongletPerformanceAlert.classList.remove('d-none');
+                ongletPerformanceAlert.classList.add('alert-success');
+                ongletPerformanceAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+                    fetchData()
+
+            } else {
+
+                ongletPerformanceAlert.classList.remove('alert-danger');
+                ongletPerformanceAlert.classList.remove('d-none');
+                ongletPerformanceAlert.classList.add('alert-success');
+                ongletPerformanceAlert.innerHTML = data.message;
+
+            }
+
+        })
+        .catch(error => console.log('error', error));
+
+    });
+
+</script>
+<script>
+    
     let userForm = document.getElementById("userForm");
     let email = document.getElementById("email");
     let name = document.getElementById("name");
@@ -234,7 +344,8 @@
         .catch(error => console.log('error', error));
 
     });
-
+</script>
+<script>
     let boutonOnglet = document.querySelectorAll(".boutonOnglet");
 
     boutonOnglet.forEach(bouton => {
@@ -266,53 +377,40 @@
 </script>
 <script>
 
-    let performanceTableBody = document.querySelector('#performanceTableBody');
+    let measurmentForm = document.querySelector('#measurmentForm');
 
-    async function fetchData() {
+    let weightZone = document.querySelector("#weightZone")
+    let sizeZone = document.querySelector("#sizeZone")
+    let suroundShoulersZone = document.querySelector("#suroundSouldersZone")
+    let suroundWaistZone = document.querySelector("#suroundWaistZone")
+    let suroundArmsZone = document.querySelector("#suroundArmsZone")
+    let suroundChestZone = document.querySelector("#suroundChestZone")
 
-        let row = '';
+    let weight = document.querySelector("#weight")
+    let size = document.querySelector("#size")
+    let suroundShoulers = document.querySelector("#suroundSoulders")
+    let suroundWaist = document.querySelector("#suroundWaist")
+    let suroundArms = document.querySelector("#suroundArms")
+    let suroundChest = document.querySelector('#suroundChest')
+    let ongletMeasurmentAlert = document.querySelector('#ongletMeasurmentAlert');
+    let measurmentTableBody = document.querySelector('#measurmentTableBody');
 
-        const promise = await fetch('/api/performance', {
-            methode: 'GET',
-            headers: {'Content-type': 'application/json'}
-        }).catch(error => console.log('error', error));
-
-        let res = await promise.json();
-        console.log(res);
-
-        res.data.forEach(performance => {
-
-            row += '<tr><td>' + performance.rmDeadlift + ' kg </td><td>' + performance.rmBench + ' kg </td><td>' + performance.rmSquat + ' kg </td><td>' + performance.createdAt.slice(0, 10) + '</td></tr>'
-             
-        })
-
-        performanceTableBody.innerHTML = row;
-
-    }
-    fetchData();
-
-    let performanceForm = document.querySelector('#performanceForm');
-    let squat = document.querySelector('#squat');
-    let benchPress = document.querySelector('#benchPress');
-    let deadLift = document.querySelector('#deadLift');
-    let date = document.querySelector('#date');
-    let ongletPerformanceAlert = document.querySelector('#ongletPerformanceAlert');
-
-    performanceForm.addEventListener('submit', async function(event){
+    measurmentForm.addEventListener('submit', function(event){
 
         event.preventDefault();
 
         const rawData = JSON.stringify({
-            "rmSquat": squat.value,
-            "rmBench": benchPress.value,
-            "rmDeadlift": deadLift.value,
-            "createdAt": date.value,
-            "updatedAt": date.value
-        })
+            'weight': weight.value,
+            'size': size.value,
+            'suroundShoulers': suroundShoulers.value,
+            'suroundWaist': suroundWaist.value,
+            'suroundArms': suroundArms.value,
+            'suroundChest': suroundChest.value
+        });
 
-        fetch('/api/performance', {
+        fetch('/api/measurment', {
             method: "POST",
-            headers: {"Content-type": "application/json"},
+            headers: {"Content-Type" : "application/json"},
             body: rawData
         }).then(response => response.json())
         .then(data => {
@@ -320,25 +418,62 @@
             
             if(data.code != 201){
 
-                ongletPerformanceAlert.classList.remove('alert-danger');
-                ongletPerformanceAlert.classList.remove('d-none');
-                ongletPerformanceAlert.classList.add('alert-success');
-                ongletPerformanceAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+                ongletMeasurmentAlert.classList.remove('alert-danger');
+                ongletMeasurmentAlert.classList.remove('d-none');
+                ongletMeasurmentAlert.classList.add('alert-success');
+                ongletMeasurmentAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+                
 
             } else {
 
-                ongletPerformanceAlert.classList.remove('alert-danger');
-                ongletPerformanceAlert.classList.remove('d-none');
-                ongletPerformanceAlert.classList.add('alert-success');
-                ongletPerformanceAlert.innerHTML = data.message;
+                ongletMeasurmentAlert.classList.remove('alert-danger');
+                ongletMeasurmentAlert.classList.remove('d-none');
+                ongletMeasurmentAlert.classList.add('alert-success');
+                ongletMeasurmentAlert.innerHTML = data.message;
+                fetchMeasurment();
 
             }
 
         })
         .catch(error => console.log('error', error));
 
+
     });
 
-  
+    async function fetchMeasurment() {
 
+        let row = '';
+
+        const promise = await fetch('/api/measurment', {
+        methode: 'GET',
+        headers: {'Content-type': 'application/json'}
+        }).catch(error => console.log('error', error));
+
+        let res = await promise.json();
+
+        if (res.code == 200){
+
+            const lastMeasurment = res.data[0]
+
+            weightZone.innerHTML = lastMeasurment.weight; 
+            sizeZone.innerHTML = lastMeasurment.size; 
+            suroundShoulersZone.innerHTML = lastMeasurment.suroundShoulers; 
+            suroundWaistZone.innerHTML = lastMeasurment.suroundWaist; 
+            suroundArmsZone.innerHTML = lastMeasurment.suroundArms; 
+            suroundChestZone.innerHTML = lastMeasurment.suroundChest;
+
+            res.data.forEach(measurment => {
+
+                row += '<tr><td>' + measurment.size + ' cm </td><td> ' + measurment.weight + ' kg </td>';
+                row += '<td>' + measurment.suroundShoulers + '</td><td> ' + measurment.suroundChest + '</td>';
+                row += '<td>' + measurment.suroundArms + '</td><td> ' + measurment.suroundWaist + '</td></tr>';
+
+            });
+
+            measurmentTableBody.innerHTML = row;
+
+        }
+
+    }
+    fetchMeasurment();
 </script>

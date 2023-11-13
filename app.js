@@ -17,12 +17,13 @@ const user = require('./routes/user')
 const food = require('./routes/food')
 const foodAte = require('./routes/foodate');
 const performance = require('./routes/performance');
+const measurment = require('./routes/measurment')
 
 
 const authenticationChecker = require('./middlewares/authenticationChecker');
 
 const { User } = require('./models');
-const pbkdf2 = require("hash-password-pbkdf2")
+const pbkdf2 = require("hash-password-pbkdf2");
 
 app.set('view engine', 'ejs');
 app.use(layout);
@@ -41,6 +42,8 @@ app.use(train);
 app.use(food);
 app.use(foodAte);
 app.use(performance);
+app.use(measurment);
+
 
 
 

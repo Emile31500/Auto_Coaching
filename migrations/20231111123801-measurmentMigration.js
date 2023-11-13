@@ -4,15 +4,10 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface.addColumn(
-        'AteFoods',
-        'userId',
-        Sequelize.INTEGER
-      ),
-      queryInterface.addConstraint('AteFoods', {
+      queryInterface.addConstraint('Measurments', {
         fields: ['userId'],
         type: 'foreign key',
-        name: 'ate_food_user_assoc',
+        name: 'measurment_user_assoc',
         references: {
           table: 'Users',
           field: 'id'
