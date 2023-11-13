@@ -1,32 +1,32 @@
 const express = require('express');
 const router = express.Router()
 var authenticationChecker = require('../middlewares/authenticationChecker');
-const { User, Performance } = require('../models');
+const { User, Measurment } = require('../models');
 
 
-router.get('/api/performance', authenticationChecker, async (req, res) => {
+router.get('/api/measurment', authenticationChecker, async (req, res) => {
 
     const user = await User.findOne({where: {authToken:  req.session.token}});
     const userId = user.id;
 
-    let performances = await Performance.findAll({where: {userId: userId}, order: [['createdAt', 'DESC']]});
+    let measurments = await Measurment.findAll({where: {userId: userId}, order: [['createdAt', 'DESC']]});
 
-    if (performances) {
+    if (measurments) {
 
         res.code = 200;
-        res.send({"code":200, "message":"Performances requêtées", "data": performances});
+        res.send({"code":200, "message":"Measurments requêtées", "data": measurments});
     
     } else {
 
         res.code = 404;
-        res.send({'code': 404, 'message': 'Aucune performance trouvée'});   
+        res.send({'code': 404, 'message': 'Aucune Measurment trouvée'});   
 
     }
 
 
 });
 
-router.post('/api/performance', authenticationChecker, async (req, res) => {
+router.post('/api/measurment', authenticationChecker, async (req, res) => {
 
     let data  = req.body;
 
@@ -35,12 +35,12 @@ router.post('/api/performance', authenticationChecker, async (req, res) => {
         var user = await User.findOne({where: {authToken:  req.session.token}});
         data.userId = user.id;
 
-        let performance = Performance.create(data);
+        let measurment = Measurment.create(data);
 
-        if (performance) {
+        if (measurment) {
 
             res.code = 201
-            res.send({"code" : 201, "message": "Les performances ont bien étées ajoutées.", "data": performance});
+            res.send({"code" : 201, "message": "Les Measurments ont bien étées ajoutées.", "data": measurment});
 
 
         } else {

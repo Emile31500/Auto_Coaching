@@ -2,39 +2,33 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Food', {
+    await queryInterface.createTable('Measurments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
+      userId: {
+        type: Sequelize.INTEGER
       },
-      carbohydrate: {
+      weight: {
         type: Sequelize.FLOAT
       },
-      proteine: {
+      sizeweight: {
         type: Sequelize.FLOAT
       },
-      fat: {
+      suroundShoulersweight: {
         type: Sequelize.FLOAT
       },
-      trans_fat: {
+      suroundWaistweight: {
         type: Sequelize.FLOAT
       },
-      is_meat: {
-        type: Sequelize.BOOLEAN
+      suroundArmsweight: {
+        type: Sequelize.FLOAT
       },
-      is_milk: {
-        type: Sequelize.BOOLEAN
-      },
-      is_egg: {
-        type: Sequelize.BOOLEAN
-      },
-      is_veggie: {
-        type: Sequelize.BOOLEAN
+      suroundChestweight: {
+        type: Sequelize.FLOAT
       },
       createdAt: {
         allowNull: false,
@@ -47,6 +41,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Food');
+    await queryInterface.dropTable('Measurments');
   }
 };
