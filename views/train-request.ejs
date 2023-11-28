@@ -1,0 +1,193 @@
+<% title = "Child Template" %>
+<%- contentFor('main') %>
+<h2 class="my-5">Train</h2>
+
+<form id="trainRequestForm">
+
+    <p>
+        <label for="weight">
+            Poids :
+        </label>
+        <input class="form-control" type="number" value="64.0" step="0.1" id="weight" required/>
+    </p>
+    <p>
+        <label for="height">
+            Taille :
+        </label>
+        <input class="form-control" type="number" value="173" step="0.1" id="height" required/>
+    </p>
+    <p>
+        <label for="birth_day">
+            Date de naissance :
+        </label>
+        <input class="form-control" type="date" value="2002-07-17" id="birth_day" required/>
+    </p>
+    <p>
+        <label for="metabolism"> Métabolisme : </label>
+        <select class="form-control" id="metabolism" required>
+            <option value="Très lent">Très lent</option>
+            <option value="Lent">Lent</option>
+            <option value="Normal"> Normal</option>
+            <option value="Rapide"> Rapide</option>
+            <option selected value="Très rapide"> Très rapide</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="objectif"> Objectif : </label>
+        <select class="form-control" id="objectif" required>
+            <option value="Perdre du poids">Perdre du poids</option>
+            <option value="Force">Force </option>
+            <option selected value="Volume">Volume </option>
+        </select>
+    </p>
+    <p>
+        <label for="description"> D'autre chose à ajouter ? </label>
+        <textarea class="form-control" id="description"></textarea>
+    </p>
+    <h3>Antécédant sportifs : </h3>
+    <div class="border border-light p-3">
+        <div class="row">
+            <div class="col-3">
+                <label for="name"> Nom : </label>
+                <input requried id="passed_sport_name" value="musculation" class="form-control" type="text"/>
+            </div>
+            <div class="col-3">
+                <label for="start_date">Start Date:</label>
+                <input requried class="form-control" type="date" value="2020-09-01" id="start_date" name="start_date">
+        
+                <label for="end_date">End Date:</label>
+                <input requried class="form-control" type="date" value="2023-09-01" id="end_date" name="end_date">
+        
+            </div>
+            <div class="col-6">
+                <label for="sport-description">
+                    Description : 
+                </label>
+                <textarea id="sport-description" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <span id="addSport" class="btn btn-primary">
+                Ajouter
+            </span>
+        </div>
+    </div>
+    <div id='passedSportListElements'>
+
+    </div>
+    <div class="alert d-none" id="trainRequestAlert">
+    </div>
+    <p>
+        <button class="btn btn-primary">Submit </button>
+    </p>
+   
+</form>
+<script>
+    var trainRequestForm = document.querySelector('#trainRequestForm');
+    var addSport = document.querySelector("#addSport");
+    var birthDay = document.querySelector('#birth_day');
+    var objectif = document.querySelector('#objectif');
+    var passedSportName = document.querySelector("#passed_sport_name");
+    var startDate = document.querySelector("#start_date");
+    var endDate = document.querySelector("#end_date");
+    var passedSportListElements= document.querySelector("#passedSportListElements")
+    var delete_sport = document.querySelectorAll(".delete-sport ")
+    var trainRequestAlert = document.querySelector('#trainRequestAlert');
+    var sportDescription = document.querySelector('#sport-description');
+
+    var index = 0;
+    var passedSports = [];
+    addSport.addEventListener('click', function (event){
+
+        event.preventDefault();
+        passedSports.push(JSON.stringify({
+                'name' : passedSportName.value,
+                'startDate' : startDate.value,
+                'endDate': endDate.value,
+                'description': sportDescription.value
+        }));
+        
+        passedSportListElements.innerHTML += '<div id="sport-zone-'+index+'" class="border border-light p-3 my-3"><div class="row"><div class="col-3">' + passedSportName.value + ' </div><div class="col-3">' +  startDate.value + ' ' +  startDate.value + '</div> <div class="col-5">' + sportDescription.value +'</div></div><div class="d-flex justify-content-end"><span index="'+ index + '" class="delete-sport btn btn-outline-danger"> x </span></div></div>'
+        delete_sport = document.querySelectorAll(".delete-sport ");
+        
+
+        delete_sport.forEach(delBtn => {
+
+            delBtn.addEventListener("click", function (event){
+                
+                event.preventDefault();
+
+                let selector = '#sport-zone-'+delBtn.getAttribute('index');
+                document.querySelector(selector).remove();
+                passedSports[delBtn.getAttribute('index')] = '';
+
+            });
+
+        });
+
+        index++;
+
+    });
+</script>
+<script>
+
+    trainRequestForm.addEventListener('submit', function (event){
+
+        event.preventDefault();
+        if (true){
+
+            for (let i = 0; i < passedSports; i++) {
+                
+                if (passedSports[i].name == undefined) {
+
+                    passedSports.splice(i, 1);
+
+                }
+            }
+        }
+            
+        
+
+
+        const rawData = JSON.stringify({
+            'weight': height.value,
+            'height': height.value,
+            'birthDay': birthDay.value,
+            'objectif': objectif.value,
+            'metabolism': metabolism.value,
+            'passedSport': passedSports,
+            'description': description.value
+        });
+
+       fetch('/api/train/request', {
+            method: "POST",
+            headers: {"Content-Type" : "application/json"},
+            body: rawData
+        }).then(response => response.json())
+        .then(data => {
+            
+            
+            if(data.code != 201){
+
+                trainRequestAlert.classList.remove('alert-danger');
+                trainRequestAlert.classList.remove('d-none');
+                trainRequestAlert.classList.add('alert-success');
+                trainRequestAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+                
+
+            } else {
+
+                trainRequestAlert.classList.remove('alert-danger');
+                trainRequestAlert.classList.remove('d-none');
+                trainRequestAlert.classList.add('alert-success');
+                trainRequestAlert.innerHTML = data.message;
+                console.log(JSON.parse(data.data.passedSport[0]));
+            }
+
+        })
+        .catch(error => console.log('error', error));   
+
+    });
+
+</script>
