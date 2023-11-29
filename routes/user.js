@@ -31,7 +31,7 @@ router.get('/signup', function(req, res, next) {
 
 });
 
-router.post('/users/create/', async (req, res) => {
+router.post('/sign', async (req, res) => {
 
     let data;
 
@@ -60,7 +60,7 @@ router.post('/users/create/', async (req, res) => {
 
 });
 
-router.post('/api/users/update/', authenticationChecker, async (req, res) => {
+router.patch('/api/users', authenticationChecker, async (req, res) => {
 
     let user = req.user;
 
@@ -79,14 +79,15 @@ router.post('/api/users/update/', authenticationChecker, async (req, res) => {
         res.statusCode = 201;
         
         res.send({
-                    "code":201,
-                    "message":"user created"
+                    'code':201,
+                    'message':'user created',
+                    'data': user
                 });
 
     } else {
 
         res.statusCode = 400;
-        res.json({"status" : 400});
+        res.json({'code': res.statusCode, 'message':'The user couldn\'t be edited', 'data': user});
 
     }
 
@@ -104,7 +105,7 @@ router.post('/login', parserJson, async (req, res, next) => {
 
                 const authToken = await user.getAuthenticationToken();
                 req.session.token = authToken;
-                res.redirect('/home');
+                res.redirect('/');
             
             } else {
             

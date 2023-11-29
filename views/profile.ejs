@@ -316,8 +316,8 @@
             password: password.value,
         });
 
-        fetch('/api/users/update', {
-            method: 'POST',
+        fetch('/api/users', {
+            method: 'PATCH',
             headers: {"Content-Type": "application/json"},
             body: raw,
         }).then(response => response.json())
