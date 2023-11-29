@@ -13,12 +13,12 @@
 
     </tbody>
 </table>
-<div id="responseFoddAteRequest" class="my-3 alert d-none">
+<div id="responseFoodAteRequest" class="my-3 alert d-none">
 
 </div>
 <script>
 
-    let responseFoddAteRequest = document.querySelector('#responseFoddAteRequest');
+    let responseFoodAteRequest = document.querySelector('#responseFoodAteRequest');
     let date = document.querySelector('#date').innerHTML;
 
     fetch(('/api/food/ate?date=' + date), {
@@ -34,16 +34,16 @@
 
     }).then(data => {
 
-        if(data[0] != undefined){
+        if(data.code == 200){
 
-            responseFoddAteRequest.classList.add('d-none');
+            responseFoodAteRequest.classList.add('d-none');
 
 
         } else {
 
-            responseFoddAteRequest.classList.remove('d-none');
-            responseFoddAteRequest.classList.add('alert-warning');
-            responseFoddAteRequest.innerHTML = "Warning : No data yet for this day";
+            responseFoodAteRequest.classList.remove('d-none');
+            responseFoodAteRequest.classList.add('alert-warning');
+            responseFoodAteRequest.innerHTML = "Warning : No data yet for this day";
 
         }
 

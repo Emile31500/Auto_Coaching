@@ -9,7 +9,7 @@ const url = require('url');
 const router = express.Router();
 
 
-router.get('/food', authenticationChecker, parserJson, async(req, res, next) => {
+router.get('/api/food', authenticationChecker, parserJson, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
     const id = parsedUrl.query.id;
@@ -19,12 +19,12 @@ router.get('/food', authenticationChecker, parserJson, async(req, res, next) => 
     if (food) {
 
         res.statusCode = 200;
-        res.send(food);
+        res.send({'code' : res.statusCode, 'message': 'This food model successfully requested', 'data': food});
 
     } else {
 
         res.statusCode = 404;
-        res.send({'message' : 'This food was not found of id ' + id});
+        res.send({'code' : res.statusCode, 'message' : 'This food was not found of id ' + id});
 
     }
     
@@ -39,7 +39,7 @@ router.get('/food/add', async(req, res, next) => {
 });
 
 
-router.get('/food/eat', authenticationChecker, parserJson, async(req, res, next) => {
+router.get('/api/food/eat', authenticationChecker, parserJson, async(req, res, next) => {
 
     if (req.session.token){
 
@@ -48,7 +48,6 @@ router.get('/food/eat', authenticationChecker, parserJson, async(req, res, next)
         const dateEnd = parsedUrl.query.dateEnd;
 
         const user = await User.findOne({ where: {authToken: req.session.token}})
-        //const user = req.User.findOne({ where: {authToken: req.session.token}})
 
 
         if (user) {
@@ -64,14 +63,13 @@ router.get('/food/eat', authenticationChecker, parserJson, async(req, res, next)
 
             if (food){
 
-                console.log(food);
                 res.statusCode = 200;
-                res.send(food);
+                res.send({'code': res.statusCode, 'message': 'food elements successfully requested', 'data': food});
 
             } else {
 
                 res.statusCode = 404
-                res.send({"message" : "Ate Food not found"});
+                res.send({'code': res.statusCode, 'message' : 'Ate Food not found'});
             }
 
         } else {
@@ -90,7 +88,7 @@ router.get('/food/eat', authenticationChecker, parserJson, async(req, res, next)
     
 });
 
-router.post('/food', parserJson, async (req, res, next) => {
+router.post('/api/food', parserJson, async (req, res, next) => {
 
     if (req.body && req.session.token){
 
@@ -114,15 +112,11 @@ router.post('/food', parserJson, async (req, res, next) => {
 });
 
 
-router.post('/food/eat', authenticationChecker, parserJson, async (req, res, next) => {
+router.post('/api/food/eat', authenticationChecker, parserJson, async (req, res, next) => {
 
     if (req.body && req.session.token){
 
         var user = await User.findOne({where: {authToken:  req.session.token}});
-        
-        console.log(req.body.createdAt);
-        console.log(req.body.updatedAt);
-
 
         req.body.userId = user.id;
         ateFood = AteFood.create(req.body);

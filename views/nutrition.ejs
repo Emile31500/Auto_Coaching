@@ -74,7 +74,7 @@
               <td> <%= food[i].proteine %> g </td>
               <td> <%= food[i].fat %> g </td>
               <td>
-                <form action="/food/eat" class="alimentForms" method="post">
+                <form action="/api/food/eat" class="alimentForms" method="post">
                   <div class="row"  style="max-width: 200px;">
                     <input type="number" name="foodId" hidden value=<%= food[i].id %> >
                     <div class="col">
@@ -143,7 +143,7 @@
 
     let endDate = new Date(currentDate).getFullYear() + "-" + (new Date (currentDate).getMonth()+1) + "-" + (new Date (currentDate).getDate()+1) + ' 00:00:00'; 
     
-    let url = "/food/eat?dateStart=" + daySearched + "&dateEnd=" + endDate;
+    let url = "/api/food/eat?dateStart=" + daySearched + "&dateEnd=" + endDate;
 
     const promise = await fetch(url, {
       method: 'GET',
@@ -157,7 +157,11 @@
     });
 
     let data = await promise.json();
-    return data;
+    if (data.code == 200) {
+      
+      return data.data;
+
+    }
 
   }
   
@@ -224,7 +228,7 @@
   async function getThisFood(id)
   {
       try {
-        const response = await fetch('/food?id=' + id, {
+        const response = await fetch('/api/food?id=' + id, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -236,7 +240,13 @@
         }
 
         const data = await response.json();
-        return data;
+
+        if (data.code == 200) {
+
+          return data.data;
+
+        }
+        
 
       } catch (error) {
 
@@ -281,7 +291,7 @@
             updatedAt: ateFoodDate
           })
           
-      fetch('/food/eat', {
+      fetch('/api/food/eat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

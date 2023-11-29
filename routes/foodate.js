@@ -37,8 +37,6 @@ router.get('/api/food/ate', authenticationChecker, parserJson, async(req, res, n
   
     const dateEnd = year + "-" + month + "-" + day + ' 00:00:00';
 
-    console.log(dateStart + " " + dateEnd);
-
     let ateFoods = await AteFood.findAll({where : {userId: req.session.token,
             createdAt: {
                 [Op.between]: [dateStart, dateEnd],

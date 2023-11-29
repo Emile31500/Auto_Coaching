@@ -72,7 +72,7 @@
         isEgg = settingRadioValue(isEggEl);
         isVeggie = !(isEgg || isMeat || isMilk)
 
-        fetch('/food', {
+        fetch('/api/food', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/JSON'
