@@ -64,7 +64,7 @@
                 <label for="sport-description">
                     Description : 
                 </label>
-                <textarea id="sport-description" class="form-control"></textarea>
+                <textarea id="sport-description" class="form-control">eerter</textarea>
             </div>
         </div>
         <div class="d-flex justify-content-end">
@@ -103,9 +103,10 @@
         event.preventDefault();
         passedSports.push(JSON.stringify({
                 name : passedSportName.value,
+                description: sportDescription.value,
                 startDate : startDate.value,
-                endDate: endDate.value,
-                description: sportDescription.value
+                endDate: endDate.value
+               
         }));
         
         passedSportListElements.innerHTML += '<div id="sport-zone-'+index+'" class="border border-light p-3 my-3"><div class="row"><div class="col-3">' + passedSportName.value + ' </div><div class="col-3">' +  startDate.value + ' ' +  startDate.value + '</div> <div class="col-5">' + sportDescription.value +'</div></div><div class="d-flex justify-content-end"><span index="'+ index + '" class="delete-sport btn btn-outline-danger"> x </span></div></div>'
@@ -135,7 +136,8 @@
     trainRequestForm.addEventListener('submit', function (event){
 
         event.preventDefault();
-        if (true){
+
+        if (passedSports){
 
             for (let i = 0; i < passedSports; i++) {
                 
@@ -146,21 +148,20 @@
                 }
             }
         }
-            
-        
-
 
         const rawData = JSON.stringify({
-            weight: height.value,
-            height: height.value,
-            birthDay: birthDay.value,
-            objectif: objectif.value,
-            metabolism: metabolism.value,
+            trainRequest : {
+                weight: weight.value,
+                height: height.value,
+                birthDay: birthDay.value,
+                objectif: objectif.value,
+                metabolism: metabolism.value,
+                description: description.value
+            },
             passedSport: passedSports,
-            description: description.value
         });
 
-       fetch('/api/train/request', {
+        fetch('/api/train/request', {
             method: 'POST',
             headers: {"Content-Type" : "application/json"},
             body: rawData
@@ -185,7 +186,7 @@
             }
 
         })
-        .catch(error => console.log('error', error));   
+        .catch(error => console.log('error', error)); /*  */
 
     });
 

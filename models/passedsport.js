@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       PassedSport.belongsTo(models.TrainRequest)
-      models.TrainRequest.hasOne(PassedSport);
+      models.TrainRequest.hasMany(PassedSport);
     }
   }
   PassedSport.init({

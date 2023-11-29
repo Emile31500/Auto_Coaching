@@ -6,8 +6,8 @@ module.exports = {
     
     return Promise.all([
       
-      queryInterface.addColumn('passedsports', 'startDate', Sequelize.DATE ),
-      queryInterface.addColumn('passedsports', 'endDate', Sequelize.DATE )
+      queryInterface.addColumn('passedsports', 'startDate',{type : Sequelize.DATE, allowNull: false } ),
+      queryInterface.addColumn('passedsports', 'endDate',{type : Sequelize.DATE, allowNull: false } )
     
     ]);
 
