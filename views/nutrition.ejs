@@ -188,10 +188,10 @@
               ttlEnergie = ttlFat*9 + ttlCarbo*4 + ttlProt*4;
 
               let data = JSON.stringify({ 
-                      "energie": ttlEnergie,
-                      "proteine": ttlProt,
-                      "carbohydrate": ttlCarbo,
-                      "fat": ttlFat
+                      energie: ttlEnergie,
+                      proteine: ttlProt,
+                      carbohydrate: ttlCarbo,
+                      fat: ttlFat
                     });
 
               printMacroOnDashbord(data);
@@ -275,10 +275,10 @@
       }
 
       var raw = JSON.stringify({
-            "foodId": parseInt(data.get("foodId")),
-            "weight": parseInt(data.get("weight")),
-            "createdAt": ateFoodDate,
-            "updatedAt": ateFoodDate
+            foodId: parseInt(data.get("foodId")),
+            weight: parseInt(data.get("weight")),
+            createdAt: ateFoodDate,
+            updatedAt: ateFoodDate
           })
           
       fetch('/food/eat', {

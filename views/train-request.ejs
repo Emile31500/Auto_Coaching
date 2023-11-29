@@ -102,10 +102,10 @@
 
         event.preventDefault();
         passedSports.push(JSON.stringify({
-                'name' : passedSportName.value,
-                'startDate' : startDate.value,
-                'endDate': endDate.value,
-                'description': sportDescription.value
+                name : passedSportName.value,
+                startDate : startDate.value,
+                endDate: endDate.value,
+                description: sportDescription.value
         }));
         
         passedSportListElements.innerHTML += '<div id="sport-zone-'+index+'" class="border border-light p-3 my-3"><div class="row"><div class="col-3">' + passedSportName.value + ' </div><div class="col-3">' +  startDate.value + ' ' +  startDate.value + '</div> <div class="col-5">' + sportDescription.value +'</div></div><div class="d-flex justify-content-end"><span index="'+ index + '" class="delete-sport btn btn-outline-danger"> x </span></div></div>'
@@ -151,17 +151,17 @@
 
 
         const rawData = JSON.stringify({
-            'weight': height.value,
-            'height': height.value,
-            'birthDay': birthDay.value,
-            'objectif': objectif.value,
-            'metabolism': metabolism.value,
-            'passedSport': passedSports,
-            'description': description.value
+            weight: height.value,
+            height: height.value,
+            birthDay: birthDay.value,
+            objectif: objectif.value,
+            metabolism: metabolism.value,
+            passedSport: passedSports,
+            description: description.value
         });
 
        fetch('/api/train/request', {
-            method: "POST",
+            method: 'POST',
             headers: {"Content-Type" : "application/json"},
             body: rawData
         }).then(response => response.json())

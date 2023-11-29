@@ -259,15 +259,15 @@
         event.preventDefault();
 
         const rawData = JSON.stringify({
-            "rmSquat": squat.value,
-            "rmBench": benchPress.value,
-            "rmDeadlift": deadLift.value,
-            "createdAt": date.value,
-            "updatedAt": date.value
+            rmSquat: squat.value,
+            rmBench: benchPress.value,
+            rmDeadlift: deadLift.value,
+            createdAt: date.value,
+            updatedAt: date.value
         })
 
         fetch('/api/performance', {
-            method: "POST",
+            method: 'POST',
             headers: {"Content-type": "application/json"},
             body: rawData
         }).then(response => response.json())
@@ -311,9 +311,9 @@
         event.preventDefault();
 
         const raw = JSON.stringify({
-            'email': email.value,
-            'name': name.value,
-            'password': password.value,
+            email: email.value,
+            name: name.value,
+            password: password.value,
         });
 
         fetch('/api/users/update', {
@@ -400,16 +400,16 @@
         event.preventDefault();
 
         const rawData = JSON.stringify({
-            'weight': weight.value,
-            'size': size.value,
-            'suroundShoulers': suroundShoulers.value,
-            'suroundWaist': suroundWaist.value,
-            'suroundArms': suroundArms.value,
-            'suroundChest': suroundChest.value
+            weight: weight.value,
+            size: size.value,
+            suroundShoulers: suroundShoulers.value,
+            suroundWaist: suroundWaist.value,
+            suroundArms: suroundArms.value,
+            suroundChest: suroundChest.value
         });
 
         fetch('/api/measurment', {
-            method: "POST",
+            method: 'POST',
             headers: {"Content-Type" : "application/json"},
             body: rawData
         }).then(response => response.json())
