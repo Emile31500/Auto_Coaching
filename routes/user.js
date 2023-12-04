@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router()
 var parserJson = require('../middlewares/parserJson');
+
 var authenticationChecker = require('../middlewares/authenticationChecker');
+var adminChecker = require('../middlewares/adminChecker')
+
 var layout = require('express-ejs-layouts');
 const { User } = require('../models');
 const pbkdf2 = require("hash-password-pbkdf2")
-
-
+const url = require('url');
 
 router.get('/profile', authenticationChecker, (req, res) => {
 
@@ -56,6 +58,26 @@ router.post('/sign', async (req, res) => {
         res.statusCode = 400;
         res.json({"status" : 400});
 
+    }
+
+});
+
+router.get('/api/user', adminChecker, parserJson, async (req, res) => {
+
+    const parsedUrl = url.parse(req.url, true);
+    const id = parsedUrl.query.id;
+
+    const user = await User.findOne({where: {id: id}});
+
+    if (user) {
+
+        res.statusCode = 200
+        res.send({'code': res.statusCode, 'message': 'The user has been found', 'data': user});
+        
+    } else {
+
+        res.statusCode = 404
+        res.send({'code': res.statusCode, 'message': 'The user hasn\'t been found'});
     }
 
 });
