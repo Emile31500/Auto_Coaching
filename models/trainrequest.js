@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     description:{ type : DataTypes.STRING,
       validate : {
         len: [0, 16384]
-      }}
+      }},
+    birthDay: DataTypes.DATE 
   }, {
     sequelize,
     modelName: 'TrainRequest',

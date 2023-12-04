@@ -20,7 +20,7 @@ router.get('/api/train', authenticationChecker, async (req, res) => {
 
     var trains = await  Train.findAll({where:{userId: userId}});
 
-    if (trainRequest) {
+    if (trains) {
 
         res.statusCode = 201
         
@@ -45,6 +45,24 @@ router.get('/train/request', authenticationChecker, (req, res) => {
 router.get('/admin/train/request', adminChecker, (req, res) => {
 
     res.render('../views/admin/train-request',  {layout: '../views/main-admin' });
+
+})
+
+router.get('/api/admin/train/request', adminChecker, async (req, res) => {
+
+    trainRequests = await TrainRequest.findAll()
+
+    if (trainRequests) {
+
+        res.statusCode = 200;
+        res.send({'code': res.statusCode, 'message': 'Train requests has been found', 'data': trainRequests});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({'code': res.statusCode, 'message': 'The train request models can\'t be reached '});
+
+    }
 
 })
 
