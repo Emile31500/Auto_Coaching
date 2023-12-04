@@ -105,7 +105,16 @@ router.post('/login', parserJson, async (req, res, next) => {
 
                 const authToken = await user.getAuthenticationToken();
                 req.session.token = authToken;
-                res.redirect('/');
+
+                if (user.role.includes('admin')){
+
+                    res.redirect('/admin/train/request')
+
+                } else {
+
+                    res.redirect('/');
+
+                }
             
             } else {
             
