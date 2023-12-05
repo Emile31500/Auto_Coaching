@@ -1,0 +1,294 @@
+<% title = 'Child Template' %>
+<%- contentFor('main') %>
+<h2 class='my-5'>Demande d'entraînement : </h2>
+<span class='d-block' id='idRequest'><%= id_request %></span>
+<div class='row'>
+    <div class='col-6'>
+        <h3> Demande de l'utilisateur : </h3>
+        <div class='my-3 row'>
+            <span class='fw-bold'>
+                Nom :
+            </span>
+            <span class='d-block' id='nameUserEl'>
+            </span>
+        </div>
+        <div class='my-3 row'>
+            <span class='fw-bold'>
+                Âge :
+            </span>
+            <span class='d-block' id='ageUserEl'>
+            </span>
+        </div>
+        <div class='my-3 row'>
+            <span class='fw-bold'>
+                Contact :
+            </span>
+            <span class='d-block' id='emailUserEl'>
+            </span>
+        </div>
+        <div class='my-3 row'>
+            <span class='fw-bold'>
+                Objectif :
+            </span>
+            <span class='d-block' id='objectifUserEl'>
+            </span>
+        </div>
+        <div class='my-3 row'>
+            <span class='fw-bold'>
+                Métabolisme :
+            </span>
+            <span class='d-block' id='metabolismUserEl'>
+            </span>
+        </div>
+    
+        <div class='my-3 row'>
+            <span class='fw-bold'>
+                Description :
+            </span>
+            <span class='d-block' id='descriptionUserEl'>
+                
+            </span>
+        </div>
+    </div>
+    <div class='col-6'>
+        <form>
+            <h3> Edition de l'entraînement :</h3>
+            <div class='my-3 row'>
+                <span class='fw-bold'>
+                    Message :
+                </span>
+                <textarea class='d-block form-control'></textarea>
+            </div>
+            <div class='my-3 row'>
+                <div class='col-9'>
+                    <select class='form-control'>
+                        <option value='lundi'>Lundi</option>
+                        <option value='mardi'>Mardi</option>
+                        <option value='mercredi'>Mercredi</option>
+                        <option value='jeudi'>Jeudi</option>
+                        <option value='vendredi'>Vendredi</option>
+                        <option value='samedi'>Samedi</option>
+                        <option value='dimanche'>Dimanche</option>
+                    </select>
+                    
+                </div>
+                <div class='col-3 '>
+                    <button class='btn btn-secondary'>
+                        +
+                    </button>
+                </div>
+            </div>
+            <div class='my-3 mt-5 mb-5 row'>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class='lundi' scope='col'>Lundi</th>
+                            <th class='mardi' scope='col'>Mardi</th>
+                            <th class='mercredi' scope='col'>Mercredi</th>
+                            <th class='jeudi' scope='col'>Jeudi</th>
+                            <th class='vendredi' scope='col'>Vendredi</th>
+                            <th class='samedi' scope='col'>Samedi</th>
+                            <th class='dimanche' scope='col'>Dimanche</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class='lundi'>
+                                <button class='lundi' day='Lundi' class='btn btn-secondary'> + </button>
+                            </td class='mardi'>
+                                <td>
+                                <button class='mardi' day='Mardi' class='btn btn-secondary'> + </button>
+                            </td class='mercredi'>
+                                <td>
+                                <button class='mercredi' day='Mercredi' class='btn btn-secondary'> + </button>
+                            </td class='jeudi'>
+                                <td>
+                                <button class='jeudi' day='Jeudi' class='btn btn-secondary'> + </button>
+                            </td class='vendredi'>
+                                <td>
+                                <button class='vendredi' day='Vendredi' class='btn btn-secondary'> + </button>
+                            </td class='samedi'>
+                                <td>
+                                <button class='samedi' day='Samedi' class='btn btn-secondary'> + </button>
+                            </td>
+                            <td class='dimanche'>
+                                <button class='dimanche' day='Dimanche' class='btn btn-secondary'> + </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class='row my-3'>
+                <div class='col'>
+                    <button class='mx-3 btn btn-warning'>Enregistrer</button> 
+                    <input class='mx-3 btn btn-success' type='submit'>
+                </div>
+            </div> 
+        </form>
+        <div class='row my-3 border border-1 rounded p-1 py-2'>
+            <form>
+                <fieldset>
+                    <legend class='my-3'>Ajouter exercice <span id='formAddExercise'></span> </legend>
+                    <div class='my-2'>
+                        <label class='my-1' for='exerciceListEl'>
+                            Exercice :
+                        </label>
+                        <select class='form-control' id='exerciceListEl'>
+        
+                        </select>
+                    </div>
+                    <div class='my-2'>
+                        <label class='my-1' for='sets'>
+                            Série :
+                        </label>
+                        <input class='form-control' type='number' id='sets' />
+                    </div>
+                    <div class='my-2'>
+                        <div class='row'>
+                            <div class='col'>
+                                <label class='my-1' for='reps'>
+                                    Répétition :
+                                </label>
+                                <input class='form-control' type='number' id='reps' />
+                            </div>
+                            <div class='col'>
+                                <p class='my-1 mt-4'>
+                                    <input type='radio' name='repsMode' id='repsMode' value='rps'/> Répétition
+                                    <br>
+                                    <input type='radio' name='repsMode' id='repsMode' value='scd'/> Seconde
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class='my-3'>
+                    <input class='btn btn-secondary' type='submit'>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let nameUserEl = document.querySelector('#nameUserEl');
+    let ageUserEl = document.querySelector('#ageUserEl');
+    let metabolismUserEl = document.querySelector('#metabolismUserEl');
+    let objectifUserEl = document.querySelector('#objectifUserEl');
+    let descriptionUserEl = document.querySelector('#descriptionUserEl');
+    let emailUserEl = document.querySelector('#emailUserEl');
+    let exerciceListEl = document.querySelector('#exerciceListEl')
+
+
+    let idRequest = document.querySelector('#idRequest').innerHTML;  
+    document.querySelector('#idRequest').remove();   
+
+    const fetchExerciseUrl = '/api/admin/exercise/'
+    fetch(fetchExerciseUrl, {
+
+        method: 'GET',
+        headers: {'Content-Type' : 'application/json'}
+
+    }).then(response => response.json())
+    .then(data => {
+
+        let exericesesList = '';
+
+        if (data.code === 200) {
+
+            const exercises = data.data
+
+            exercises.forEach(exercise => {
+    
+                exericesesList += '<option value=\''+exercise.id+ '\'>'+exercise.name+'</option>'
+                
+            });
+
+            exerciceListEl.innerHTML = exericesesList
+
+        }
+
+    });
+
+    const fetchTrainRequestUrl = '/api/admin/train/request/'+ idRequest
+    fetch(fetchTrainRequestUrl, {
+
+        method: 'GET',
+        headers: {'Content-Type' : 'application/json'}
+
+    }).then(response => response.json())
+    .then(data => {
+
+        if (data.code === 200) {
+
+            const trainRequest = data.data
+            let utilisateur = getUser(trainRequest.userId);
+            let age = calculateAge(trainRequest.birthDay)
+
+            utilisateur.then(utilisateur => { 
+                
+                nameUserEl.innerHTML = utilisateur.name; 
+                emailUserEl.innerHTML = utilisateur.email;
+                ageUserEl.innerHTML = age + ' ans'; 
+                objectifUserEl.innerHTML = trainRequest.objectif; 
+                metabolismUserEl.innerHTML = trainRequest.metabolism; 
+                descriptionUserEl.innerHTML = trainRequest.description;
+
+            });
+
+        }
+
+    });
+
+    async function getUser(userId) {
+
+        const promise = await fetch('/api/user?id='+userId, {
+
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json'},
+
+        })
+
+        let res = await promise.json();
+
+        if (res.code === 200) {
+
+            return res.data;
+
+        } else {
+
+            console.log('Error : ' +  res.code + '\n' + res.message)
+
+        }
+        
+    }
+
+   
+    function calculateAge(birthDay) {
+
+        const birthDate = new Date(birthDay);
+        const currentDate = new Date();
+        let age = currentDate.getFullYear() - birthDate.getFullYear();
+        const hasBirthdayOccurred = (
+            currentDate.getMonth() > birthDate.getMonth() ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() >= birthDate.getHours()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() >= birthDate.getMinutes()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() === birthDate.getMinutes() && currentDate.getSeconds() >= birthDate.getSeconds())
+        );
+
+        if (hasBirthdayOccurred) {
+
+            age = age - 1;
+            
+        }
+
+        const intAge = age;
+        return intAge;
+    }
+</script>

@@ -18,6 +18,7 @@ const food = require('./routes/food')
 const foodAte = require('./routes/foodate');
 const performance = require('./routes/performance');
 const measurment = require('./routes/measurment')
+const exercise = require('./routes/exercise')
 
 
 const authenticationChecker = require('./middlewares/authenticationChecker');
@@ -34,18 +35,15 @@ app.use(session({
   saveUninitialized: true,
 }));
 app.use(bodyParser.json());
-
+app.use(exercise);
 app.use(home);
-app.use(nutrition);
-app.use(user);
-app.use(train);
 app.use(food);
 app.use(foodAte);
-app.use(performance);
 app.use(measurment);
-
-
-
+app.use(nutrition);
+app.use(performance);
+app.use(train);
+app.use(user);
 
 app.listen(3000, async () => {
   
