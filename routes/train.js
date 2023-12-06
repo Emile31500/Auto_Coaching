@@ -59,10 +59,14 @@ router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
 router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res) => {
 
     const id = req.params.id_request
+
     trainRequest = await TrainRequest.findOne({where: {id: id}})
 
-    if (trainRequest) {
+    if (trainRequest){
 
+        const passedSport = await PassedSport.findAll({where: {trainRequestId: trainRequest.id}});
+
+        trainRequest.passedSports = passedSport.data;
         res.statusCode = 200;
         res.send({'code': res.statusCode, 'message': 'Train request has been found', 'data': trainRequest});
 
@@ -72,7 +76,6 @@ router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res
         res.send({'code': res.statusCode, 'message': 'The train request model can\'t be reached '});
 
     }
-
 })
 
 router.get('/api/admin/train/request', adminChecker, async (req, res) => {

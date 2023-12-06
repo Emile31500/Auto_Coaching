@@ -1,68 +1,76 @@
 <% title = 'Child Template' %>
-<%- contentFor('main') %>
+<%- contentFor('mainNotMarged') %>
+<div class='px-5'>
+    
 <h2 class='my-5'>Demande d'entraînement : </h2>
 <span class='d-block' id='idRequest'><%= id_request %></span>
 <div class='row'>
-    <div class='col-6'>
+    <div class='col-4'>
         <h3> Demande de l'utilisateur : </h3>
         <div class='my-3 row'>
-            <span class='fw-bold'>
+            <h5>
                 Nom :
-            </span>
+            </h5>
             <span class='d-block' id='nameUserEl'>
             </span>
         </div>
         <div class='my-3 row'>
-            <span class='fw-bold'>
+            <h5>
                 Âge :
-            </span>
+            </h5>
             <span class='d-block' id='ageUserEl'>
             </span>
         </div>
         <div class='my-3 row'>
-            <span class='fw-bold'>
+            <h5>
                 Contact :
-            </span>
+            </h5>
             <span class='d-block' id='emailUserEl'>
             </span>
         </div>
         <div class='my-3 row'>
-            <span class='fw-bold'>
+            <h5>
                 Objectif :
-            </span>
+            </h5>
             <span class='d-block' id='objectifUserEl'>
             </span>
         </div>
         <div class='my-3 row'>
-            <span class='fw-bold'>
+            <h5>
                 Métabolisme :
-            </span>
+            </h5>
             <span class='d-block' id='metabolismUserEl'>
             </span>
         </div>
     
         <div class='my-3 row'>
-            <span class='fw-bold'>
+            <h5>
                 Description :
-            </span>
+            </h5>
             <span class='d-block' id='descriptionUserEl'>
                 
             </span>
         </div>
+        <div class='my-3 row'>
+            <h5>Sport précédents : </h5>
+            <span class='d-block' id='passedSportsEl'>
+               
+            </span>
+        </div>
     </div>
-    <div class='col-6'>
+    <div class='col-8'>
         <form>
             <h3> Edition de l'entraînement :</h3>
             <div class='my-3 row'>
-                <span class='fw-bold'>
+                <h4>
                     Message :
-                </span>
+                </h4>
                 <textarea class='d-block form-control'></textarea>
             </div>
             <div class='my-3 row'>
                 <div class='col-9'>
-                    <select class='form-control'>
-                        <option value='lundi'>Lundi</option>
+                    <select id='dayList' class='form-control'>
+                        <option value='lundi' selected>Lundi</option>
                         <option value='mardi'>Mardi</option>
                         <option value='mercredi'>Mercredi</option>
                         <option value='jeudi'>Jeudi</option>
@@ -73,7 +81,7 @@
                     
                 </div>
                 <div class='col-3 '>
-                    <button class='btn btn-secondary'>
+                    <button id='addDayBtn' class='btn btn-secondary'>
                         +
                     </button>
                 </div>
@@ -82,42 +90,48 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class='lundi' scope='col'>Lundi</th>
-                            <th class='mardi' scope='col'>Mardi</th>
-                            <th class='mercredi' scope='col'>Mercredi</th>
-                            <th class='jeudi' scope='col'>Jeudi</th>
-                            <th class='vendredi' scope='col'>Vendredi</th>
-                            <th class='samedi' scope='col'>Samedi</th>
-                            <th class='dimanche' scope='col'>Dimanche</th>
+                            <th class='lundi d-none' scope='col'>Lundi</th>
+                            <th class='mardi d-none' scope='col'>Mardi</th>
+                            <th class='mercredi d-none' scope='col'>Mercredi</th>
+                            <th class='jeudi d-none' scope='col'>Jeudi</th>
+                            <th class='vendredi d-none' scope='col'>Vendredi</th>
+                            <th class='samedi d-none' scope='col'>Samedi</th>
+                            <th class='dimanche d-none' scope='col'>Dimanche</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-
+                            <td class='lundi cellsListExercise d-none'></td>
+                            <td class='mardi cellsListExercise d-none'></td>
+                            <td class='mercredi cellsListExercise d-none'></td>
+                            <td class='jeudi cellsListExercise d-none'></td>
+                            <td class='vendredi cellsListExercise d-none'></td>
+                            <td class='samedi cellsListExercise d-none'></td>
+                            <td class='dimanche cellsListExercise d-none'></td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td class='lundi'>
-                                <button class='lundi' day='Lundi' class='btn btn-secondary'> + </button>
-                            </td class='mardi'>
-                                <td>
-                                <button class='mardi' day='Mardi' class='btn btn-secondary'> + </button>
-                            </td class='mercredi'>
-                                <td>
-                                <button class='mercredi' day='Mercredi' class='btn btn-secondary'> + </button>
-                            </td class='jeudi'>
-                                <td>
-                                <button class='jeudi' day='Jeudi' class='btn btn-secondary'> + </button>
-                            </td class='vendredi'>
-                                <td>
-                                <button class='vendredi' day='Vendredi' class='btn btn-secondary'> + </button>
-                            </td class='samedi'>
-                                <td>
-                                <button class='samedi' day='Samedi' class='btn btn-secondary'> + </button>
+                            <td class='lundi d-none'>
+                                <button class='addExerciseForThisDay lundi d-none' day='Lundi' class='btn btn-secondary'> + </button>
                             </td>
-                            <td class='dimanche'>
-                                <button class='dimanche' day='Dimanche' class='btn btn-secondary'> + </button>
+                            <td class='mardi d-none'>
+                                <button class='addExerciseForThisDay mardi d-none' day='Mardi' class='btn btn-secondary'> + </button>
+                            </td>
+                            <td class='mercredi d-none'>
+                                <button class='addExerciseForThisDay mercredi d-none' day='Mercredi' class='btn btn-secondary'> + </button>
+                            </td>
+                            <td class='jeudi d-none'>
+                                <button class='addExerciseForThisDay jeudi d-none' day='Jeudi' class='btn btn-secondary'> + </button>
+                            </td>
+                            <td class='vendredi d-none'>
+                                <button class='addExerciseForThisDay vendredi d-none' day='Vendredi' class='btn btn-secondary'> + </button>
+                            </td>
+                            <td class='samedi d-none'>
+                                <button class='addExerciseForThisDay samedi d-none' day='Samedi' class='btn btn-secondary'> + </button>
+                            </td>
+                            <td class='dimanche d-none'>
+                                <button class='addExerciseForThisDay dimanche d-none' day='Dimanche' class='btn btn-secondary'> + </button>
                             </td>
                         </tr>
                     </tfoot>
@@ -130,10 +144,16 @@
                 </div>
             </div> 
         </form>
-        <div class='row my-3 border border-1 rounded p-1 py-2'>
-            <form>
+        <div id='addExerciseZone' class='row my-3 border border-1 rounded p-1 py-2 d-none'>
+            <form id='addExerciseForm'>
                 <fieldset>
                     <legend class='my-3'>Ajouter exercice <span id='formAddExercise'></span> </legend>
+                    <div class='my-2'>
+                        <label class='my-1' for='exerciceListEl'>
+                            Jour :
+                        </label>
+                        <input class='form-control' id='dayEl' disabled/>
+                    </div>
                     <div class='my-2'>
                         <label class='my-1' for='exerciceListEl'>
                             Exercice :
@@ -173,7 +193,28 @@
         </div>
     </div>
 </div>
+</div>
+<script>
+    let dayList = document.querySelector('#dayList');
+    let addDayBtn = document.querySelector('#addDayBtn');
 
+    addDayBtn.addEventListener('click', function (event){
+
+        event.preventDefault();
+        let thisDay = dayList.value
+        let thisDayElements = document.querySelectorAll('.'+thisDay);
+
+        thisDayElements.forEach(thisDayElement=>{
+
+            thisDayElement.classList.remove('d-none');
+
+        });
+
+
+
+    });
+
+</script>
 <script>
 
     let nameUserEl = document.querySelector('#nameUserEl');
@@ -182,38 +223,10 @@
     let objectifUserEl = document.querySelector('#objectifUserEl');
     let descriptionUserEl = document.querySelector('#descriptionUserEl');
     let emailUserEl = document.querySelector('#emailUserEl');
-    let exerciceListEl = document.querySelector('#exerciceListEl')
-
+    let passedSportsEl = document.querySelector('#passedSportsEl');
 
     let idRequest = document.querySelector('#idRequest').innerHTML;  
     document.querySelector('#idRequest').remove();   
-
-    const fetchExerciseUrl = '/api/admin/exercise/'
-    fetch(fetchExerciseUrl, {
-
-        method: 'GET',
-        headers: {'Content-Type' : 'application/json'}
-
-    }).then(response => response.json())
-    .then(data => {
-
-        let exericesesList = '';
-
-        if (data.code === 200) {
-
-            const exercises = data.data
-
-            exercises.forEach(exercise => {
-    
-                exericesesList += '<option value=\''+exercise.id+ '\'>'+exercise.name+'</option>'
-                
-            });
-
-            exerciceListEl.innerHTML = exericesesList
-
-        }
-
-    });
 
     const fetchTrainRequestUrl = '/api/admin/train/request/'+ idRequest
     fetch(fetchTrainRequestUrl, {
@@ -226,6 +239,7 @@
 
         if (data.code === 200) {
 
+            console.log(data.data)
             const trainRequest = data.data
             let utilisateur = getUser(trainRequest.userId);
             let age = calculateAge(trainRequest.birthDay)
@@ -238,11 +252,20 @@
                 objectifUserEl.innerHTML = trainRequest.objectif; 
                 metabolismUserEl.innerHTML = trainRequest.metabolism; 
                 descriptionUserEl.innerHTML = trainRequest.description;
+                
+                let startDate = trainRequest.passedSports.startDate;
+                let endDate = trainRequest.passedSports.endDate;
 
+                startDate.splice(0, 7)
+                endDate.splice(0, 7)
+
+                startDate.replace('-', ' ');
+                endDate.replace('-', ' ');
+
+                passedSportsEl.innerHTML += '<div class=\'border border-1\'><h6 class=\'m-2 my-3\'>' + trainRequest.passedSports.name +'</h6><div class=\'m-2 my-3 text-muted\'>'+startDate+' / '+endDate+' </div><div class=\'m-2 my-3\'>' + trainRequest.passedSports.description +'</div> </div>'
+            
             });
-
         }
-
     });
 
     async function getUser(userId) {
@@ -282,13 +305,108 @@
             (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() === birthDate.getMinutes() && currentDate.getSeconds() >= birthDate.getSeconds())
         );
 
-        if (hasBirthdayOccurred) {
+        /*if (hasBirthdayOccurred) {
 
             age = age - 1;
             
-        }
+        }*/
 
         const intAge = age;
         return intAge;
     }
 </script>
+<script>
+    let exercicesTrain = []
+    let indexExercicesTrain = 0;
+
+    const fetchExerciseUrl = '/api/admin/exercise/'
+    fetch(fetchExerciseUrl, {
+
+        method: 'GET',
+        headers: {'Content-Type' : 'application/json'}
+
+    }).then(response => response.json())
+    .then(data => {
+
+        let exericesesList = '';
+
+        if (data.code === 200) {
+
+            const exercises = data.data
+
+            exercises.forEach(exercise => {
+    
+                exericesesList += '<option id="exercise_'+exercise.id+'" value="'+ exercise.id +'" name="' + exercise.name + '">'+exercise.name+'</option>'
+            });
+
+            exerciceListEl.innerHTML = exericesesList
+
+        }
+
+    });
+
+    let addExerciseForThisDays = document.querySelectorAll('.addExerciseForThisDay')
+    let addExerciseZone = document.querySelector('#addExerciseZone')
+    let addExerciseForm = document.querySelector('#addExerciseForm')
+    let exerciceListEl = document.querySelector('#exerciceListEl');
+    let sets = document.querySelector('#sets');
+    let reps = document.querySelector('#reps');
+    let repsMode = document.querySelector('#repsMode');
+    let dayEl = document.querySelector('#dayEl');
+
+    addExerciseForThisDays.forEach(addExerciseForThisDay => {
+
+        addExerciseForThisDay.addEventListener('click', function(event){
+
+            event.preventDefault();
+
+            let temp = addExerciseForThisDay.getAttribute('day').toLowerCase();
+            document.querySelector('#dayEl').setAttribute('value', temp);
+
+            addExerciseZone.classList.remove('d-none')
+        });
+
+    });
+
+    addExerciseForm.addEventListener('submit', function (event){
+
+        event.preventDefault();
+
+        let exerciseTrain = JSON.stringify({
+            day: dayEl.value,
+            exerciseId: exerciceListEl.value,
+            sets: sets.value,
+            reps: reps.value,
+            repsMode: repsMode.value
+        });
+
+        exercicesTrain.push(exerciseTrain);
+
+        let exerciseName = document.querySelector('#exercise_'+exerciceListEl.value).getAttribute('name');
+        let tempHTML = '<div class=\'border border-1 exerciseElement'+exerciceListEl.value+'\'><div class=\'border-bottom px-2 py-3\'><button type="button" idExercise=\''+exerciceListEl.value+'\' class="btn btn-outline-danger deleteExercisesBtn mx-1">X</button>' + exerciseName + '</div><div class=\'px-2 py-3\'>Série : ' + sets.value  +'<br>Répétitions : ' + reps.value  +'</div></div>'
+        document.querySelector('.cellsListExercise.'+dayEl.getAttribute('value')).innerHTML += tempHTML;
+        document.querySelector('.cellsListExercise.'+dayEl.getAttribute('value')).classList.remove('d-none');
+        addExerciseZone.classList.add('d-none')
+        dayEl.setAttribute('value', '');
+
+        indexExercicesTrain++;
+
+    });
+</script>
+<script>
+    let deleteExercisesBtn = document.querySelectorAll('.deleteExercisesBtn');
+
+    deleteExercisesBtn.forEach(deleteExerciseBtn => {
+
+        deleteExerciseBtn.addEventListener('click', function(event){
+
+            let id = deleteExercisesBtn.getAttribute('idExercise');
+            let exerciseSelector = '#exerciseElement' + id;
+            document.querySelector(exerciseSelector).remove();
+            exercicesTrain[id] = ''
+        });
+
+    });
+
+</script>
+<%- contentFor('main') %>
