@@ -48,6 +48,36 @@ router.get('/admin/train/request', adminChecker, (req, res) => {
 
 })
 
+router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
+
+    const idRequest = req.params.id_request;
+    
+    res.render('../views/admin/train-request-detail',  {layout: '../views/main-admin', id_request: idRequest});
+
+})
+
+router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res) => {
+
+    const id = req.params.id_request
+
+    trainRequest = await TrainRequest.findOne({where: {id: id}})
+
+    if (trainRequest){
+
+        const passedSport = await PassedSport.findAll({where: {trainRequestId: trainRequest.id}});
+
+        trainRequest.passedSports = passedSport.data;
+        res.statusCode = 200;
+        res.send({'code': res.statusCode, 'message': 'Train request has been found', 'data': trainRequest});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({'code': res.statusCode, 'message': 'The train request model can\'t be reached '});
+
+    }
+})
+
 router.get('/api/admin/train/request', adminChecker, async (req, res) => {
 
     trainRequests = await TrainRequest.findAll()
