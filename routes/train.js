@@ -1,5 +1,5 @@
 const express = require('express');
-const {TrainRequest, PassedSport, Train, User} = require('../models/');
+const {ExerciseTrain, TrainRequest, PassedSport, Train, User} = require('../models/');
 
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var adminChecker = require('../middlewares/adminChecker')
@@ -56,6 +56,37 @@ router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
 
 })
 
+router.post('/api/admin/train', adminChecker, async (req, res) => {
+
+    const rawTrain = req.body.train;
+    const rawExercisesTrains = req.body.exerciseTrains;
+    let exercisesTrains = [];
+
+    let train = await Train.create(rawTrain);
+
+    rawExercisesTrains.forEach(async(rawExerciseTrain) => {
+        
+        console.log(rawExerciseTrain);
+        let exerciseTrain = await ExerciseTrain.create(rawExerciseTrain)
+        console.log(exerciseTrain);
+        await train.setExerciseTrain(exerciseTrain);
+        exercisesTrains.push(exerciseTrain);
+    });
+
+    if (train){
+
+        res.statusCode = 201
+        res.send({'code': res.statusCode, 'message':'Train has been created', 'data':{'train' : train, 'exerciseTrains':exercisesTrains}});
+
+    } else {
+
+        res.statusCode = 201
+        res.send({'code': res.statusCode, 'message':'Train has been created'});
+
+    }
+
+});
+
 router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res) => {
 
     const id = req.params.id_request
@@ -66,9 +97,10 @@ router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res
 
         const passedSport = await PassedSport.findAll({where: {trainRequestId: trainRequest.id}});
 
-        trainRequest.passedSports = passedSport.data;
+        const data = JSON.stringify({trainRequest, 'passedSports' : passedSport});
+
         res.statusCode = 200;
-        res.send({'code': res.statusCode, 'message': 'Train request has been found', 'data': trainRequest});
+        res.send({'code': res.statusCode, 'message': 'Train request has been found', 'data': data});
 
     } else {
 
@@ -123,8 +155,7 @@ router.post('/api/train/request', authenticationChecker, async (req, res) => {
 
     if (trainRequest) {
 
-        res.statusCode = 201
-        
+        res.statusCode = 201      
         res.send({'code': res.statusCode, 'message': 'Train request has been created', 'data': req.body});
 
     } else {

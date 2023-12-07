@@ -10,16 +10,16 @@ var router = express.Router();
 const { sequelize } = require('./models');
 var layout = require('express-ejs-layouts');
 
-const home = require('./routes/home');
-const train = require('./routes/train');
-const nutrition = require('./routes/nutrition');
-const user = require('./routes/user');
+const exercise = require('./routes/exercise');
 const food = require('./routes/food');
 const foodAte = require('./routes/foodate');
+const home = require('./routes/home');
+const measurment = require('./routes/measurment');
+const nutrition = require('./routes/nutrition');
 const passedsport = require('./routes/Passedsport');
 const performance = require('./routes/performance');
-const measurment = require('./routes/measurment');
-const exercise = require('./routes/exercise');
+const train = require('./routes/train');
+const user = require('./routes/user');
 
 
 const authenticationChecker = require('./middlewares/authenticationChecker');
