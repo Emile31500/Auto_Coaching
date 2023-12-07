@@ -1,199 +1,243 @@
 <% title = 'Child Template' %>
 <%- contentFor('mainNotMarged') %>
-<div class='px-5'>
-    
-<h2 class='my-5'>Demande d'entraînement : </h2>
-<span class='d-block' id='idRequest'><%= id_request %></span>
-<div class='row'>
-    <div class='col-4'>
-        <h3> Demande de l'utilisateur : </h3>
-        <div class='my-3 row'>
-            <h5>
-                Nom :
-            </h5>
-            <span class='d-block' id='nameUserEl'>
-            </span>
-        </div>
-        <div class='my-3 row'>
-            <h5>
-                Âge :
-            </h5>
-            <span class='d-block' id='ageUserEl'>
-            </span>
-        </div>
-        <div class='my-3 row'>
-            <h5>
-                Contact :
-            </h5>
-            <span class='d-block' id='emailUserEl'>
-            </span>
-        </div>
-        <div class='my-3 row'>
-            <h5>
-                Objectif :
-            </h5>
-            <span class='d-block' id='objectifUserEl'>
-            </span>
-        </div>
-        <div class='my-3 row'>
-            <h5>
-                Métabolisme :
-            </h5>
-            <span class='d-block' id='metabolismUserEl'>
-            </span>
-        </div>
-    
-        <div class='my-3 row'>
-            <h5>
-                Description :
-            </h5>
-            <span class='d-block' id='descriptionUserEl'>
-                
-            </span>
-        </div>
-        <div class='my-3 row'>
-            <h5>Sport précédents : </h5>
-            <span class='d-block' id='passedSportsEl'>
-               
-            </span>
-        </div>
-    </div>
-    <div class='col-8'>
-        <form>
-            <h3> Edition de l'entraînement :</h3>
+<div class='px-5'> 
+    <h2 class='my-5'>Demande d'entraînement : </h2>
+    <span class='d-block' id='idRequest'><%= id_request %></span>
+    <div class='row'>
+        <div class='col-4'>
+            <h3> Demande de l'utilisateur : </h3>
             <div class='my-3 row'>
-                <h4>
-                    Message :
-                </h4>
-                <textarea class='d-block form-control'></textarea>
+                <h5>
+                    Nom :
+                </h5>
+                <span class='d-block' id='nameUserEl'>
+                </span>
             </div>
             <div class='my-3 row'>
-                <div class='col-9'>
-                    <select id='dayList' class='form-control'>
-                        <option value='lundi' selected>Lundi</option>
-                        <option value='mardi'>Mardi</option>
-                        <option value='mercredi'>Mercredi</option>
-                        <option value='jeudi'>Jeudi</option>
-                        <option value='vendredi'>Vendredi</option>
-                        <option value='samedi'>Samedi</option>
-                        <option value='dimanche'>Dimanche</option>
-                    </select>
-                    
-                </div>
-                <div class='col-3 '>
-                    <button id='addDayBtn' class='btn btn-secondary'>
-                        +
-                    </button>
-                </div>
+                <h5>
+                    Âge :
+                </h5>
+                <span class='d-block' id='ageUserEl'>
+                </span>
             </div>
-            <div class='my-3 mt-5 mb-5 row'>
-                <table>
-                    <thead>
-                        <tr>
-                            <th class='lundi d-none' scope='col'>Lundi</th>
-                            <th class='mardi d-none' scope='col'>Mardi</th>
-                            <th class='mercredi d-none' scope='col'>Mercredi</th>
-                            <th class='jeudi d-none' scope='col'>Jeudi</th>
-                            <th class='vendredi d-none' scope='col'>Vendredi</th>
-                            <th class='samedi d-none' scope='col'>Samedi</th>
-                            <th class='dimanche d-none' scope='col'>Dimanche</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class='lundi cellsListExercise d-none'></td>
-                            <td class='mardi cellsListExercise d-none'></td>
-                            <td class='mercredi cellsListExercise d-none'></td>
-                            <td class='jeudi cellsListExercise d-none'></td>
-                            <td class='vendredi cellsListExercise d-none'></td>
-                            <td class='samedi cellsListExercise d-none'></td>
-                            <td class='dimanche cellsListExercise d-none'></td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td class='lundi d-none'>
-                                <button class='addExerciseForThisDay lundi d-none' day='Lundi' class='btn btn-secondary'> + </button>
-                            </td>
-                            <td class='mardi d-none'>
-                                <button class='addExerciseForThisDay mardi d-none' day='Mardi' class='btn btn-secondary'> + </button>
-                            </td>
-                            <td class='mercredi d-none'>
-                                <button class='addExerciseForThisDay mercredi d-none' day='Mercredi' class='btn btn-secondary'> + </button>
-                            </td>
-                            <td class='jeudi d-none'>
-                                <button class='addExerciseForThisDay jeudi d-none' day='Jeudi' class='btn btn-secondary'> + </button>
-                            </td>
-                            <td class='vendredi d-none'>
-                                <button class='addExerciseForThisDay vendredi d-none' day='Vendredi' class='btn btn-secondary'> + </button>
-                            </td>
-                            <td class='samedi d-none'>
-                                <button class='addExerciseForThisDay samedi d-none' day='Samedi' class='btn btn-secondary'> + </button>
-                            </td>
-                            <td class='dimanche d-none'>
-                                <button class='addExerciseForThisDay dimanche d-none' day='Dimanche' class='btn btn-secondary'> + </button>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+            <div class='my-3 row'>
+                <h5>
+                    Contact :
+                </h5>
+                <span class='d-block' id='emailUserEl'>
+                </span>
             </div>
-            <div class='row my-3'>
-                <div class='col'>
-                    <button class='mx-3 btn btn-warning'>Enregistrer</button> 
-                    <input class='mx-3 btn btn-success' type='submit'>
-                </div>
-            </div> 
-        </form>
-        <div id='addExerciseZone' class='row my-3 border border-1 rounded p-1 py-2 d-none'>
-            <form id='addExerciseForm'>
-                <fieldset>
-                    <legend class='my-3'>Ajouter exercice <span id='formAddExercise'></span> </legend>
-                    <div class='my-2'>
-                        <label class='my-1' for='exerciceListEl'>
-                            Jour :
-                        </label>
-                        <input class='form-control' id='dayEl' disabled/>
-                    </div>
-                    <div class='my-2'>
-                        <label class='my-1' for='exerciceListEl'>
-                            Exercice :
-                        </label>
-                        <select class='form-control' id='exerciceListEl'>
+            <div class='my-3 row'>
+                <h5>
+                    Objectif :
+                </h5>
+                <span class='d-block' id='objectifUserEl'>
+                </span>
+            </div>
+            <div class='my-3 row'>
+                <h5>
+                    Métabolisme :
+                </h5>
+                <span class='d-block' id='metabolismUserEl'>
+                </span>
+            </div>
         
-                        </select>
-                    </div>
-                    <div class='my-2'>
-                        <label class='my-1' for='sets'>
-                            Série :
+            <div class='my-3 row'>
+                <h5>
+                    Description :
+                </h5>
+                <span class='d-block' id='descriptionUserEl'>
+                    
+                </span>
+            </div>
+            <div class='my-3 row'>
+                <h5>Sport précédents : </h5>
+                <span class='d-block' id='passedSportsEl'>
+                
+                </span>
+            </div>
+        </div>
+        <div class='col-8'>
+            <form>
+                <h3> Edition de l'entraînement :</h3>
+
+                <div class='my-3 row'>
+                    <h4>
+                        <label for='nameTrainEl'>
+                            Nom :
                         </label>
-                        <input class='form-control' type='number' id='sets' />
+                    </h4>
+                    <input type='text' id='nameTrainEl' class="form-control" />
+                    <!--<textarea class='d-block form-control'></textarea>-->
+                </div>
+                <div class='my-3 row'>
+                    <div class='col-9'>
+                        <select id='dayList' class='form-control'>
+                            <option value='lundi' selected>Lundi</option>
+                            <option value='mardi'>Mardi</option>
+                            <option value='mercredi'>Mercredi</option>
+                            <option value='jeudi'>Jeudi</option>
+                            <option value='vendredi'>Vendredi</option>
+                            <option value='samedi'>Samedi</option>
+                            <option value='dimanche'>Dimanche</option>
+                        </select>
+                        
                     </div>
-                    <div class='my-2'>
-                        <div class='row'>
-                            <div class='col'>
-                                <label class='my-1' for='reps'>
-                                    Répétition :
-                                </label>
-                                <input class='form-control' type='number' id='reps' />
-                            </div>
-                            <div class='col'>
-                                <p class='my-1 mt-4'>
-                                    <input type='radio' name='repsMode' id='repsMode' value='rps'/> Répétition
-                                    <br>
-                                    <input type='radio' name='repsMode' id='repsMode' value='scd'/> Seconde
-                                </p>
+                    <div class='col-3 '>
+                        <button id='addDayBtn' class='btn btn-secondary'>
+                            +
+                        </button>
+                    </div>
+                </div>
+                <div class='my-3 mt-5 mb-5 row'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class='lundi d-none' scope='col'>Lundi</th>
+                                <th class='mardi d-none' scope='col'>Mardi</th>
+                                <th class='mercredi d-none' scope='col'>Mercredi</th>
+                                <th class='jeudi d-none' scope='col'>Jeudi</th>
+                                <th class='vendredi d-none' scope='col'>Vendredi</th>
+                                <th class='samedi d-none' scope='col'>Samedi</th>
+                                <th class='dimanche d-none' scope='col'>Dimanche</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class='lundi cellsListExercise d-none'></td>
+                                <td class='mardi cellsListExercise d-none'></td>
+                                <td class='mercredi cellsListExercise d-none'></td>
+                                <td class='jeudi cellsListExercise d-none'></td>
+                                <td class='vendredi cellsListExercise d-none'></td>
+                                <td class='samedi cellsListExercise d-none'></td>
+                                <td class='dimanche cellsListExercise d-none'></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class='lundi d-none'>
+                                    <button class='addExerciseForThisDay lundi d-none' day='Lundi' class='btn btn-secondary'> + </button>
+                                </td>
+                                <td class='mardi d-none'>
+                                    <button class='addExerciseForThisDay mardi d-none' day='Mardi' class='btn btn-secondary'> + </button>
+                                </td>
+                                <td class='mercredi d-none'>
+                                    <button class='addExerciseForThisDay mercredi d-none' day='Mercredi' class='btn btn-secondary'> + </button>
+                                </td>
+                                <td class='jeudi d-none'>
+                                    <button class='addExerciseForThisDay jeudi d-none' day='Jeudi' class='btn btn-secondary'> + </button>
+                                </td>
+                                <td class='vendredi d-none'>
+                                    <button class='addExerciseForThisDay vendredi d-none' day='Vendredi' class='btn btn-secondary'> + </button>
+                                </td>
+                                <td class='samedi d-none'>
+                                    <button class='addExerciseForThisDay samedi d-none' day='Samedi' class='btn btn-secondary'> + </button>
+                                </td>
+                                <td class='dimanche d-none'>
+                                    <button class='addExerciseForThisDay dimanche d-none' day='Dimanche' class='btn btn-secondary'> + </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class='row my-3'>
+                    <div class='col'>
+                        
+                        <button class='mx-3 btn btn-warning' id='btnEnregistrer' data-bs-toggle="modal" data-bs-target="#confirmSave">Enregistrer</button> 
+                        <input class='mx-3 btn btn-success' type='submit' id='envoyer'>
+                    </div>
+                </div> 
+            </form>
+            <div id='addExerciseZone' class='row my-3 border border-1 rounded p-1 py-2 d-none'>
+                <form id='addExerciseForm'>
+                    <fieldset>
+                        <legend class='my-3'>Ajouter exercice <span id='formAddExercise'></span> </legend>
+                        <div class='my-2'>
+                            <label class='my-1' for='exerciceListEl'>
+                                Jour :
+                            </label>
+                            <input class='form-control' id='dayEl' disabled/>
+                        </div>
+                        <div class='my-2'>
+                            <label class='my-1' for='exerciceListEl'>
+                                Exercice :
+                            </label>
+                            <select class='form-control' id='exerciceListEl'>
+            
+                            </select>
+                        </div>
+                        <div class='my-2'>
+                            <label class='my-1' for='sets'>
+                                Série :
+                            </label>
+                            <input class='form-control' type='number' id='sets' />
+                        </div>
+                        <div class='my-2'>
+                            <div class='row'>
+                                <div class='col'>
+                                    <label class='my-1' for='reps'>
+                                        Répétition :
+                                    </label>
+                                    <input class='form-control' type='number' id='reps' />
+                                </div>
+                                <div class='col'>
+                                    <p class='my-1 mt-4'>
+                                        <input type='radio' name='repsMode' id='repsMode' value='rps'/> Répétition
+                                        <br>
+                                        <input type='radio' name='repsMode' id='repsMode' value='scd'/> Seconde
+                                    </p>
+                                </div>
                             </div>
                         </div>
+                    </fieldset>
+                    <div class='my-3'>
+                        <input class='btn btn-secondary' type='submit'>
                     </div>
-                </fieldset>
-                <div class='my-3'>
-                    <input class='btn btn-secondary' type='submit'>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" role="dialog" id="infoSave" aria-labelledby="infoSaveLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="infoSaveLabel">Information  </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>
+                <span class='d-none' id='savingErrorCode'></span>
+                <span id='savingResult'></span>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
 </div>
+<div class="modal" tabindex="-1" role="dialog" id="confirmSend" aria-labelledby="confirmSendLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="confirmSendLabel">Attention  </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Êtes vous sûr de bien vouloir envoyer cet entraînement à l'utilisateur ?'</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let dayList = document.querySelector('#dayList');
     let addDayBtn = document.querySelector('#addDayBtn');
@@ -225,7 +269,8 @@
     let emailUserEl = document.querySelector('#emailUserEl');
     let passedSportsEl = document.querySelector('#passedSportsEl');
 
-    let idRequest = document.querySelector('#idRequest').innerHTML;  
+    let idRequest = document.querySelector('#idRequest').innerHTML; 
+    let userId; 
     document.querySelector('#idRequest').remove();   
 
     const fetchTrainRequestUrl = '/api/admin/train/request/'+ idRequest
@@ -239,9 +284,12 @@
 
         if (data.code === 200) {
 
-            console.log(data.data)
-            const trainRequest = data.data
-            let utilisateur = getUser(trainRequest.userId);
+            const jsonData = JSON.parse(data.data)
+            const trainRequest = jsonData.trainRequest;
+            const passedSports = jsonData.passedSports;
+
+            userId = trainRequest.userId
+            let utilisateur = getUser(userId);
             let age = calculateAge(trainRequest.birthDay)
 
             utilisateur.then(utilisateur => { 
@@ -253,17 +301,20 @@
                 metabolismUserEl.innerHTML = trainRequest.metabolism; 
                 descriptionUserEl.innerHTML = trainRequest.description;
                 
-                let startDate = trainRequest.passedSports.startDate;
-                let endDate = trainRequest.passedSports.endDate;
+                passedSports.forEach(passedSport => {
 
-                startDate.splice(0, 7)
-                endDate.splice(0, 7)
+                    let startDate = passedSport.startDate;
+                    let endDate = passedSport.endDate;
 
-                startDate.replace('-', ' ');
-                endDate.replace('-', ' ');
+                    startDate = startDate.slice(0, 7)
+                    endDate = endDate.slice(0, 7)
 
-                passedSportsEl.innerHTML += '<div class=\'border border-1\'><h6 class=\'m-2 my-3\'>' + trainRequest.passedSports.name +'</h6><div class=\'m-2 my-3 text-muted\'>'+startDate+' / '+endDate+' </div><div class=\'m-2 my-3\'>' + trainRequest.passedSports.description +'</div> </div>'
-            
+                    startDate = startDate.replace('-', ' ');
+                    endDate = endDate.replace('-', ' ');
+
+                    passedSportsEl.innerHTML += '<div class=\'border border-1\'><h6 class=\'m-2 my-3\'>' + passedSport.name +'</h6><div class=\'m-2 my-3 text-muted\'>'+startDate+' / '+endDate+' </div><div class=\'m-2 my-3\'>' + passedSport.description +'</div> </div>'
+                
+                });  
             });
         }
     });
@@ -383,30 +434,75 @@
         exercicesTrain.push(exerciseTrain);
 
         let exerciseName = document.querySelector('#exercise_'+exerciceListEl.value).getAttribute('name');
-        let tempHTML = '<div class=\'border border-1 exerciseElement'+exerciceListEl.value+'\'><div class=\'border-bottom px-2 py-3\'><button type="button" idExercise=\''+exerciceListEl.value+'\' class="btn btn-outline-danger deleteExercisesBtn mx-1">X</button>' + exerciseName + '</div><div class=\'px-2 py-3\'>Série : ' + sets.value  +'<br>Répétitions : ' + reps.value  +'</div></div>'
+        let tempHTML = '<div class=\'border border-1\' id=\'exerciseElement'+indexExercicesTrain+'\'><div class=\'border-bottom px-2 py-3\'><button type="button" idExercise=\''+indexExercicesTrain+'\' class="btn btn-outline-danger deleteExercisesBtn mx-1">X</button>' + exerciseName + '</div><div class=\'px-2 py-3\'>Série : ' + sets.value  +'<br>Répétitions : ' + reps.value  +'</div></div>'
         document.querySelector('.cellsListExercise.'+dayEl.getAttribute('value')).innerHTML += tempHTML;
         document.querySelector('.cellsListExercise.'+dayEl.getAttribute('value')).classList.remove('d-none');
         addExerciseZone.classList.add('d-none')
         dayEl.setAttribute('value', '');
+        let deleteExercisesBtn = document.querySelectorAll('.deleteExercisesBtn')
+
+        deleteExercisesBtn.forEach(deleteExerciseBtn => {
+
+            deleteExerciseBtn.addEventListener('click', function(event){
+                
+                event.preventDefault();
+                let id = deleteExerciseBtn.getAttribute('idExercise');
+
+                let exerciseSelector = '#exerciseElement' + id;
+                console.log(exerciseSelector);
+                document.querySelector(exerciseSelector).remove();
+                exercicesTrain[id] = ''
+            });
+
+        });
 
         indexExercicesTrain++;
 
     });
 </script>
 <script>
-    let deleteExercisesBtn = document.querySelectorAll('.deleteExercisesBtn');
+    let btnEnregistrer = document.querySelector('#btnEnregistrer');
+    let nameTrainEl = document.querySelector('#nameTrainEl')
 
-    deleteExercisesBtn.forEach(deleteExerciseBtn => {
+    btnEnregistrer.addEventListener('click', function (event){
 
-        deleteExerciseBtn.addEventListener('click', function(event){
+        //event.preventDefault();
+        for (let i = 0; i < exercicesTrain.length; i++) {
+            exercicesTrain.splice(i, 1)
+            
+        }
+        const rawData = JSON.stringify({
+            train: {
+                name: nameTrainEl.value,
+                userId: userId,
+                isFinished: false,
+                trainRequestId: idRequest
+            },
+            exercicesTrain: exercicesTrain
+        })
 
-            let id = deleteExercisesBtn.getAttribute('idExercise');
-            let exerciseSelector = '#exerciseElement' + id;
-            document.querySelector(exerciseSelector).remove();
-            exercicesTrain[id] = ''
+        fetch('api/admin/train', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: rawData
+        }).then(response => response.json())
+        .then(data => {
+
+            if (data.code === 201){
+
+                document.querySelector('#savingResult').innerHTML = 'Votre entraînement a bien été enregistré.<br>Appuyer sur Envoyer pour le transmettre à lutilisateur.'
+
+            } else {
+
+                document.querySelector('#savingErrorCode').innerHTML = 'Erreur : ' + data.code;
+                document.querySelector('#savingResult').innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+
+            }
+ 
         });
 
     });
-
 </script>
 <%- contentFor('main') %>
