@@ -130,7 +130,7 @@ router.post('/login', parserJson, async (req, res, next) => {
 
                 if (user.role.includes('admin')){
 
-                    res.redirect('/admin/train/request')
+                    res.redirect('/admin/train')
 
                 } else {
 
