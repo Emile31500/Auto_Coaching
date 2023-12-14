@@ -1,0 +1,241 @@
+<% title = "Child Template" %>exerciseAlerte
+<%- contentFor('main') %>
+<h2 class="my-5">Entraînement </h2>
+<h3 class="my-4">Exercices : </h3>
+<div class="row">
+    <div class="col">
+        <table class="table my-3">
+            <thead>
+                <tr>
+                    <th scope="col"> Nom</th> 
+                </tr>
+            </thead>
+            <tbody id='bodyExerciseList'></tbody>
+        </table>
+    </div>
+    <div class="col">
+        <form id="addExerciseForm">
+            <div class="my-3">
+                <label class="my-1" for="name"> Nom :</label>
+                <input id="name" name="name" class="form-control my-1"/>
+            </div>
+            <input type="submit" value="Ajouter" class="btn btn-primary my-1"/>
+        </form>
+        <div id='exerciseAlerte' class="alert alert-danegr d-none">
+
+        </div>
+    </div>
+    
+</div>
+
+<h3 class="my-4">Train request : </h3>
+
+<table class="table my-3">
+    <thead>
+        <tr>
+            <th scope="col"> Utilsiateur</th>
+            <th scope="col"> Contact </th>
+            <th scope="col"> Objectif </th>  
+            <th scope="col"> Métabolisme </th>  
+            <th scope="col" colspan="2"> Age </th>  
+        </tr>
+    </thead>
+    <tbody id="bodyTrainRequestTable">
+    </tbody>
+</table>
+
+<div class="modal" tabindex="-1" role="dialog" id="confirmDel" aria-labelledby="confirmDelLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="confirmDelLabel">Attention : </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Êtes vous sûr de bien vouloir supprimer cet exercice</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" id='confirmDeletionBtn'>Supprimmer</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteThisExercise;
+    let bodyTrainRequestTable = document.querySelector('#bodyTrainRequestTable');   
+
+
+    fetch('/api/admin/train/request', {
+
+        method: 'GET',
+        headers: {'Content-Type' : 'application/json'}
+
+    }).then(response => response.json())
+    .then(data => {
+
+        if (data.code === 200) {
+
+            data.data.forEach(trainRequest => {
+
+                let utilisateur = getUser(trainRequest.userId);
+                let age = calculateAge(trainRequest.birthDay)
+
+                utilisateur.then(utilisateur => { 
+                
+                    bodyTrainRequestTable.innerHTML +='<tr><td>' + utilisateur.name + '</td><td>'+utilisateur.email +'</td><td>'+trainRequest.objectif+'</td><td>'+trainRequest.metabolism+'</td><td>' + age + '</td><td><a href="/admin/train/request/' + trainRequest.id + '">Détail</a></td></tr>';                 
+                
+                });
+            });
+
+        }
+
+    });
+
+    async function getUser(userId) {
+
+        const promise = await fetch('/api/user?id='+userId, {
+
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json'},
+
+        })
+
+        let res = await promise.json();
+
+        if (res.code === 200) {
+
+            return res.data;
+
+        } else {
+
+            console.log('Error : ' +  res.code + '\n' + res.message)
+
+        }
+        
+    }
+
+   
+    function calculateAge(birthDay) {
+
+        const birthDate = new Date(birthDay);
+
+        const currentDate = new Date();
+        let age = currentDate.getFullYear() - birthDate.getFullYear();
+        const hasBirthdayOccurred = (
+            currentDate.getMonth() > birthDate.getMonth() ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() >= birthDate.getHours()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() >= birthDate.getMinutes()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() === birthDate.getMinutes() && currentDate.getSeconds() >= birthDate.getSeconds())
+        );
+
+        if (hasBirthdayOccurred) {
+
+            age = age - 1;
+            
+        }
+
+        const intAge = age;
+        return intAge;
+    }
+</script>
+<script>
+
+    let name =  document.querySelector('#name');
+    let addExerciseForm = document.querySelector('#addExerciseForm');
+    let confirmDeletionBtn = document.querySelector('#confirmDeletionBtn');
+    let exerciseAlert = document.querySelector('#exerciseAlert');
+    let idExerciseToDelete;
+
+    function loadAllExercise() {
+
+        let bodyExerciseList = document.querySelector('#bodyExerciseList');
+
+        fetch('/api/admin/exercise', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => response.json()
+        ).then(data => {
+
+            let htmlTableauExercise = ''
+
+            if (data.code === 200) {
+
+                data.data.forEach(exercise => {
+
+                    htmlTableauExercise += '<tr><td><div class=\'row\'><div class=\'col\'>' + exercise.name + ' </div><div style=\'max-width: 200px\' class=\'d-flex justify-content-end col\'><a class=\'delExerciseBtns\' data-bs-toggle=\'modal\' data-bs-target=\'#confirmDel\' data-id-exercise=\''+exercise.id+'\'>Supprimer</a></div></div></td></tr>'
+                    delExerciseBtns = document.querySelectorAll('.delExerciseBtns');
+                    delExerciseBtns.forEach(delExerciseBtn => {
+      
+                    delExerciseBtn.addEventListener('click', function(event){
+
+                            event.preventDefault();
+                            idExerciseToDelete = delExerciseBtn.getAttribute('data-id-exercise')
+                        })
+                    })
+
+                });
+
+                bodyExerciseList.innerHTML = htmlTableauExercise;
+            } 
+        });
+    }
+    loadAllExercise();
+
+    
+
+    addExerciseForm.addEventListener('submit', function(event){
+
+        event.preventDefault();
+
+        const rawData = JSON.stringify({name: name.value});
+
+        fetch('/api/admin/exercise', {
+            method : 'POST',
+            headers : {'Content-Type' : 'application/json'},
+            body : rawData
+        }).then(response => response.json()
+        ).then(data => {
+
+            if (data.code === 201){
+
+                loadAllExercise();
+
+            }
+        });
+    });
+
+</script>
+<script>
+
+    confirmDeletionBtn.addEventListener('click', function(event){
+
+        fetch('/api/admin/exercise/'+idExerciseToDelete, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'}
+
+        }).then(
+
+            response => response.json()
+
+        ).then(data => {
+
+            if (data.code !== 200) {
+
+                exerciseAlegirt.innerHTML = 'Error ' + data.code + ': <br>' + data.message
+
+            } else {
+
+                loadAllExercise();
+
+            }
+
+        });
+    });
+            
+</script>
+<%- contentFor('mainNotMarged') %>

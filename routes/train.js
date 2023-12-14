@@ -42,9 +42,9 @@ router.get('/train/request', authenticationChecker, (req, res) => {
 
 })
 
-router.get('/admin/train/request', adminChecker, (req, res) => {
+router.get('/admin/train', adminChecker, (req, res) => {
 
-    res.render('../views/admin/train-request',  {layout: '../views/main-admin' });
+    res.render('../views/admin/train',  {layout: '../views/main-admin' });
 
 })
 
