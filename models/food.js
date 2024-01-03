@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Food.init({
     name: DataTypes.STRING,
     carbohydrate: DataTypes.FLOAT,
+    sugar: DataTypes.FLOAT,
     proteine: DataTypes.FLOAT,
     fat: DataTypes.FLOAT,
     trans_fat: DataTypes.FLOAT,
