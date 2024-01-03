@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 const session = require('express-session');
 const http = require('http');
 const url = require('url');
+const adminChecker = require('../middlewares/adminChecker');
 const router = express.Router();
 
 
@@ -111,6 +112,70 @@ router.post('/api/food', parserJson, async (req, res, next) => {
 
 });
 
+router.post('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
+
+    if (req.body && req.session.token){
+
+        const rawData = req.body
+
+        const food = Food.create(rawData);
+        if (food){
+
+            res.statusCode = 201
+            res.send({'code': res.statusCode, 'message': 'This food has been created', 'data': food});
+
+        } else {
+
+            res.statusCode = 400
+            res.send({'code': res.statusCode, "message" : "Food not created"});
+
+        }
+    }
+});
+
+router.patch('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
+
+    if (req.body && req.session.token){
+
+        const element = req.body.element
+        const selector = req.body.selector
+
+
+        var food = await Food.findOne({where : selector});
+        await food.update(element);
+        await food.save();
+        // foodUnUpdated = await Food.findOne({where : selector}); 
+        
+
+        // if (foodUnUpdated){
+
+        //     await Food.update(element, {where : selector}
+        //     );
+
+        //     foodUpdated = await Food.findOne({where : selector}); 
+
+        //     if (foodUnUpdated !== foodUpdated) {
+
+        //         res.statusCode = 202
+        //         res.send({'code': res.statusCode, 'message': 'This food has been updated', 'data': foodUpdated});
+
+        //     } else {
+
+        //         res.statusCode = 422
+        //         res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
+
+        //     }
+
+            
+
+        // } else {
+
+        //     res.statusCode = 404
+        //     res.send({'code': res.statusCode, "message" : "Food not updated"});
+
+        // }
+    }
+});
 
 router.post('/api/food/eat', authenticationChecker, parserJson, async (req, res, next) => {
 

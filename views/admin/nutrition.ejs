@@ -1,0 +1,229 @@
+<% title = 'Child Template' %>
+<%- contentFor('mainNotMarged') %>
+
+<div class='m-3 row'>
+    <h3 class="my-5 ">Aliments </h3>
+    <div class='col-8'>
+        
+        <table class="table table-striped my-3">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">Nom </th>
+                <th scope="col">Kcalorie</th>
+                <th scope="col" colspan="2">Glucide dont Sucre</th>
+                <th scope="col">Proteine</th>
+                <th scope="col" colspan="3" >Lipide dont saturé</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for(var i=0; i<food.length; i++) {%>
+                <tr id='alimentRow<%= food[i].id %>'>
+                    <th scope="row"><%= food[i].name %></th>
+                    <td> <%=  parseFloat(food[i].carbohydrate *4+ food[i].proteine *4 + food[i].fat*9).toFixed(1)  %> kcal </td>
+                    <td> <%= food[i].carbohydrate %> g </td>
+                    <td> <%= food[i].sugar %> g </td>
+                    <td> <%= food[i].proteine %> g </td>
+                    <td> <%= food[i].fat %> g </td>
+                    <td> <%= food[i].trans_fat %> g </td>
+                    <td> <button class="btn btn-outline-danger" data-id-aliment='<%= food[i].id %>'>supprimer</button>  <button class="btn btn-outline-secondary edit-aliment" data-macro-nutrient='{"name" : "<%= food[i].name %>","protein" : <%= food[i].proteine %>,"fat" : <%= food[i].fat %>,"trans_fat" : <%= food[i].trans_fat %>,"carbohydrate" : <%= food[i].carbohydrate %>, "sugar" : <%= food[i].sugar %>, "is_egg" : <%= food[i].is_egg %>, "is_meat" : <%= food[i].is_meat %>, "is_milk" : <%= food[i].is_milk %>}' data-id-aliment='<%= food[i].id %>'>éditer</button> </td>
+                </tr>
+            <% } %>
+            </tbody>
+            
+        </table>
+    </div>
+    <div class='col-3'>
+        <form id='foodForm' class="my-3">
+            <input class="d-none" id='isUpdated' type='checkbox' disabled/>
+            <input class="d-none" id='idFoodEl' type='text' disabled/>
+            <div class='my-3'>
+                <label for='name'> Nom : </label>
+                <br>
+                <input id='name' class='form-control name' name='name'/>
+            </div>
+            <div class='my-3 row'>
+                <div class="col">
+                    <label for='carbohydrateEl'> Glucide : </label>
+                    <br>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='carbohydrateEl' class='form-control carbohydrateEl' name='carbohydrateEl'/>
+                </div>
+                <div class="col">
+                    <label for='sugarEl'> Dont sucre : </label>
+                    <br>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='sugarEl' class='form-control sugarEl' name='sugarEl'/>
+                </div>
+            </div>
+            <div class='my-3'>
+                <label for='proteinEl'> Protéine : </label>
+                <br>
+                <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='proteinEl' class='form-control proteinEl' name='proteinEl'/>
+            </div>
+            <div class='my-3'>
+                <div class='col'>
+                    <label for='fatEl'> Lipide : </label>
+                    <br>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='fatEl' class='form-control fatEl' name='fatEl'/>
+                </div>
+                <div class='col'>
+                    <label for='transFatEl'> Saturé : </label>
+                    <br>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='transFatEl' class='form-control transFatEl' name='transFatEl'/>
+                </div>
+            </div>
+            <div class='my-3'>
+                <div class='col'>
+                    <div class='my-2'>
+                        <input type='checkbox' id='isMeatEl'/>
+                        <label for='transFatEl'> Contient de la viande </label>
+                    </div>
+                    <div class='my-2'>
+                        <input type='checkbox' id='isEggEl'/>
+                        <label for='transFatEl'> Contient des eoufs </label>
+                    </div>
+                    <div class='my-2'>
+                        <input type='checkbox' id='isMilkEl'/>
+                        <label for='transFatEl'> Contient du lait</label>
+                    </div>
+                </div>
+            </div>
+
+            <input type='submit' class='btn btn-primary'>
+            <div class='alert d-none my-2' id='addAlimentAlert'>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    let editAliments = document.querySelectorAll('.edit-aliment')
+    let carbohydrateEl = document.querySelector('#carbohydrateEl');
+    let transFatEl = document.querySelector('#transFatEl');
+    let isUpdated = document.querySelector('#isUpdated');
+    let proteinEl = document.querySelector('#proteinEl');
+    let sugarEl = document.querySelector('#sugarEl');
+    let idFoodEl = document.querySelector('#idFoodEl');
+    let foodForm = document.querySelector('#foodForm');
+    let fatEl = document.querySelector('#fatEl');
+    let name = document.querySelector('#name');
+    let isMeatEl = document.querySelector('#isMeatEl');
+    let isEggEl = document.querySelector('#isEggEl');
+    let isMilkEl = document.querySelector('#isMilkEl');
+    let addAlimentAlert = document.querySelector('#addAlimentAlert')
+    let idAliment;
+
+    editAliments.forEach(editAliment => {
+
+        editAliment.addEventListener('click', function(event){
+
+            document.querySelectorAll('.table-warning').forEach(row => { row.classList.remove('table-warning')});
+            
+            let macroNutrients = editAliment.getAttribute('data-macro-nutrient');
+            idAliment = editAliment.getAttribute('data-id-aliment');
+
+            let jsonMacroNutrients = JSON.parse(macroNutrients);
+            
+            isUpdated.checked = true;
+            name.value = jsonMacroNutrients.name;
+            proteinEl.value = jsonMacroNutrients.protein;
+            sugarEl.value = jsonMacroNutrients.sugar;
+            fatEl.value = jsonMacroNutrients.fat;
+            transFatEl.value = jsonMacroNutrients.trans_fat;
+            carbohydrateEl.value = jsonMacroNutrients.carbohydrate;
+            idFoodEl.value = idAliment;
+            isMeatEl.checked = jsonMacroNutrients.is_meat;
+            isEggEl.checked = jsonMacroNutrients.is_egg;
+            isMilkEl.checked = jsonMacroNutrients.is_milk;
+            //sugar.value = jsonMacroNutrients.;
+
+            let selector = '#alimentRow'+idAliment;
+            isUpdated.setAttribute('checked', 'true')
+            document.querySelector(selector).classList.add('table-warning')
+
+        })
+
+    });
+
+    foodForm.addEventListener('submit', function(event){
+
+        event.preventDefault();
+        let rawData;
+        let verb;
+
+        const dataElment = JSON.stringify({
+            "name": name.value,
+            "carbohydrate": carbohydrateEl.value,
+            "sugar": sugarEl.value,
+            "proteine": proteinEl.value,
+            "fat": fatEl.value,
+            "trans_fat": transFatEl.value,
+            "is_meat" : isMeatEl.checked,
+            "is_milk" : isEggEl.checked,
+            "is_egg" : isMilkEl.checked, 
+            "is_veggie" : !(isMilkEl.checked || isMeatEl.checked || isEggEl.checked )
+
+        })
+        if (isUpdated.checked){
+
+            verb = 'PATCH';
+            rawData = JSON.stringify({
+                "selector" : {"id" : idAliment},
+                "element" : {
+                    "name": name.value,
+                    "carbohydrate": carbohydrateEl.value,
+                    "sugar": sugarEl.value,
+                    "proteine": proteinEl.value,
+                    "fat": fatEl.value,
+                    "trans_fat": transFatEl.value,
+                    "is_meat" : isMeatEl.checked,
+                    "is_milk" : isEggEl.checked,
+                    "is_egg" : isMilkEl.checked, 
+                    "is_veggie" : !(isMilkEl.checked || isMeatEl.checked || isEggEl.checked )
+                }
+            });
+            rawData.element = dataElment;
+
+        } else {
+
+            verb = 'POST';
+            rawData = dataElment
+
+        }
+        console.log(dataElment);
+        console.log(rawData);
+
+        fetch('/api/admin/food', {
+            method: verb,
+            headers: {'Content-Type': 'application/json'},
+            body: rawData
+
+        }).then(response => response.json())
+        .then(data => {
+
+            if (data.code === 201){
+
+                addAlimentAlert.classList.remove('d-none')
+                addAlimentAlert.classList.add('alert-success')
+                addAlimentAlert.innerHTML = 'L\'aliment a été créé avec succès';
+
+            } else if (data.code === 202){
+
+                addAlimentAlert.classList.remove('d-none')
+                addAlimentAlert.classList.add('alert-success')
+                addAlimentAlert.innerHTML = 'L\'aliment a été mis à jour avec succès';
+
+            } else {
+
+                addAlimentAlert.classList.remove('d-none')
+                addAlimentAlert.classList.add('alert-danger')
+                addAlimentAlert.innerHTML = 'Error : ' + data.code +'<br>'
+                addAlimentAlert.innerHTML += data.message;
+                
+            }
+
+
+        });
+
+    });
+
+
+</script>
+<%- contentFor('main') %>
