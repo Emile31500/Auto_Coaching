@@ -9,6 +9,36 @@ const url = require('url');
 const adminChecker = require('../middlewares/adminChecker');
 const router = express.Router();
 
+router.delete('/api/admin/food/:id_food', adminChecker, parserJson, async(req, res, next) => {
+
+    const idFood = req.params.id_food;
+    let food = await Food.findOne({where : {id: idFood}});
+
+    if (food){
+
+        Food.destroy({where: {id: idFood}});
+        let foodDel = await Food.findOne({where : {id: idFood}});
+
+        if (!foodDel) {
+    
+            res.statusCode = 204;
+            res.send({'code' : res.statusCode, 'message': 'Food instance successfully delated'});
+    
+        } else {
+    
+            res.statusCode = 500;
+            res.send({'code' : res.statusCode, 'message' : 'This food delation didn\'t works'});
+    
+        }
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({'code' : res.statusCode, 'message' : 'This food was not found'});
+
+    }
+
+});
 
 router.get('/api/food', authenticationChecker, parserJson, async(req, res, next) => {
 

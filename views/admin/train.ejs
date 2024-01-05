@@ -21,7 +21,7 @@
             </div>
             <input type="submit" value="Ajouter" class="btn btn-primary my-1"/>
         </form>
-        <div id='exerciseAlerte' class="alert alert-danegr d-none">
+        <div id='exerciseAlert' class="alert alert-danegr d-none">
 
         </div>
     </div>
@@ -57,7 +57,7 @@
             <p>Êtes vous sûr de bien vouloir supprimer cet exercice</p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id='colse-del-modal'>Close</button>
             <button type="button" class="btn btn-danger" id='confirmDeletionBtn'>Supprimmer</button>
         </div>
         </div>
@@ -212,27 +212,32 @@
 </script>
 <script>
 
-    confirmDeletionBtn.addEventListener('click', function(event){
+    confirmDeletionBtn.addEventListener('click', func = function(event){
 
         fetch('/api/admin/exercise/'+idExerciseToDelete, {
             method: 'DELETE',
             headers: {'Content-Type': 'application/json'}
 
-        }).then(
-
-            response => response.json()
-
-        ).then(data => {
-
-            if (data.code !== 200) {
-
-                exerciseAlegirt.innerHTML = 'Error ' + data.code + ': <br>' + data.message
-
-            } else {
+        }).then(response => {
+                
+            if (response.status === 204) {
 
                 loadAllExercise();
 
+            } else {
+
+                return response.json();
+
             }
+
+        }).then(data => {
+
+            exerciseAlert.classList.remove('d-none');
+            exerciseAlert.classList.add('alert-danger');
+            exerciseAlert.innerHTML = 'Error ' + data.code + ': <br>' + data.message
+
+            document.querySelector("#colse-del-modal").click();
+            confirmDeletionBtn.removeEventListener("click", func);
 
         });
     });
