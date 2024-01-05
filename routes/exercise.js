@@ -49,31 +49,33 @@ router.post('/api/admin/exercise', adminChecker, parserJson, async(req, res, nex
 router.delete('/api/admin/exercise/:id_exercise', adminChecker, parserJson, async(req, res, next) => {
 
     const idExercise = req.params.id_exercise;
-    exercise = Exercise.findOne({where: {id: idExercise}});
-
+    let exercise = await Exercise.findOne({where : {id: idExercise}});
 
     if (exercise){
 
         Exercise.destroy({where: {id: idExercise}});
+        let exerciseDel = await Exercise.findOne({where : {id: idExercise}});
 
-        if (exercise) {
+        if (!exerciseDel) {
     
-            res.statusCode = 202;
-            res.send({'code' : res.statusCode, 'message': 'Exercise instance successfully created'});
+            res.statusCode = 204;
+            res.send({'code' : res.statusCode, 'message': 'Exercise instance successfully delated'});
     
         } else {
     
-            res.statusCode = 401;
-            res.send({'code' : res.statusCode, 'message' : 'Exercises was not found'});
+            res.statusCode = 500;
+            res.send({'code' : res.statusCode, 'message' : 'This exercise delation didn\'t works'});
     
         }
 
     } else {
 
         res.statusCode = 404;
-        res.send({'code' : res.statusCode, 'message' : 'Exercises was not found'})
+        res.send({'code' : res.statusCode, 'message' : 'This exercise was not found'});
 
     }
+
+
 });
 
 module.exports = router

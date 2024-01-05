@@ -25,7 +25,7 @@
                     <td> <%= food[i].proteine %> g </td>
                     <td> <%= food[i].fat %> g </td>
                     <td> <%= food[i].trans_fat %> g </td>
-                    <td> <button class="btn btn-outline-danger" data-id-aliment='<%= food[i].id %>'>supprimer</button>  <button class="btn btn-outline-secondary edit-aliment" data-macro-nutrient='{"name" : "<%= food[i].name %>","protein" : <%= food[i].proteine %>,"fat" : <%= food[i].fat %>,"trans_fat" : <%= food[i].trans_fat %>,"carbohydrate" : <%= food[i].carbohydrate %>, "sugar" : <%= food[i].sugar %>, "is_egg" : <%= food[i].is_egg %>, "is_meat" : <%= food[i].is_meat %>, "is_milk" : <%= food[i].is_milk %>}' data-id-aliment='<%= food[i].id %>'>éditer</button> </td>
+                    <td> <button class='delAlimentBtns btn btn-danger' data-bs-toggle='modal' data-bs-target='#confirmDel' data-id-aliment='<%= food[i].id %>'>Supprimer</button>  <button class="btn btn-outline-secondary edit-aliment" data-macro-nutrient='{"name" : "<%= food[i].name %>","protein" : <%= food[i].proteine %>,"fat" : <%= food[i].fat %>,"trans_fat" : <%= food[i].trans_fat %>,"carbohydrate" : <%= food[i].carbohydrate %>, "sugar" : <%= food[i].sugar %>, "is_egg" : <%= food[i].is_egg %>, "is_meat" : <%= food[i].is_meat %>, "is_milk" : <%= food[i].is_milk %>}' data-id-aliment='<%= food[i].id %>'>éditer</button> </td>
                 </tr>
             <% } %>
             </tbody>
@@ -88,9 +88,28 @@
             </div>
 
             <input type='submit' class='btn btn-primary'>
-            <div class='alert d-none my-2' id='addAlimentAlert'>
+            <div class='alert d-none my-2' id='alimentAlert'>
             </div>
         </form>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="confirmDel" aria-labelledby="confirmDelLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="confirmDelLabel">Attention : </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Êtes vous sûr de bien vouloir supprimer cet aliment</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id='colse-del-modal'>Close</button>
+            <button type="button" class="btn btn-danger" id='confirmDeletionBtn'>Supprimmer</button>
+        </div>
+        </div>
     </div>
 </div>
 <script>
@@ -107,7 +126,7 @@
     let isMeatEl = document.querySelector('#isMeatEl');
     let isEggEl = document.querySelector('#isEggEl');
     let isMilkEl = document.querySelector('#isMilkEl');
-    let addAlimentAlert = document.querySelector('#addAlimentAlert')
+    let alimentAlert = document.querySelector('#alimentAlert')
     let idAliment;
 
     editAliments.forEach(editAliment => {
@@ -200,30 +219,82 @@
 
             if (data.code === 201){
 
-                addAlimentAlert.classList.remove('d-none')
-                addAlimentAlert.classList.add('alert-success')
-                addAlimentAlert.innerHTML = 'L\'aliment a été créé avec succès';
+                alimentAlert.classList.remove('d-none')
+                alimentAlert.classList.add('alert-success')
+                alimentAlert.innerHTML = 'L\'aliment a été créé avec succès';
 
             } else if (data.code === 202){
 
-                addAlimentAlert.classList.remove('d-none')
-                addAlimentAlert.classList.add('alert-success')
-                addAlimentAlert.innerHTML = 'L\'aliment a été mis à jour avec succès';
+                alimentAlert.classList.remove('d-none')
+                alimentAlert.classList.add('alert-success')
+                alimentAlert.innerHTML = 'L\'aliment a été mis à jour avec succès';
 
             } else {
 
-                addAlimentAlert.classList.remove('d-none')
-                addAlimentAlert.classList.add('alert-danger')
-                addAlimentAlert.innerHTML = 'Error : ' + data.code +'<br>'
-                addAlimentAlert.innerHTML += data.message;
+                alimentAlert.classList.remove('d-none')
+                alimentAlert.classList.add('alert-danger')
+                alimentAlert.innerHTML = 'Error : ' + data.code +'<br>'
+                alimentAlert.innerHTML += data.message;
                 
             }
-
-
         });
-
     });
 
 
+</script>
+<script>
+
+    let delAlimentBtns = document.querySelectorAll('.delAlimentBtns');
+    let confirmDeletionBtn = document.querySelector('#confirmDeletionBtn');
+
+    delAlimentBtns.forEach(delAlimentBtn => {
+
+        delAlimentBtn.addEventListener('click', function(){
+
+            let idAliment = this.getAttribute('data-id-aliment');
+            confirmDeletionBtn.setAttribute('data-id-aliment', idAliment)
+
+        });
+
+    })
+
+    confirmDeletionBtn.addEventListener('click', func = function(event){
+
+        let idAliment = this.getAttribute('data-id-aliment');
+        const url = '/api/admin/food/'+idAliment
+        fetch(url, {
+
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'}
+
+        }).then(response => {
+                
+            if (response.status === 204) {
+
+                alimentAlert.classList.remove('d-none')
+                alimentAlert.classList.add('alert-success')
+                alimentAlert.innerHTML = 'L\'aliment a été supprimé avec succès';
+
+                let rowAliement = document.querySelector('#alimentRow'+idAliment);
+                rowAliement.remove();
+                return true;
+
+            } else {
+
+                alimentAlert.classList.remove('d-none')
+                alimentAlert.classList.add('alert-danger')
+                alimentAlert.innerHTML = 'Error : ' + data.code +'<br>'
+                alimentAlert.innerHTML += data.message;
+                return false;
+
+            }
+
+            return false;
+
+        }).then(data => {return data});
+
+        document.querySelector("#colse-del-modal").click();
+        confirmDeletionBtn.removeEventListener("click", func);
+    });
 </script>
 <%- contentFor('main') %>
