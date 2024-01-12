@@ -1,0 +1,35 @@
+<% title = "Child Template" %>
+
+<%- contentFor('main') %>
+<h2 class="my-5"> Procéder au paiement</h2>
+<form style="max-width: 500px;" action="/checkout" method='post'>
+    <% if(idProduct) { %>
+        <input class="d-none" type="text" name="idProduct" value="<%= idProduct %>">
+    <% } %>
+    <div class="row my-2">
+        <label class="my-2" for="name-card"> Titulaire de la carte :</label>
+        <input class="form-control" type="text" name="name-card"  value="M. ANTOINE DUPONT" />
+    </div>
+    <div class="row my-2">
+        <label class="my-2" for="card-number"> Numéro de carte : </label>
+        <input class="form-control" type="text" name="card-number" class="cardNumber" value="1234 5678 9123 0000" placeholder="Ex.: 1234 5678 9123 0000" maxlength="19" autocomplete="off">
+    </div>
+    <div class="row my-2">
+        <div class="col-6">
+            <label class="my-2" for="exp-date"> Date Exp :</label>
+            <div class="row">
+                <div class="col">
+                    <input class="form-control" type="number" name="exp-date-mm" id="exp-date-mm" placeholder="mm" maxlength="2" value="06">
+                </div>
+                <div class="col">
+                    <input class="form-control" type="number" name="exp-date-aa" id="exp-date-aa" placeholder="aa" maxlength="2" value="23">
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <label class="my-2" for="cvc"> CVC :</label>
+            <input class="form-control" type="number" name="cvc" id="cvc" value="123" maxlength="3">
+        </div>
+    </div>
+    <input type="submit" class="btn btn-primary my-3"/>
+</form>
