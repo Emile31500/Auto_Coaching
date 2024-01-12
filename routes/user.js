@@ -1,5 +1,8 @@
 const express = require('express');
+const dotenv = require('dotenv').config();
+
 const router = express.Router()
+const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 var parserJson = require('../middlewares/parserJson');
 
 var authenticationChecker = require('../middlewares/authenticationChecker');
@@ -33,12 +36,13 @@ router.get('/signup', function(req, res, next) {
 
 });
 
-router.post('/sign', async (req, res) => {
+router.post('/sign', parserJson, async (req, res) => {
 
     let data;
 
     if (data = req.body){
 
+        console.log(data);
         const hashedPassword = pbkdf2.hashSync(data.password);
         
         const user = User.create({
@@ -47,11 +51,13 @@ router.post('/sign', async (req, res) => {
         password: hashedPassword
         });
 
-        const authToken = await user.getAuthenticationToken();
-        req.session.token = authToken;
+        const customer = await stripe.customers.create({
+            name:  data.name,
+            email: data.email,
+        });
 
         res.statusCode = 201
-        res.redirect('auth-requi');
+        res.redirect('login');
 
     } else {
 

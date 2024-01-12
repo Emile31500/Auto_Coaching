@@ -1,0 +1,44 @@
+<% title = "Child Template" %>
+
+<%- contentFor('main') %>
+<h2 class="my-5">Abonnement premium</h2>
+<p class="my-3">
+    Passer à un abonnement premium pour un coaching personnalisé et pour utiliser l'application sans limite de temps !
+</p>
+<table class="table my-3">
+    <tr>
+        <th>Engagement</th>
+        <td>Aucun</td>
+        <td>6 mois</td>
+        <td>12 mois</td>
+    </tr>
+    <tr>
+        <th>Prix</th>
+        <td>19.95 €.mois^-1</td>
+        <td>14.95 €.mois^-1</td>
+        <td>9.95 €.mois^-1</td>
+    </tr>
+    <tr>
+        <th>Avantage</th>
+        <td colspan="3">
+            <ul>
+                <li>
+                    Programme personnalisé
+                </li>
+                <li>
+                    Messagerie direct avec un coach
+                </li>
+                <li>
+                    Accès illimité dans le temps
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tfoot>
+        <td></td>
+        <td> <a class="btn btn-primary" href="/checkout/<%= products[0].id %>" > Choisir </a> </td> 
+        <td> <a class="btn btn-primary" href="/checkout/<%= products[1].id %>" > Choisir </a> </td> 
+        <td> <a class="btn btn-primary" href="/checkout/<%= products[2].id %>" > Choisir </a> </td>   
+    </tfoot>
+        
+</table>
