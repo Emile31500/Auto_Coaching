@@ -4,7 +4,8 @@ const authenticationChecker = require('../middlewares/authenticationChecker');
 const parserJson = require('../middlewares/parserJson');
 const url = require('url');
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
-const { User }= require('../models')
+const http = require('http');
+const { User }= require('../models');
 
 router.get('/', authenticationChecker, (req, res) => {
 
@@ -43,13 +44,92 @@ router.post('/checkout', parserJson, authenticationChecker, async (req, res) => 
         limit: 1
     })
 
-    const customer = customerPromise.data[0]
-    console.log(customer);
+    let customer = customerPromise.data[0]
+    console.log('\n Customer : \n');
+    console.log(customer)
+    
+    ///////////////////////////////////////////////////////////////
+    // S'IL N'A PAS DE SOURCE, CREER UNE CARTE AVEC CETTE SOURCE //
 
-    const card = await stripe.customers.retrieveSource(customer.default_source);
-    console.log(card);
+    console.log('\n Card : \n');
+    const tokenId = req.body.token.id
+    const customerSource = await stripe.customers.createSource(
+        customer.id,
+        {
+           source: tokenId
+        }
+    );
 
-    /* const pricePromise = await stripe.prices.list({
+    console.log(customerSource)
+
+
+    // const tokenJson = req.body.token
+    // const token = await stripe.tokens.create({tokenJson});
+
+    // console.log(token)
+
+    ///////////////////////////////////////////////////////////////
+
+       /* if (customer.default_source !== null){
+
+            // const option = {
+            //     method: 'GET',
+            //     headers: {
+            //         'Authorization' : 'Bearer '+process.env.STRIPE_API_SECRET_KEY
+            //     }
+            // };
+
+            // const url = 'https://api.stripe.com/v1/customers/'+customer.id+'/cards/'+customer.default_source;
+            
+            // fetch(url, option)
+            // .then(response => response.json())
+            // .then(card => {
+                
+            //     console.log(card);
+            //     return card;
+
+            // });
+            console.log('This cus has a card')
+
+        } else {
+
+            console.log('b');
+
+            const cardNumber = parseInt(req.body.number.replace(' ', ''));
+
+            console.log('Méthode de paiement : ');
+            const paymentMethod = await stripe.paymentMethods.create({
+                type: 'card',
+                card: {
+                    exp_month: req.body.exp_month,
+                    exp_year: req.body.exp_year,
+                    // number: cardNumber,
+                    cvc: req.body.cvc,
+                },
+            });
+            console.log(paymentMethod)
+
+            // const customerSource = await stripe.customers.createSource(card.id, {
+
+            //     last4: paymentMethod,
+            //     source: {
+            //         exp_month: req.body.exp_month,
+            //         exp_year: req.body.exp_year,
+            //         cvc: req.body.cvc,
+            //         object: 'card'
+            //     }
+            // });
+            // await stripe.customers.update(
+            //     customer.id,
+            //     {
+            //         default_source: customerSource.id
+            //     }
+            // );
+
+        }*/
+
+
+    const pricePromise = await stripe.prices.list({
         product : idProduct,
         type : "recurring",
         limit: 1
@@ -64,8 +144,11 @@ router.post('/checkout', parserJson, authenticationChecker, async (req, res) => 
                     price: price.id,
                 },
             ],
-    });*/
+    });
 
+    console.log('\n Subscription : \n');
+    console.log(subscription)
+    
     res.render('../views/home',  { layout: '../views/main' });
 
 })
