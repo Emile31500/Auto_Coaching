@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router()
 var authenticationChecker = require('../middlewares/authenticationChecker');
 const { User, Performance } = require('../models');
+const premiumChecker = require('../middlewares/premiumChecker');
 
 
-router.get('/api/performance', authenticationChecker, async (req, res) => {
+router.get('/api/performance', authenticationChecker, premiumChecker, async (req, res) => {
 
     const user = await User.findOne({where: {authToken:  req.session.token}});
     const userId = user.id;
@@ -26,7 +27,7 @@ router.get('/api/performance', authenticationChecker, async (req, res) => {
 
 });
 
-router.post('/api/performance', authenticationChecker, async (req, res) => {
+router.post('/api/performance', authenticationChecker, premiumChecker, async (req, res) => {
 
     let data  = req.body;
 

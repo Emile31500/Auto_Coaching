@@ -2,6 +2,11 @@
 
 <%- contentFor('main') %>
 <h2 class="my-5">Abonnement premium</h2>
+<% if (alert) { %>
+    <div class="alert alert-warning">
+        Attetnion : <%= alert %>
+    </div>
+<% } %>
 <p class="my-3">
     Passer à un abonnement premium pour un coaching personnalisé et pour utiliser l'application sans limite de temps !
 </p>

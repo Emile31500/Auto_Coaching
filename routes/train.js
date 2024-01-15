@@ -2,12 +2,13 @@ const express = require('express');
 const {ExerciseTrain, TrainRequest, PassedSport, Train, User} = require('../models/');
 
 var authenticationChecker = require('../middlewares/authenticationChecker')
-var adminChecker = require('../middlewares/adminChecker')
+var adminChecker = require('../middlewares/adminChecker');
+const premiumChecker = require('../middlewares/premiumChecker');
 
 
 const router = express.Router()
 
-router.get('/train', authenticationChecker, (req, res) => {
+router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
     res.render('../views/train',  {layout: '../views/main' });
 
@@ -35,20 +36,20 @@ router.get('/api/train', authenticationChecker, async (req, res) => {
 
 })
 
-router.get('/train/request', authenticationChecker, (req, res) => {
+router.get('/train/request', authenticationChecker, premiumChecker, (req, res) => {
 
     res.render('../views/train-request',  {layout: '../views/main' });
 
 
 })
 
-router.get('/admin/train', adminChecker, (req, res) => {
+router.get('/admin/train', adminChecker, premiumChecker, (req, res) => {
 
     res.render('../views/admin/train',  {layout: '../views/main-admin' });
 
 })
 
-router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
+router.get('/admin/train/request/:id_request', adminChecker, premiumChecker, (req, res) => {
 
     const idRequest = req.params.id_request;
     

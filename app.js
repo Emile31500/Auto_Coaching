@@ -10,6 +10,7 @@ var router = express.Router();
 const { sequelize } = require('./models');
 var layout = require('express-ejs-layouts');
 
+const checkout = require('./routes/checkout');
 const exercise = require('./routes/exercise');
 const food = require('./routes/food');
 const foodAte = require('./routes/foodate');
@@ -36,6 +37,7 @@ app.use(session({
   saveUninitialized: true,
 }));
 app.use(bodyParser.json());
+app.use(checkout);
 app.use(exercise);
 app.use(home);
 app.use(food);
