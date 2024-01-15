@@ -10,7 +10,6 @@ const { User }= require('../models');
 
 router.get('/', authenticationChecker, premiumChecker, (req, res) => {
 
-    console.log(req.isPremium);
     res.render('../views/home',  { layout: '../views/main' });
 
 })

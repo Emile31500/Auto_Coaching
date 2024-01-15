@@ -3,22 +3,35 @@ const dotenv = require('dotenv').config();
 
 const router = express.Router()
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
-var parserJson = require('../middlewares/parserJson');
 
-var authenticationChecker = require('../middlewares/authenticationChecker');
-var adminChecker = require('../middlewares/adminChecker')
 
 var layout = require('express-ejs-layouts');
 const { User } = require('../models');
 const pbkdf2 = require("hash-password-pbkdf2")
 const url = require('url');
-const premiumChecker = require('../middlewares/premiumChecker');
 
-router.get('/profile', authenticationChecker, premiumChecker, (req, res) => {
+const getStripeCustomer = require('../middlewares/getStripeCustomer')
+const premiumChecker = require('../middlewares/premiumChecker');
+const parserJson = require('../middlewares/parserJson');
+const authenticationChecker = require('../middlewares/authenticationChecker');
+const adminChecker = require('../middlewares/adminChecker')
+
+router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker, async (req, res) => {
 
     const user = req.user;
 
-    res.render('../views/profile',  { user: user, layout: '../views/main' });
+    let subscriptions;
+    const subscriptionsPromise = await stripe.subscriptions.list({
+        customer: req.stripeCustomer.id
+    });
+
+    if (subscriptionsPromise.data.length > 0) {
+
+        subscriptions = subscriptionsPromise.data;
+
+    }
+    
+    res.render('../views/profile',  { user: user, layout: '../views/main', isPremium: req.isPremium, subscriptions: subscriptions });
 
 })
 
@@ -43,7 +56,6 @@ router.post('/sign', parserJson, async (req, res) => {
 
     if (data = req.body){
 
-        console.log(data);
         const hashedPassword = pbkdf2.hashSync(data.password);
         
         const user = User.create({

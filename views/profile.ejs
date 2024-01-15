@@ -197,13 +197,78 @@
         <p>
             <label for="confirmpassword"> Confirmer le mot de passe : </label>
             <input class="form-control" type="password" id="confirmpassword" required>
-        </p>   
+        </p> 
+        <div class="my-3">
+            <h4> Premium : </h4>
+            <% if (isPremium) { %>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date </th>
+                            <th>Prix </th>
+                            <th>Fin de l'engagement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i < subscriptions.length; i++) {%>
+                            <tr>
+                                <!-- ou <%= subscriptions[i].start_date %> -->
+                                <td class="startDate"> <%= subscriptions[i].start_date %></td>
+                                <td> <%= subscriptions[i].plan.amount / 100 %> € / moi </td>
+                                <td>
+                                    <% if (subscriptions[i].plan.product === 'prod_KKjw4bAelTBOMa') { %>
+                                        <span class="endDate">
+                                            <%= subscriptions[i].start_date += 86400*31*12 %>
+                                        </span>
+                                        
+                                    <% } else if (subscriptions[i].plan.product === 'prod_KKjy9S91iB6qYP') { %>
+                                        <span class="endDate">
+                                            <%= subscriptions[i].start_date += 86400*31*6 %>
+                                        </span>
+                                    <% } else {%>
+                                        -
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } else { %>
+            <% } %>
+        </div>  
         <input type="submit" class="btn btn-primary" value="Mettre à jour"/>
     </form>  
-
     <div id="ongletCompteAlert" class="alert d-none"></div>
 
 </div>
+<script>
+
+    function formatDate(selector) {
+
+        let elements = document.querySelectorAll(selector)
+
+        elements.forEach(element => {
+
+            let inputDate = element.innerHTML;
+
+            let date = new Date(inputDate * 1000);
+
+            let year = date.getFullYear().toString() 
+            let month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+            let day = date.getDate().toString().padStart(2, '0');
+
+            let formattedDate = `${day} ${month} ${year}`;
+
+
+            element.innerHTML = formattedDate
+
+        });1712912040
+    }
+    formatDate('.startDate');
+    formatDate('.endDate');
+
+
+</script>
 <script>
 
     let performanceTableBody = document.querySelector('#performanceTableBody');
