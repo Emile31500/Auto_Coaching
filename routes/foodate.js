@@ -6,9 +6,10 @@ const { Op } = require('sequelize');
 const session = require('express-session');
 const http = require('http');
 const url = require('url');
+const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
-router.get('/food/ate', authenticationChecker, parserJson, async(req, res, next) => {
+router.get('/food/ate', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
 
@@ -25,7 +26,7 @@ router.get('/food/ate', authenticationChecker, parserJson, async(req, res, next)
 
 })
 
-router.get('/api/food/ate', authenticationChecker, parserJson, async(req, res, next) => {
+router.get('/api/food/ate', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
     const dateStart = parsedUrl.query.date;

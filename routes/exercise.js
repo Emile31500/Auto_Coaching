@@ -2,7 +2,8 @@ const express = require('express');
 const { Exercise } = require('../models');
 var parserJson = require('../middlewares/parserJson');
 var authenticationChecker = require('../middlewares/authenticationChecker')
-var adminChecker = require('../middlewares/adminChecker')
+var adminChecker = require('../middlewares/adminChecker');
+const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
 

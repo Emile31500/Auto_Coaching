@@ -12,8 +12,9 @@ var layout = require('express-ejs-layouts');
 const { User } = require('../models');
 const pbkdf2 = require("hash-password-pbkdf2")
 const url = require('url');
+const premiumChecker = require('../middlewares/premiumChecker');
 
-router.get('/profile', authenticationChecker, (req, res) => {
+router.get('/profile', authenticationChecker, premiumChecker, (req, res) => {
 
     const user = req.user;
 
@@ -88,7 +89,7 @@ router.get('/api/user', adminChecker, parserJson, async (req, res) => {
 
 });
 
-router.patch('/api/users', authenticationChecker, async (req, res) => {
+router.patch('/api/users', authenticationChecker, premiumChecker, async (req, res) => {
 
     let user = req.user;
 

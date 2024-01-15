@@ -2,42 +2,20 @@
 
 <%- contentFor('main') %>
 <h2 class="my-5"> Procéder au paiement</h2>
-    <!-- <form style="max-width: 500px;" action="/checkout" method='post'> -->
     <% if(idProduct) { %>
         <input class="d-none" type="text" name="idProduct" id="idProduct" value="<%= idProduct %>">
     <% } %>
-    <!--<div class="row my-2">
-        <label class="my-2" for="name-card"> Titulaire de la carte :</label>
-        <input class="form-control" type="text" name="name-card"  value="M. ANTOINE DUPONT" />
-    </div>
-    <div class="row my-2">
-        <label class="my-2" for="number"> Numéro de carte : </label>
-        <input class="form-control" type="text" name="number" class="number" id="number" value="4000002500000003" placeholder="Ex.: 1234 5678 9123 0000" maxlength="19" autocomplete="off">
-    </div>
-    <div class="row my-2">
-        <div class="col-6">
-            <label class="my-2" for="exp-date"> Date Exp :</label>
-            <div class="row">
-                <div class="col">
-                    <input class="form-control" type="number" name="exp_month" id="exp_month" placeholder="mm" maxlength="2" value="12">
-                </div>
-                <div class="col">
-                    <input class="form-control" type="number" name="exp_year" id="exp_year" placeholder="aaaa" maxlength="4" value="2034">
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <label class="my-2" for="cvc"> CVC :</label>
-            <input class="form-control" type="number" name="cvc" id="cvc" value="567" maxlength="3">
-        </div>
-    </div>
-    <input type="submit" class="btn btn-primary my-3"/>
+    <!--4000002500000003" placeholder="Ex.: 1234 5678 9123 0000" maxlength="19" autocomplete="off">-->
+    <form id="payment-form" action="/api/checkout" method='post'>
+        <div id="card-element">
 
-    </form>-->
-    <form id="payment-form">
-        <div id="card-element"></div>
-        <div id="card-errors" role="alert"></div>
-        <input type="submit" id="submit-button"/>
+        </div>
+        <div id="card-paiement-loading" class="progress d-none">
+            Wait For paiement ...
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+        </div>
+        <div id="card-errors" role="alert" class="alert d-none"></div>
+        <input type="submit" class="btn btn-primary" id="submit-button"/>
     </form>
     
 <script src="https://js.stripe.com/v3/"></script>
@@ -45,28 +23,32 @@
     var stripe = Stripe('pk_test_51JSe6xJEkapOWG0uMvUjdASEMRmuay3yhmeLPLLazRBxhR6WqlAXF1GrpzfFSQzBMMwSHJZffxxcYFv9njK2jnNo00lRkAazE4');
     var elements = stripe.elements();
 
-    var card = elements.create('card');
+    var card = elements.create('card', {
+        classes: {
+            base: 'form-control',
+        },
+    });
     card.mount('#card-element');
     var form = document.querySelector('#payment-form');
+    var card_paiement_loading = document.querySelector('#card-paiement-loading');
+    var errorElement = document.querySelector('#card-errors');
+
 
     form.addEventListener('submit', function(event) {
 
         event.preventDefault();
+        card_paiement_loading.classList.remove('d-none');
+        
         stripe.createToken(card).then(function(result) {
 
             if (result.error) {
 
-                var errorElement = document.querySelector('#card-errors');
                 errorElement.textContent = result.error.message;
 
             } else {
 
-                console.log(result.token);
-
-                const url = '/checkout/';
+                const url = '/api/checkout/';
                 const jsonToken = result.token
-
-                console.log(jsonToken)
 
                 fetch(url, {
                     method: 'POST',
@@ -75,35 +57,27 @@
                     },
                     body: JSON.stringify({
                         'idProduct':  document.querySelector('#idProduct').value,
-                        'number': '4000 0025 0000 0003',
                         'token': jsonToken
                     })
+                }).then(response => { return response.json(); })
+                .then(data => {
+
+                    card_paiement_loading.classList.add('d-none');
+                    errorElement.classList.remove('d-none');
+                    errorElement.innerHTML = data.message;
+
+                    if (data.code === 201) {
+
+                        errorElement.classList.add('alert-success');
+
+                    } else {
+
+                        errorElement.classList.add('alert-danger');
+
+                    }
                 })
 
             }
         });
     });
-</script>
-
-
-
-
-<script>/*
-    var stripe = Stripe('pk_test_51JSe6xJEkapOWG0uMvUjdASEMRmuay3yhmeLPLLazRBxhR6WqlAXF1GrpzfFSQzBMMwSHJZffxxcYFv9njK2jnNo00lRkAazE4');
-
-    var elements = stripe.elements();
-
-    var cardElement = elements.create('card', {value:{
-
-        number: document.querySelector('#number').value,
-        exp_month: document.querySelector('#exp_month').value,
-        exp_year: document.querySelector('#exp_year').value,
-        cvc: document.querySelector('#cvc').value
-
-    }});
-    cardElement.mount('#card-element');
-
-    document.querySelector('#print_element').innerHTML = cardElement;
-
-    console.log(cardElement);*/
 </script>

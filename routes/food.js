@@ -7,6 +7,7 @@ const session = require('express-session');
 const http = require('http');
 const url = require('url');
 const adminChecker = require('../middlewares/adminChecker');
+const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
 router.delete('/api/admin/food/:id_food', adminChecker, parserJson, async(req, res, next) => {
@@ -40,7 +41,7 @@ router.delete('/api/admin/food/:id_food', adminChecker, parserJson, async(req, r
 
 });
 
-router.get('/api/food', authenticationChecker, parserJson, async(req, res, next) => {
+router.get('/api/food', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
     const id = parsedUrl.query.id;
@@ -63,14 +64,14 @@ router.get('/api/food', authenticationChecker, parserJson, async(req, res, next)
 });
 
 
-router.get('/food/add', async(req, res, next) => {
+router.get('/food/add', premiumChecker, async(req, res, next) => {
 
     res.render('../views/food-add',  {layout: '../views/main' });
     
 });
 
 
-router.get('/api/food/eat', authenticationChecker, parserJson, async(req, res, next) => {
+router.get('/api/food/eat', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
     if (req.session.token){
 
@@ -142,7 +143,7 @@ router.post('/api/food', parserJson, async (req, res, next) => {
 
 });
 
-router.post('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
+router.post('/api/admin/food', parserJson, async (req, res, next) => {
 
     if (req.body && req.session.token){
 
@@ -163,7 +164,7 @@ router.post('/api/admin/food', parserJson, adminChecker, async (req, res, next) 
     }
 });
 
-router.patch('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
+router.patch('/api/admin/food', parserJson, async (req, res, next) => {
 
     if (req.body && req.session.token){
 
