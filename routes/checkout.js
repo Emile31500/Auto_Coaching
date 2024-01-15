@@ -9,12 +9,41 @@ const { User }= require('../models');
 
 router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
 
-    console.log(req.body)
+    const authToken = req.session.token;
+    const idProduct = req.body.idProduct;
+    let isPremium = false;
+
+    const user = await User.findOne({where: {'authToken': authToken}});
+
+    const customerPromise = await stripe.customers.list({
+        email: user.email,
+        limit: 1
+    })
+
+    let customer = customerPromise.data[0]
+
+    const subscriptions = await stripe.subscriptions.list({
+        customer: customer.id
+    });
+
+    if(subscriptions.data.length > 0){
+
+        for(let i = 0; i > subscriptions.data.length || isPremium === false; i++ ){
+
+            if (subscriptions.data[i].status === "active") {
+
+                isPremium = true;
+
+            }
+
+        }
+    }
+
     const products = await stripe.products.list({
         limit: 3,
     });
 
-    res.render('../views/rates',  { layout: '../views/main', products: products.data, alert: req.body.alert});
+    res.render('../views/rates',  { layout: '../views/main', products: products.data, alert: req.body.alert, isPremium: isPremium});
 
 })
 
@@ -64,8 +93,6 @@ router.post('/api/checkout', parserJson, authenticationChecker, async (req, res)
                 },
             ],
     });
-
-    console.log(subscription)
 
     if (subscription.id){
 

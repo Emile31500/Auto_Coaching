@@ -67,9 +67,7 @@ router.post('/api/admin/train', adminChecker, async (req, res) => {
 
     rawExercisesTrains.forEach(async(rawExerciseTrain) => {
         
-        console.log(rawExerciseTrain);
         let exerciseTrain = await ExerciseTrain.create(rawExerciseTrain)
-        console.log(exerciseTrain);
         await train.setExerciseTrain(exerciseTrain);
         exercisesTrains.push(exerciseTrain);
     });
