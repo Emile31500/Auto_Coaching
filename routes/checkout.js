@@ -10,7 +10,14 @@ const { User }= require('../models');
 router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
 
     const authToken = req.session.token;
-    const idProduct = req.body.idProduct;
+    const parsedUrl = url.parse(req.url, true);
+    let error_message;
+
+    if (parsedUrl.query.error_message){
+
+        error_message = parsedUrl.query.error_message;
+    }
+     
     let isPremium = false;
 
     const user = await User.findOne({where: {'authToken': authToken}});
@@ -35,7 +42,6 @@ router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
                 isPremium = true;
 
             }
-
         }
     }
 
@@ -43,7 +49,7 @@ router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
         limit: 3,
     });
 
-    res.render('../views/rates',  { layout: '../views/main', products: products.data, alert: req.body.alert, isPremium: isPremium});
+    res.render('../views/rates',  { layout: '../views/main', products: products.data, errorMessage: error_message});
 
 })
 
@@ -107,5 +113,58 @@ router.post('/api/checkout', parserJson, authenticationChecker, async (req, res)
     }     
 
 })
+
+router.delete('/api/subscription/:id_subscription', parserJson, authenticationChecker, async (req, res) => {
+
+    const idSubscription = req.params.id_subscription;
+    let canCancel = false;
+
+    const subscription = await stripe.subscriptions.retrieve(
+        idSubscription
+    );
+
+    var currentDate = new Date();
+    var integerDate = currentDate.getTime();
+    
+    console.log(subscription);
+    productId = subscription.plan.product;
+
+    if (productId === 'prod_KKjy9S91iB6qYP'){
+
+        const expireDate = subscription.start_date + 86400*6*31;
+        if (integerDate > expireDate) canCancel = true;
+
+    } else if (productId === 'prod_KKjw4bAelTBOMa') {
+
+        const expireDate = subscription.start_date + 86400*12*31;
+        if (integerDate > expireDate) canCancel = true;
+
+    } else {
+
+        canCancel = true;
+
+    }
+
+    if (canCancel){
+
+        const canceledSubscription = await stripe.subscriptions.cancel(
+             idSubscription
+        );
+       
+
+        if (canceledSubscription.status === 'canceled') {
+
+            res.statusCode = 204
+            res.send({code: res.statusCode, message: 'The subscription has been successfully canceled'});
+
+        } else {
+
+            res.statusCode = 500
+            res.send({code: res.statusCode, message: 'There was a problem during cancelation.'});
+
+        }
+    
+    }
+});
 
 module.exports = router
