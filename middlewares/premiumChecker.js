@@ -45,8 +45,8 @@ const premiumChecker = async function (req, res, next) {
 
     } else {
 
-        req.body.alert = 'Trial period has expired. Take a premium to discover new features !';
-        res.redirect('/premium');
+        res.statusCode = 401
+        res.redirect('/premium?error_message=Trial period has expired. Take a premium to discover new features !');
 
     }
 
