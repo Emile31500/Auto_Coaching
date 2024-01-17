@@ -1,5 +1,5 @@
 const express = require('express');
-const {ExerciseTrain, TrainRequest, PassedSport, Train, User} = require('../models/');
+const {ExerciseTrain, TrainRequest, PassedSport, Train, User, PassedInjury} = require('../models/');
 
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var adminChecker = require('../middlewares/adminChecker');
@@ -43,13 +43,13 @@ router.get('/train/request', authenticationChecker, premiumChecker, (req, res) =
 
 })
 
-router.get('/admin/train', adminChecker, premiumChecker, (req, res) => {
+router.get('/admin/train', adminChecker, (req, res) => {
 
     res.render('../views/admin/train',  {layout: '../views/main-admin' });
 
 })
 
-router.get('/admin/train/request/:id_request', adminChecker, premiumChecker, (req, res) => {
+router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
 
     const idRequest = req.params.id_request;
     
@@ -131,27 +131,45 @@ router.post('/api/train/request', authenticationChecker, async (req, res) => {
 
     var user = await User.findOne({where: {authToken:  req.session.token}});
     const userId = user.id;
-    var passedSports = []; 
     
+    // console.log(req.body)
+
     const rawDataTrainRequest = req.body.trainRequest;
     const rawDataPassedSport = req.body.passedSport;
+    const rawDataPassedInjs = req.body.passedInj;
 
     var trainRequest = await TrainRequest.create(rawDataTrainRequest);
 
-    if (rawDataPassedSport.length > 0){
 
-        var index = 0;
-        rawDataPassedSport.forEach(async (row) => {
+    createAssociation(rawDataPassedSport, PassedSport.create())
+    createAssociation(rawDataPassedInjs, PassedInjury.create())
 
-            let passedSport = await PassedSport.create(JSON.parse(row));
-            passedSport.userId = userId;
-            await trainRequest.addPassedSport(passedSport);
-            passedSports.push(passedSport);
-            index++;
+    async function createAssociation(array, modelCreation, associationMethod){
 
-        });
+        // console.log('Array : ')
+        // console.log(array)
+
+
+        if (array.length > 0){
+
+            var jsonArray = []
+            
+            await Promise.all(array.map(async (row) => {
+               
+                console.log(row)
+                let jsonModel = await modelCreation;
+                jsonModel.update(JSON.parse(row));
+                jsonModel.userId = userId;
+
+                await jsonModel.setTrainRequest(trainRequest)
+                jsonArray.push(jsonModel);
+
+            }));    
+
+            return jsonArray;
+        }
     }
-
+    
     if (trainRequest) {
 
         res.statusCode = 201      
