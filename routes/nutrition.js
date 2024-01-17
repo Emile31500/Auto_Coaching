@@ -14,7 +14,7 @@ router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res)
 
 })
 
-router.get('/admin/nutrition', adminChecker, premiumChecker, async (req, res) => {
+router.get('/admin/nutrition', adminChecker, async (req, res) => {
     
     var food = await Food.findAll();
     res.render('../views/admin/nutrition',  { food: food, layout: '../views/main-admin' });
