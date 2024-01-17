@@ -187,7 +187,7 @@
         passedInjs.push(JSON.stringify({
                 name : passedInjName.value,
                 description: injDescription.value,
-                alreadyEmbarassed: alrd_embarrased.value,
+                alreadyEmbarrased: alrd_embarrased.value,
                 date : injDate.value,
                
         }));
@@ -220,10 +220,12 @@
 
         event.preventDefault();
 
+        
         if (passedSports.length > 0){
 
             for (let i = 0; i < passedSports.length; i++) {
                 
+                passedSports[i] = JSON.parse(passedSports[i])
                 if (passedSports[i].name === undefined) {
 
                     passedSports.splice(i, 1);
@@ -232,10 +234,13 @@
             }
         }
 
-        if (passedInjs != undefined){
+        console.log(passedSports)
+
+        if (passedInjs.length > 0){
 
             for (let i = 0; i < passedInjs.length; i++) {
                 
+                passedInjs[i] = JSON.parse(passedInjs[i])
                 if (passedInjs[i].name === undefined) {
 
                     passedInjs.splice(i, 1);
@@ -272,13 +277,14 @@
 
                 trainRequestAlert.classList.remove('alert-danger');
                 trainRequestAlert.classList.add('alert-success');
-                trainRequestAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
+                trainRequestAlert.innerHTML = data.message;
+
 
             } else {
 
                 trainRequestAlert.classList.remove('alert-success');
                 trainRequestAlert.classList.add('alert-danger');
-                trainRequestAlert.innerHTML = data.message;
+                trainRequestAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
             }
 
         })

@@ -131,8 +131,6 @@ router.post('/api/train/request', authenticationChecker, async (req, res) => {
 
     var user = await User.findOne({where: {authToken:  req.session.token}});
     const userId = user.id;
-    
-    // console.log(req.body)
 
     const rawDataTrainRequest = req.body.trainRequest;
     const rawDataPassedSport = req.body.passedSport;
@@ -141,28 +139,24 @@ router.post('/api/train/request', authenticationChecker, async (req, res) => {
     var trainRequest = await TrainRequest.create(rawDataTrainRequest);
 
 
-    createAssociation(rawDataPassedSport, PassedSport.create())
-    createAssociation(rawDataPassedInjs, PassedInjury.create())
+    createAssociation(rawDataPassedSport, PassedSport)
+    createAssociation(rawDataPassedInjs, PassedInjury)
 
-    async function createAssociation(array, modelCreation, associationMethod){
-
-        // console.log('Array : ')
-        // console.log(array)
-
+    async function createAssociation(array, model){
 
         if (array.length > 0){
 
+            var index = 0;
             var jsonArray = []
             
             await Promise.all(array.map(async (row) => {
-               
-                console.log(row)
-                let jsonModel = await modelCreation;
-                jsonModel.update(JSON.parse(row));
-                jsonModel.userId = userId;
+    
+                jsonArray[index] = await model.create(row);
+                jsonArray[index].userId = userId;
 
-                await jsonModel.setTrainRequest(trainRequest)
-                jsonArray.push(jsonModel);
+                await jsonArray[index].setTrainRequest(trainRequest);
+                await jsonArray[index].save();
+                index++;
 
             }));    
 
