@@ -19,7 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     trainRequestId: DataTypes.INTEGER,
     name: DataTypes.STRING,
     alreadyEmbarrased: DataTypes.STRING,
-    description: DataTypes.STRING
+    description: DataTypes.STRING,
+    date: DataTypes.DATE
+
   }, {
     sequelize,
     modelName: 'PassedInjury',
