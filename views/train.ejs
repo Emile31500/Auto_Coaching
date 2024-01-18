@@ -8,27 +8,46 @@
     </a>
 </div>
 
-
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col" colspan="2">
-                Train name
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                <span id="trainName">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" colspan="2">
                     Train name
-                </span>
-            </td>
-            <td>
-                <button type="button" class="btn btn-success">
-                    Play
-                </button>
-            </th>
-        </tr>
-    </tbody>
-</table>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <td>
+                        <span id="trainName">
+                        </span>
+                    </td>
+                    <td>
+                        <button type="button" data-id-train="e" class="btn btn-success">
+                            Play
+                        </button>
+                    </th>
+                </tr>
+        </tbody>
+    </table>
+<script>
+    fetch('/api/train', {
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json'
+        }
+    }).then(response=>response.json())
+    .then(data => {
+
+        if (data.code === 200){
+        
+            console.log(data.data);
+        
+        } else {
+
+            alert('error')
+        }
+
+
+    })
+</script>

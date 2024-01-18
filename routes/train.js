@@ -14,16 +14,16 @@ router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
 })
 
-router.get('/api/train', authenticationChecker, async (req, res) => {
+router.get('/api/train', authenticationChecker, premiumChecker, async (req, res) => {
 
     const user = await User.findOne({where:{authToken: req.user.authToken}});
     const userId = user.id; 
 
-    var trains = await  Train.findAll({where:{userId: userId}});
+    var trains = await Train.findAll({where:{userId: userId}});
 
     if (trains) {
 
-        res.statusCode = 201
+        res.statusCode = 200
         
         res.send({'code': res.statusCode, 'message': 'Trains models have been requested', 'data': trains});
 
@@ -43,6 +43,24 @@ router.get('/train/request', authenticationChecker, premiumChecker, (req, res) =
 
 })
 
+router.get('/api/admin/train/request/:id_train_request/train', adminChecker, async (req, res) => {
+
+    const idTrainRequest = req.params.id_train_request;
+    const train = await Train.findOne({where : {trainRequestId: idTrainRequest}})
+
+    if (train) {
+    
+        res.statusCode = 200
+        res.send({code: res.statusCode, message: 'The train associated to this train request has been found', data : train});
+
+    } else {
+
+        res.statusCode = 404
+        res.send({code: res.statusCode, message: 'The train associated to this train request hasn\'t been found'});
+
+    }
+})
+
 router.get('/admin/train', adminChecker, (req, res) => {
 
     res.render('../views/admin/train',  {layout: '../views/main-admin' });
@@ -60,12 +78,12 @@ router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
 router.post('/api/admin/train', adminChecker, async (req, res) => {
 
     const rawTrain = req.body.train;
-    const rawExercisesTrains = req.body.exerciseTrains;
+    const rawExercisesTrain = req.body.exercicesTrain;
     let exercisesTrains = [];
 
     let train = await Train.create(rawTrain);
 
-    rawExercisesTrains.forEach(async(rawExerciseTrain) => {
+    rawExercisesTrain.forEach(async(rawExerciseTrain) => {
         
         let exerciseTrain = await ExerciseTrain.create(rawExerciseTrain)
         await train.setExerciseTrain(exerciseTrain);
@@ -86,6 +104,40 @@ router.post('/api/admin/train', adminChecker, async (req, res) => {
 
 });
 
+router.patch('/api/admin/train', adminChecker, async (req, res) => {
+
+    const rawTrain = req.body.train;
+    const rawExercisesTrains = req.body.exercicesTrain;
+    let exercisesTrains = [];
+
+    let train = await Train.findOne({where : {trainRequestId : rawTrain.trainRequestId}})
+    await train.update(rawTrain);
+    train.save();
+
+    await ExerciseTrain.destroy({where : {trainId : train.id}});
+
+    rawExercisesTrains.forEach(async(rawExerciseTrain) => {
+        
+        let exerciseTrain = await ExerciseTrain.create(rawExerciseTrain)
+        await train.setExerciseTrain(exerciseTrain);
+        exercisesTrains.push(exerciseTrain);
+    
+    });
+
+    if (train){
+
+        res.statusCode = 201
+        res.send({code: res.statusCode, message:'Train has been created', data:{train : train, exerciseTrains:exercisesTrains}});
+
+    } else {
+
+        res.statusCode = 404
+        res.send({code: res.statusCode, message:'This Train hasn\'t been created'});
+
+    }
+
+});
+
 router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res) => {
 
     const id = req.params.id_request
@@ -94,9 +146,10 @@ router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res
 
     if (trainRequest){
 
-        const passedSport = await PassedSport.findAll({where: {trainRequestId: trainRequest.id}});
+        const passedSports = await PassedSport.findAll({where: {trainRequestId: trainRequest.id}});
+        const passedInjuries = await PassedInjury.findAll({where: {trainRequestId: trainRequest.id}});
 
-        const data = JSON.stringify({trainRequest, 'passedSports' : passedSport});
+        const data = JSON.stringify({trainRequest, 'passedSports' : passedSports, 'passedInjuries' : passedInjuries});
 
         res.statusCode = 200;
         res.send({'code': res.statusCode, 'message': 'Train request has been found', 'data': data});

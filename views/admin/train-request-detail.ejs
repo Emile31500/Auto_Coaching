@@ -56,6 +56,12 @@
                 
                 </span>
             </div>
+            <div class='my-3 row'>
+                <h5>Antécédent de blessures : </h5>
+                <span class='d-block' id='passedInjuriesEl'>
+                
+                </span>
+            </div>
         </div>
         <div class='col-8'>
             <form>
@@ -68,7 +74,6 @@
                         </label>
                     </h4>
                     <input type='text' id='nameTrainEl' class="form-control" />
-                    <!--<textarea class='d-block form-control'></textarea>-->
                 </div>
                 <div class='my-3 row'>
                     <div class='col-9'>
@@ -144,7 +149,7 @@
                     <div class='col'>
                         
                         <button class='mx-3 btn btn-warning' id='btnEnregistrer' data-bs-toggle="modal" data-bs-target="#confirmSave">Enregistrer</button> 
-                        <input class='mx-3 btn btn-success' type='submit' id='envoyer'>
+                        <input class='mx-3 btn btn-success' type='submit' id='envoyer' data-bs-toggle="modal" data-bs-target="#confirmSend">
                     </div>
                 </div> 
             </form>
@@ -224,14 +229,15 @@
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="confirmSendLabel">Attention  </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
-            </button>
+            </button> -->
         </div>
         <div class="modal-body">
             <p>Êtes vous sûr de bien vouloir envoyer cet entraînement à l'utilisateur ?'</p>
         </div>
         <div class="modal-footer">
+            <button type="button" id='btnEnvoyer' class="btn btn-primary" data-dismiss="modal">Envoyer</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
         </div>
@@ -268,6 +274,7 @@
     let descriptionUserEl = document.querySelector('#descriptionUserEl');
     let emailUserEl = document.querySelector('#emailUserEl');
     let passedSportsEl = document.querySelector('#passedSportsEl');
+    let passedInjuriesEl = document.querySelector('#passedInjuriesEl');
 
     let idRequest = document.querySelector('#idRequest').innerHTML; 
     let userId; 
@@ -287,6 +294,7 @@
             const jsonData = JSON.parse(data.data)
             const trainRequest = jsonData.trainRequest;
             const passedSports = jsonData.passedSports;
+            const passedInjuries = jsonData.passedInjuries;
 
             userId = trainRequest.userId
             let utilisateur = getUser(userId);
@@ -314,7 +322,20 @@
 
                     passedSportsEl.innerHTML += '<div class=\'border border-1\'><h6 class=\'m-2 my-3\'>' + passedSport.name +'</h6><div class=\'m-2 my-3 text-muted\'>'+startDate+' / '+endDate+' </div><div class=\'m-2 my-3\'>' + passedSport.description +'</div> </div>'
                 
-                });  
+                });
+                
+                passedInjuries.forEach(passedInjury => {
+                    
+                    console.log(passedInjury);
+                    let date = passedInjury.date;
+
+                    date = date.slice(0, 7)
+
+                    date = date.replace('-', ' ');
+
+                    passedInjuriesEl.innerHTML += '<div class=\'border border-1\'><h6 class=\'m-2 my-3\'>' + passedInjury.name +'</h6><div class=\'m-2 my-3 text-muted\'>'+date+'</div><div class=\'m-2 my-3\'>' + passedInjury.description +'</div> </div>'
+
+                });
             });
         }
     });
@@ -461,6 +482,7 @@
     });
 </script>
 <script>
+
     let btnEnregistrer = document.querySelector('#btnEnregistrer');
     let nameTrainEl = document.querySelector('#nameTrainEl')
 
@@ -504,5 +526,84 @@
         });
 
     });
+</script>
+<script>
+    let btnEnvoyer = document.querySelector('#btnEnvoyer');
+
+    btnEnvoyer.addEventListener('click', function (event){
+
+        // event.preventDefault();
+        const verbPromise = fetch('/api/admin/train/request/' + idRequest +  '/train', {
+            method  : 'GET',
+            headers : {
+                'Conntent-Type' : 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+
+            if (data.code === 200) {
+
+                return 'PATCH';
+
+            } else {
+
+                return 'POST';
+
+            }
+
+        });
+
+        console.log(verbPromise);
+        verbPromise.then(verb => {
+
+            console.log(verb);
+
+            for (let i = 0; i < exercicesTrain.length; i++) {
+
+                exercicesTrain[i] = JSON.parse(exercicesTrain[i]);
+
+                if (exercicesTrain[i].exerciseId === undefined ) {
+
+                    exercicesTrain.splice(i, 1)
+
+                }
+            }
+
+            const rawData = JSON.stringify({
+                train: {
+                    name: nameTrainEl.value,
+                    userId: userId,
+                    isFinished: true,
+                    trainRequestId: idRequest
+                },
+                exercicesTrain: exercicesTrain
+            })
+            console.log(rawData);
+
+            fetch('/api/admin/train', {
+                method: verb,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: rawData
+            }).then(response => response.json())
+            .then(data => {
+
+                if (data.code === 201){
+
+                    document.querySelector('#sendingResult').innerHTML = 'Votre entraînement a bien été envoyer.<br>.'
+
+                } else {
+
+                    document.querySelector('#sendingErrorCode').innerHTML = 'Erreur : ' + data.code;
+                    document.querySelector('#sendingResult').innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+
+                }
+    
+            });
+        });
+    });
+
+    document.querySelector('#envoyer').addEventListener('click', (event) => {event.preventDefault()});
 </script>
 <%- contentFor('main') %>
