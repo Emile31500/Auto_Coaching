@@ -7,10 +7,7 @@ const premiumChecker = require('../middlewares/premiumChecker');
 
 router.get('/api/measurment', authenticationChecker, premiumChecker, async (req, res) => {
 
-    const user = await User.findOne({where: {authToken:  req.session.token}});
-    const userId = user.id;
-
-    let measurments = await Measurment.findAll({where: {userId: userId}, order: [['createdAt', 'DESC']]});
+    let measurments = await Measurment.findAll({where: {userId: req.user.id}, order: [['createdAt', 'DESC']]});
 
     if (measurments) {
 
@@ -33,8 +30,7 @@ router.post('/api/measurment', authenticationChecker, premiumChecker, async (req
 
     if (data){
 
-        var user = await User.findOne({where: {authToken:  req.session.token}});
-        data.userId = user.id;
+        data.userId = req.user.id;
 
         let measurment = Measurment.create(data);
 

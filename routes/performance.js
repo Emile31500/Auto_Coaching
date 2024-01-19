@@ -7,8 +7,7 @@ const premiumChecker = require('../middlewares/premiumChecker');
 
 router.get('/api/performance', authenticationChecker, premiumChecker, async (req, res) => {
 
-    const user = await User.findOne({where: {authToken:  req.session.token}});
-    const userId = user.id;
+    const userId = req.user.id;
 
     let performances = await Performance.findAll({where: {userId: userId}, order: [['createdAt', 'DESC']]});
 
@@ -33,8 +32,7 @@ router.post('/api/performance', authenticationChecker, premiumChecker, async (re
 
     if (data){
 
-        var user = await User.findOne({where: {authToken:  req.session.token}});
-        data.userId = user.id;
+        data.userId = req.user.id;
 
         let performance = Performance.create(data);
 

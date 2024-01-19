@@ -36,6 +36,8 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }));
+
+app.use(express.static('public'))
 app.use(bodyParser.json());
 app.use(checkout);
 app.use(exercise);

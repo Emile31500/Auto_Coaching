@@ -5,7 +5,7 @@
     <% if(idProduct) { %>
         <input class="d-none" type="text" name="idProduct" id="idProduct" value="<%= idProduct %>">
     <% } %>
-    <!--4000002500000003" placeholder="Ex.: 1234 5678 9123 0000" maxlength="19" autocomplete="off">-->
+    <!--4000002500000003">-->
     <form id="payment-form" action="/api/checkout" method='post'>
         <div id="card-element">
 
@@ -19,65 +19,5 @@
     </form>
     
 <script src="https://js.stripe.com/v3/"></script>
-<script>
-    var stripe = Stripe('pk_test_51JSe6xJEkapOWG0uMvUjdASEMRmuay3yhmeLPLLazRBxhR6WqlAXF1GrpzfFSQzBMMwSHJZffxxcYFv9njK2jnNo00lRkAazE4');
-    var elements = stripe.elements();
-
-    var card = elements.create('card', {
-        classes: {
-            base: 'form-control',
-        },
-    });
-    card.mount('#card-element');
-    var form = document.querySelector('#payment-form');
-    var card_paiement_loading = document.querySelector('#card-paiement-loading');
-    var errorElement = document.querySelector('#card-errors');
-
-
-    form.addEventListener('submit', function(event) {
-
-        event.preventDefault();
-        card_paiement_loading.classList.remove('d-none');
-        
-        stripe.createToken(card).then(function(result) {
-
-            if (result.error) {
-
-                errorElement.textContent = result.error.message;
-
-            } else {
-
-                const url = '/api/checkout/';
-                const jsonToken = result.token
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        'idProduct':  document.querySelector('#idProduct').value,
-                        'token': jsonToken
-                    })
-                }).then(response => { return response.json(); })
-                .then(data => {
-
-                    card_paiement_loading.classList.add('d-none');
-                    errorElement.classList.remove('d-none');
-                    errorElement.innerHTML = data.message;
-
-                    if (data.code === 201) {
-
-                        errorElement.classList.add('alert-success');
-
-                    } else {
-
-                        errorElement.classList.add('alert-danger');
-
-                    }
-                })
-
-            }
-        });
-    });
-</script>
+<script src="/js/user/card.mount.js"></script>
+<script src="/js/user/post.checkout.js"></script>

@@ -16,8 +16,7 @@ router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
 router.get('/api/train', authenticationChecker, premiumChecker, async (req, res) => {
 
-    const user = await User.findOne({where:{authToken: req.user.authToken}});
-    const userId = user.id; 
+    const userId = req.user.id; 
 
     var trains = await Train.findAll({where:{userId: userId}});
 
@@ -25,12 +24,12 @@ router.get('/api/train', authenticationChecker, premiumChecker, async (req, res)
 
         res.statusCode = 200
         
-        res.send({'code': res.statusCode, 'message': 'Trains models have been requested', 'data': trains});
+        res.send({code: res.statusCode, message: 'Trains models have been requested', data: trains});
 
     } else {
 
         res.statusCode = 404;
-        res.send({'code':res.statusCode, 'message' : 'No train models found' + id});
+        res.send({code:res.statusCode, message : 'No train models found' + id});
 
     }
 
@@ -182,8 +181,7 @@ router.get('/api/admin/train/request', adminChecker, async (req, res) => {
 
 router.post('/api/train/request', authenticationChecker, async (req, res) => {
 
-    var user = await User.findOne({where: {authToken:  req.session.token}});
-    const userId = user.id;
+    const userId = req.user.id;
 
     const rawDataTrainRequest = req.body.trainRequest;
     const rawDataPassedSport = req.body.passedSport;

@@ -16,38 +16,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
-                <tr>
-                    <td>
-                        <span id="trainName">
-                        </span>
-                    </td>
-                    <td>
-                        <button type="button" data-id-train="e" class="btn btn-success">
-                            Play
-                        </button>
-                    </th>
-                </tr>
+        <tbody id="trainList">
         </tbody>
     </table>
-<script>
-    fetch('/api/train', {
-        method: 'GET',
-        headers:{
-            'Content-Type': 'application/json'
-        }
-    }).then(response=>response.json())
-    .then(data => {
-
-        if (data.code === 200){
-        
-            console.log(data.data);
-        
-        } else {
-
-            alert('error')
-        }
-
-
-    })
-</script>
+<script src='/js/train/get.js'></script>

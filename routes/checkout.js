@@ -20,10 +20,8 @@ router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
      
     let isPremium = false;
 
-    const user = await User.findOne({where: {'authToken': authToken}});
-
     const customerPromise = await stripe.customers.list({
-        email: user.email,
+        email: req.user.email,
         limit: 1
     })
 
@@ -63,13 +61,11 @@ router.get('/checkout/:id_product', authenticationChecker, async (req, res) => {
 
 router.post('/api/checkout', parserJson, authenticationChecker, async (req, res) => {
 
-    const authToken = req.session.token;
     const idProduct = req.body.idProduct;
 
-    const user = await User.findOne({where: {'authToken': authToken}});
 
     const customerPromise = await stripe.customers.list({
-        email: user.email,
+        email: req.user.email,
         limit: 1
     })
 

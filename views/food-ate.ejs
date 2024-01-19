@@ -2,52 +2,18 @@
 
 <%- contentFor('main') %>
 <h2 class="my-5">Détais de la diette de ce jour :</h2>
-<h3 id="date" ><%= date %></h3>
-<table class="my-3">
+<h3 id="date" >2024-01-17 00:00:00</h3>
+<table class="my-3 table">
     <thead>
-        <th scope="col">Nom : </th>
-        <th scope="col">Poids / volume : </th>
-        <th scope="col"> : </th>
+        <th scope="col">Nom </th>
+        <th scope="col">Poids / volume </th>
+        <th scope="col"></th>
     </thead>
-    <tbody>
+    <tbody id="listAteFoodHTML">
 
     </tbody>
 </table>
 <div id="responseFoodAteRequest" class="my-3 alert d-none">
 
 </div>
-<script>
-
-    let responseFoodAteRequest = document.querySelector('#responseFoodAteRequest');
-    let date = document.querySelector('#date').innerHTML;
-
-    fetch(('/api/food/ate?date=' + date), {
-
-        method: 'GET',
-        headers: {
-        'Content-Type': 'application/json'
-      }
-
-    }).then(response => {
-
-        return response.json();
-
-    }).then(data => {
-
-        if(data.code == 200){
-
-            responseFoodAteRequest.classList.add('d-none');
-
-
-        } else {
-
-            responseFoodAteRequest.classList.remove('d-none');
-            responseFoodAteRequest.classList.add('alert-warning');
-            responseFoodAteRequest.innerHTML = "Warning : No data yet for this day";
-
-        }
-
-
-    });
-
-</script>
+<script src="/js/ate_food/get.all.detail.js"></script>

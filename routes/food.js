@@ -41,10 +41,9 @@ router.delete('/api/admin/food/:id_food', adminChecker, parserJson, async(req, r
 
 });
 
-router.get('/api/food', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
+router.get('/api/food/:id_food', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
-    const parsedUrl = url.parse(req.url, true);
-    const id = parsedUrl.query.id;
+    const id = req.params.id_food;
 
     var food = await Food.findOne({where: {id: id}});
 
@@ -71,51 +70,33 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
 });
 
 
-router.get('/api/food/eat', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
+router.get('/api/food/eat/:start_date/:end_date', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
-    if (req.session.token){
+    const dateStart = req.params.start_date;
+    const dateEnd = req.params.end_date;
+        
+    console.log(dateStart);
+    console.log(dateEnd);
+    console.log(req.user.id);
 
-        const parsedUrl = url.parse(req.url, true);
-        const dateStart = parsedUrl.query.dateStart;
-        const dateEnd = parsedUrl.query.dateEnd;
-
-        const user = await User.findOne({ where: {authToken: req.session.token}})
-
-
-        if (user) {
-            
-            let food = await AteFood.findAll({
-                                                where: {
-                                                    userId: user.id,
-                                                    createdAt: {
-                                                        [Op.between]: [dateStart, dateEnd],
-                                                      }
+    let food = await AteFood.findAll({
+                                        where: {
+                                            userId: req.user.id,
+                                            createdAt: {
+                                                [Op.between]: [dateStart, dateEnd],
                                                 }
-                                            });
+                                        }
+                                    });
 
-            if (food){
+    if (food){
 
-                res.statusCode = 200;
-                res.send({'code': res.statusCode, 'message': 'food elements successfully requested', 'data': food});
-
-            } else {
-
-                res.statusCode = 404
-                res.send({'code': res.statusCode, 'message' : 'Ate Food not found'});
-            }
-
-        } else {
-
-            res.statusCode = 400;
-            res.send({"message" : "User not found"});
-
-        }
+        res.statusCode = 200;
+        res.send({'code': res.statusCode, 'message': 'food elements successfully requested', 'data': food});
 
     } else {
 
-        res.statusCode = 401;
-        res.send({"message" : "User not authenticated"});
-
+        res.statusCode = 404
+        res.send({'code': res.statusCode, 'message' : 'Ate Food not found'});
     } 
     
 });
@@ -212,9 +193,7 @@ router.post('/api/food/eat', authenticationChecker, parserJson, async (req, res,
 
     if (req.body && req.session.token){
 
-        var user = await User.findOne({where: {authToken:  req.session.token}});
-
-        req.body.userId = user.id;
+        req.body.userId = req.user.id;
         ateFood = AteFood.create(req.body);
         
         res.statusCode = 201;
