@@ -22,9 +22,6 @@ const performance = require('./routes/performance');
 const train = require('./routes/train');
 const user = require('./routes/user');
 
-
-const authenticationChecker = require('./middlewares/authenticationChecker');
-
 const { User } = require('./models');
 const pbkdf2 = require("hash-password-pbkdf2");
 
@@ -51,8 +48,10 @@ app.use(performance);
 app.use(train);
 app.use(user);
 
-app.listen(3000, async () => {
+const server = app.listen(3000, async () => {
   
   console.log('Server is running on port 3000');
 
 });
+
+module.exports = server;
