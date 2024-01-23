@@ -38,7 +38,7 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
 
 router.get('/login', async function(req, res, next) {
 
- //   res.render('../views/login',  { layout: '../views/main' });
+    res.statusCode = 200
     res.render('../views/login',  { error: false, layout: '../views/main' });
 
 
@@ -61,7 +61,8 @@ router.post('/sign', parserJson, async (req, res) => {
         const user = User.create({
         name: data.name,
         email: data.email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: ["user"]
         });
 
         const customer = await stripe.customers.create({
@@ -69,7 +70,6 @@ router.post('/sign', parserJson, async (req, res) => {
             email: data.email,
         });
 
-        res.statusCode = 201
         res.redirect('login');
 
     } else {
@@ -152,7 +152,7 @@ router.post('/login', parserJson, async (req, res, next) => {
                     res.redirect('/admin/train')
 
                 } else {
-
+                    
                     res.redirect('/');
 
                 }
