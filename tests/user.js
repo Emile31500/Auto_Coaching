@@ -1,8 +1,10 @@
 const request = require('supertest')
 const should = require('should');
 const { JSDOM } = require('jsdom')
-const app = require('../app')
 const { User } = require('../models')
+const express = require('express');
+const app = require('../app')
+const session = require('supertest-session');
 
 const userTest = describe('User tests', () => {
 
@@ -39,7 +41,7 @@ const userTest = describe('User tests', () => {
     const res = await request(app)
       .post('/sign')
       .redirects(1)
-      .send({name: 'Nouvel utilisateur', email: 'emile00013@gmail.com', password: 'P4$$w0rd'});
+      .send({name: 'Nouvel utilisateur', email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'});
 
     expect(res.req.path).toEqual('/login');
     expect(res.statusCode).toEqual(200);
@@ -48,20 +50,43 @@ const userTest = describe('User tests', () => {
   
   it('Should return the home page', async () => {
 
-    let preAuthUser = await User.findOne({where : {email: 'emile00013@gmail.com'}})
+    let preAuthUser = await User.findOne({where : {email: 'emile00013+2@gmail.com'}})
 
     const resA = await request(app)
       .post('/login')
-      .send({email: 'emile00013@gmail.com', password: 'P4$$w0rd'});
+      .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'});
 
     expect(resA.req.path).toEqual('/login');
     expect(resA.statusCode).toEqual(302);
 
-    let postAuthUser = await User.findOne({where : {email: 'emile00013@gmail.com'}})
+    let postAuthUser = await User.findOne({where : {email: 'emile00013+2@gmail.com'}})
 
     
     expect(preAuthUser.authToken).not.toEqual(postAuthUser.authToken);
     expect(preAuthUser.authToken).not.toBeUndefined();
+  });
+
+  it('Should return the home page', async () => {
+
+    const testSession = session(app)
+
+    const res = await testSession
+      .post('/login')
+      .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
+      .redirects(1);
+
+    const stringToParse = res.text;
+
+    const parsedString =  new JSDOM(stringToParse);
+    const DOM = parsedString.window.document;
+
+    expect(res.req.path).toEqual('/');
+    expect(res.statusCode).toEqual(200);
+    expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
+    expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
+    expect(DOM.querySelector('.alert')).toEqual(null);
+    expect(res.statusCode).toEqual(200);
+
   });
 
 });
