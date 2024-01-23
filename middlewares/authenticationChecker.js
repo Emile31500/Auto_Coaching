@@ -26,7 +26,7 @@ const authenticationChecker = async function (req, res, next) {
     } catch (e) {
   
         res.statusCode = 401;
-        res.send({"message" : "authentication required"});
+        res.render('../views/error/error', {layout: '../views/main', code : res.statusCode, message : "Vous devez être authentifié pour accéder à cette page."});
   
     }
 }

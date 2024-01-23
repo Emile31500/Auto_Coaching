@@ -2,3 +2,4 @@
 node_modules
 dockerfile
 dpcler-composer.yaml
+tests/.env.test
