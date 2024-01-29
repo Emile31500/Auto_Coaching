@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/');
 const session = require('express-session');
 
-const authenticationChecker = async function (req, res, next) {
+const authenticationChecker =  async function (req, res, next) {
     try {
         
         const authToken = req.session.token;

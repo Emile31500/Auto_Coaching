@@ -31,7 +31,6 @@ fetch(url, {
 
         responseFoodAteRequest.classList.add('d-none');
 
-        console.log(data.data)
         data.data.forEach(ateFood => {
             
             fetch('/api/food/' + ateFood.foodId , {
@@ -43,7 +42,6 @@ fetch(url, {
             .then(data => {
 
                 food = data.data;
-                console.log(food)
                 listAteFoodHTML.innerHTML += "<tr><td>" + food.name + "</td><td>"+ateFood.weight+"</td><td><button data-id-food='" + ateFood.foodId + "' class='delete-ate-food-btn btn btn-danger' > x </button></td></tr>";
                 
             })

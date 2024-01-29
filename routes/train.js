@@ -1,12 +1,11 @@
 const express = require('express');
 const {ExerciseTrain, TrainRequest, PassedSport, Train, User, PassedInjury} = require('../models/');
-
+const router = express.Router();
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var adminChecker = require('../middlewares/adminChecker');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
-const router = express.Router()
 
 router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 

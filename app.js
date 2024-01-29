@@ -10,6 +10,15 @@ var router = express.Router();
 const { sequelize } = require('./models');
 var layout = require('express-ejs-layouts');
 
+app.set('view engine', 'ejs');
+app.use(layout);
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+}));
+
 const checkout = require('./routes/checkout');
 const exercise = require('./routes/exercise');
 const food = require('./routes/food');
@@ -25,15 +34,6 @@ const user = require('./routes/user');
 const { User } = require('./models');
 const pbkdf2 = require("hash-password-pbkdf2");
 
-app.set('view engine', 'ejs');
-app.use(layout);
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-}));
-
 app.use(express.static('public'))
 app.use(bodyParser.json());
 app.use(checkout);
@@ -48,7 +48,7 @@ app.use(performance);
 app.use(train);
 app.use(user);
 
-const server = app.listen(3000, async () => {
+const server = app.listen(3000, () => {
   
   console.log('Server is running on port 3000');
 
