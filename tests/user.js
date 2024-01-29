@@ -6,6 +6,16 @@ const express = require('express');
 const app = require('../app')
 const session = require('supertest-session');
 
+function generateRandomString(length) {
+  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+
 const userTest = describe('User tests', () => {
 
   it('Should return a login page', async () => {
@@ -38,10 +48,12 @@ const userTest = describe('User tests', () => {
 
   it('Should return the login page', async () => {
 
+    const randomString = generateRandomString(10)
+
     const res = await request(app)
       .post('/sign')
       .redirects(1)
-      .send({name: 'Nouvel utilisateur', email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'});
+      .send({name: 'Nouvel utilisateur', email: randomString + '@gmail.com', password: 'P4$$w0rd'});
 
     expect(res.req.path).toEqual('/login');
     expect(res.statusCode).toEqual(200);

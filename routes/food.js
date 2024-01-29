@@ -74,10 +74,6 @@ router.get('/api/food/eat/:start_date/:end_date', authenticationChecker, parserJ
 
     const dateStart = req.params.start_date;
     const dateEnd = req.params.end_date;
-        
-    console.log(dateStart);
-    console.log(dateEnd);
-    console.log(req.user.id);
 
     let food = await AteFood.findAll({
                                         where: {
@@ -101,49 +97,47 @@ router.get('/api/food/eat/:start_date/:end_date', authenticationChecker, parserJ
     
 });
 
-router.post('/api/food', parserJson, async (req, res, next) => {
+    router.post('/api/food', parserJson, authenticationChecker, async (req, res, next) => {
 
-    if (req.body && req.session.token){
+        if (req.body){
 
-        food = await Food.create(req.body);
+            food = await Food.create(req.body);
+            
+            if (food){
 
-        if (food){
+                res.statusCode = 201
+                res.send({code: res.statusCode, message: 'This food has been has been created', data: food});
 
-            res.statusCode = 201
-            res.send(food);
+            } else {
 
-        } else {
+                res.statusCode = 401
+                res.send({"message" : "Food not created"});
 
-            res.statusCode = 401
-            res.send({"message" : "Food not created"});
-
+            }
         }
 
+    });
 
-    }
+    router.post('/api/admin/food', parserJson, async (req, res, next) => {
 
-});
+        if (req.body && req.session.token){
 
-router.post('/api/admin/food', parserJson, async (req, res, next) => {
+            const rawData = req.body
 
-    if (req.body && req.session.token){
+            const food = Food.create(rawData);
+            if (food){
 
-        const rawData = req.body
+                res.statusCode = 201
+                res.send({'code': res.statusCode, 'message': 'This food has been created', 'data': food});
 
-        const food = Food.create(rawData);
-        if (food){
+            } else {
 
-            res.statusCode = 201
-            res.send({'code': res.statusCode, 'message': 'This food has been created', 'data': food});
+                res.statusCode = 400
+                res.send({'code': res.statusCode, "message" : "Food not created"});
 
-        } else {
-
-            res.statusCode = 400
-            res.send({'code': res.statusCode, "message" : "Food not created"});
-
+            }
         }
-    }
-});
+    });
 
 router.patch('/api/admin/food', parserJson, async (req, res, next) => {
 
@@ -156,7 +150,7 @@ router.patch('/api/admin/food', parserJson, async (req, res, next) => {
         var food = await Food.findOne({where : selector});
         await food.update(element);
         await food.save();
-        // foodUnUpdated = await Food.findOne({where : selector}); 
+         // foodUnUpdated = await Food.findOne({where : selector}); 
         
 
         // if (foodUnUpdated){
@@ -174,7 +168,7 @@ router.patch('/api/admin/food', parserJson, async (req, res, next) => {
         //     } else {
 
         //         res.statusCode = 422
-        //         res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
+         //         res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
 
         //     }
 
