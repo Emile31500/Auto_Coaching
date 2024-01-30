@@ -93,10 +93,29 @@ const userTest = describe('User tests', () => {
     const DOM = parsedString.window.document;
 
     expect(res.req.path).toEqual('/');
-    expect(res.statusCode).toEqual(200);
     expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
     expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
     expect(DOM.querySelector('.alert')).toEqual(null);
+    expect(res.statusCode).toEqual(200);
+
+  });
+
+  it('Should return an admin page', async () => {
+
+    const testSession = session(app)
+
+    const res = await testSession
+      .post('/login')
+      .send({email: 'admin@auto-coaching.fr', password: 'P4$$w0rd'})
+      .redirects(1);
+
+    const stringToParse = res.text;
+    const parsedString =  new JSDOM(stringToParse);
+    const DOM = parsedString.window.document;
+
+    expect(res.req.path).toEqual('/admin/train');
+    expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
+    expect(DOM.querySelector('h2').innerHTML).toBe('Entraînement');
     expect(res.statusCode).toEqual(200);
 
   });
