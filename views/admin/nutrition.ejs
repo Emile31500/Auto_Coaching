@@ -166,6 +166,7 @@
         event.preventDefault();
         let rawData;
         let verb;
+        let url = '/api/admin/food'
 
         const dataElment = JSON.stringify({
             "name": name.value,
@@ -199,6 +200,7 @@
                 }
             });
             rawData.element = dataElment;
+            url += '/'+idAliment
 
         } else {
 
@@ -209,7 +211,7 @@
         console.log(dataElment);
         console.log(rawData);
 
-        fetch('/api/admin/food', {
+        fetch(url, {
             method: verb,
             headers: {'Content-Type': 'application/json'},
             body: rawData

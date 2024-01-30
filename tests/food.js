@@ -29,12 +29,12 @@ const foodTest = describe('Food tests', () => {
         is_egg: false
     }
 
-    it('Should return a 401 error page because not auth', async () => {
+    it(' 0 : Should return a 401 error page because not auth', async () => {
 
 
         const testSession = session(app)
         const res = await testSession
-            .post('/api/food')
+            .post('/api/admin/food')
             .send(rawData)
             .redirects(1);
 
@@ -52,7 +52,7 @@ const foodTest = describe('Food tests', () => {
 
     });
 
-    it('Should return a 401 error page because not auth', async () => {
+    it(' 1 : Should return a home page because auth as user ', async () => {
 
 
         const testSession = session(app)
@@ -69,7 +69,42 @@ const foodTest = describe('Food tests', () => {
         expect(authReq.statusCode).toEqual(200);
 
         const res = await testSession
-            .post('/api/food')
+            .post('/api/admin/food')
+            .send(rawData)
+            .redirects(1);
+
+        const stringToParse = res.text;
+        const parsedString =  new JSDOM(stringToParse);
+        const DOM = parsedString.window.document;
+        
+        const food = await Food.findOne({where : rawData});
+
+        expect(res.req.path).toEqual('/');
+        expect(food).toEqual(null);
+        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
+        expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
+        expect(res.statusCode).toEqual(200);
+
+    });
+
+    it(' 2 : Should create an instance of food', async () => {
+
+
+        const testSession = session(app)
+        const authenticationRawData = {
+            email: 'admin@auto-coaching.fr',
+            password: 'P4$$w0rd'
+        }
+
+        const authReq = await testSession
+            .post('/login')
+            .send(authenticationRawData)
+            .redirects(1);
+
+        expect(authReq.statusCode).toEqual(200);
+
+        const res = await testSession
+            .post('/api/admin/food')
             .send(rawData)
             .redirects(1);
 
@@ -103,7 +138,102 @@ const foodTest = describe('Food tests', () => {
 
     });
 
-    it("Sould not allow deletion of this food, redirect to home page and print a 401 error", async () => {
+    it(' 3 : Should return a 401 error page because not auth', async () => {
+
+        const testSession = session(app)
+
+        const foodSeq = await Food.findOne();
+
+        const res = await testSession
+            .patch('/api/admin/food/' + foodSeq.id)
+            .send(rawData)
+            .redirects(1);
+
+        //console.log(res.text)
+        const stringToParse = res.error.text;
+        const parsedString =  new JSDOM(stringToParse);
+        const DOM = parsedString.window.document;
+        
+        const food = await Food.findOne({where : {id : foodSeq.id}});
+
+        expect(food.name).toEqual(foodSeq.name);
+        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
+        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
+        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect(res.statusCode).toEqual(401);
+
+    });
+
+    it(' 4 : Should return the home page', async () => {
+
+
+        const testSession = session(app)
+        const authenticationRawData = {
+            email: 'emile00013+2@gmail.com',
+            password: 'P4$$w0rd'
+        }
+
+        const authReq = await testSession
+            .post('/login')
+            .send(authenticationRawData)
+            .redirects(1);
+
+        expect(authReq.statusCode).toEqual(200);
+
+        const foods = await Food.findAll({limits: 1});
+        const foodSeq = foods[0];
+        const foodBeforeUpdate = foodSeq
+
+        const res = await testSession
+            .patch('/api/admin/food/' + foodSeq.id)
+            .send({name : "New food name" + generateRandomString(5)})
+            .redirects(1);
+
+        const stringToParse = res.text;
+        const parsedString =  new JSDOM(stringToParse);
+        const DOM = parsedString.window.document;
+
+        expect(res.req.path).toEqual('/');
+        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
+        expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
+        expect(authReq.statusCode).toEqual(200);
+        expect(foodBeforeUpdate.name).toEqual(foodSeq.name);
+
+
+    });
+
+    it(' 5 : Should update this food', async () => {
+
+
+        const testSession = session(app)
+        const authenticationRawData = {
+            email: 'admin@auto-coaching.fr',
+            password: 'P4$$w0rd'
+        }
+
+        const authReq = await testSession
+            .post('/login')
+            .send(authenticationRawData)
+            .redirects(1);
+
+        expect(authReq.statusCode).toEqual(200);
+
+        const foods = await Food.findAll({limits: 1});
+        const foodSeq = foods[0];
+
+        const res = await testSession
+            .patch('/api/admin/food/' + foodSeq.id)
+            .send({name : "New food name" + generateRandomString(5)})
+            .redirects(1);
+
+        const foodApi = res._body.data;
+
+        expect(foodApi.name).not.toEqual(foodSeq.name);
+        expect(res.statusCode).toEqual(202);
+
+    });
+
+    it(" 6 : Sould not allow deletion of this food, redirect to home page and print a 401 error", async () => {
 
         const testSession = session(app)
     
@@ -129,7 +259,7 @@ const foodTest = describe('Food tests', () => {
 
     });
 
-    it("Sould not allow deletion of this food and redirect to home page", async () => {
+    it(" 7 : Sould not allow deletion of this food and redirect to home page", async () => {
 
         const testSession = session(app)
 
@@ -154,7 +284,7 @@ const foodTest = describe('Food tests', () => {
 
     });
 
-    it("Sould delete this food", async () => {
+    it(" 8 :Sould delete this food", async () => {
 
         const testSession = session(app)
 
@@ -178,6 +308,32 @@ const foodTest = describe('Food tests', () => {
 
     });
 
+    it(" 9 : Should return a food instance", async () => {
+
+        const testSession = session(app)
+
+        const authReq = await testSession
+            .post('/login')
+            .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
+            .redirects(1);
+
+        expect(authReq.statusCode).toEqual(200);
+
+        const foods = await Food.findAll({limit: 1});
+        const foodSeq = foods[0]; 
+
+        const res = await testSession
+            .get('/api/food/' + foodSeq.id)
+            .redirects(1);
+
+        const foodApi = res._body.data
+
+        expect(res.statusCode).toEqual(200);
+        expect(res._body.code).toEqual(200);
+        expect(foodApi.id).toEqual(foodSeq.id);
+        expect(foodApi.name).toEqual(foodSeq.name);
+
+    });
 
 });
 
