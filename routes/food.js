@@ -97,9 +97,11 @@ router.get('/api/food/eat/:start_date/:end_date', authenticationChecker, parserJ
     
 });
 
-    router.post('/api/food', parserJson, authenticationChecker, async (req, res, next) => {
+    router.post('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
 
         if (req.body){
+
+            req.body.is_veggie = !(req.body.is_meat || req.body.is_milk || req.body.is_egg)
 
             food = await Food.create(req.body);
             
@@ -139,47 +141,42 @@ router.get('/api/food/eat/:start_date/:end_date', authenticationChecker, parserJ
         }
     });
 
-router.patch('/api/admin/food', parserJson, async (req, res, next) => {
+router.patch('/api/admin/food/:id_food', parserJson, adminChecker, async (req, res, next) => {
 
-    if (req.body && req.session.token){
+    if (req.body){
 
-        const element = req.body.element
-        const selector = req.body.selector
+        const idFood = req.params.id_food;
 
-
-        var food = await Food.findOne({where : selector});
-        await food.update(element);
+        var food = await Food.findOne({where : {id: idFood}});
+        const foodUnUpdated = food;
+        await food.update(req.body);
         await food.save();
-         // foodUnUpdated = await Food.findOne({where : selector}); 
         
 
-        // if (foodUnUpdated){
+        if (foodUnUpdated){
 
-        //     await Food.update(element, {where : selector}
-        //     );
+            const foodUpdated = await Food.findOne({where : {id : idFood}});
 
-        //     foodUpdated = await Food.findOne({where : selector}); 
+            if (foodUnUpdated !== foodUpdated) {
 
-        //     if (foodUnUpdated !== foodUpdated) {
+                res.statusCode = 202
+                res.send({'code': res.statusCode, 'message': 'This food has been updated', 'data': foodUpdated});
 
-        //         res.statusCode = 202
-        //         res.send({'code': res.statusCode, 'message': 'This food has been updated', 'data': foodUpdated});
+            } else {
 
-        //     } else {
+                res.statusCode = 422
+                 res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
 
-        //         res.statusCode = 422
-         //         res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
-
-        //     }
+            }
 
             
 
-        // } else {
+        } else {
 
-        //     res.statusCode = 404
-        //     res.send({'code': res.statusCode, "message" : "Food not updated"});
+            res.statusCode = 404
+            res.send({'code': res.statusCode, "message" : "Food not updated"});
 
-        // }
+        }
     }
 });
 
