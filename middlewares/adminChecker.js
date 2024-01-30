@@ -29,8 +29,7 @@ const adminChecker = async function (req, res, next) {
         
     } catch (e) {
   
-        res.statusCode = 401;
-        res.send({"message" : "You're not admin ! "});
+        res.redirect('/');
   
     }
 }

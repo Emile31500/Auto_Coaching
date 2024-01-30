@@ -18,22 +18,21 @@ const foodTest = describe('Food tests', () => {
 
     jest.setTimeout(10000);
 
+    const rawData = {
+        name : 'New food ' + generateRandomString(5),
+        carbohydrate : 5,
+        proteine : 5,
+        fat : 5,
+        trans_fat : 2,
+        is_meat: false,
+        is_milk: false,
+        is_egg: false
+    }
+
     it('Should return a 401 error page because not auth', async () => {
 
 
         const testSession = session(app)
-
-        const rawData = {
-            name : 'New food ' + generateRandomString(5),
-            carbohydrate : 5,
-            proteine : 5,
-            fat : 5,
-            trans_fat : 2,
-            is_meat: false,
-            is_milk: false,
-            is_egg: false
-        }
-
         const res = await testSession
             .post('/api/food')
             .send(rawData)
@@ -57,18 +56,6 @@ const foodTest = describe('Food tests', () => {
 
 
         const testSession = session(app)
-
-        const rawData = {
-            name : 'New food ' + generateRandomString(5),
-            carbohydrate : 5,
-            proteine : 5,
-            fat : 5,
-            trans_fat : 2,
-            is_meat: false,
-            is_milk: false,
-            is_egg: false
-        }
-
         const authenticationRawData = {
             email: 'emile00013+2@gmail.com',
             password: 'P4$$w0rd'
@@ -115,6 +102,82 @@ const foodTest = describe('Food tests', () => {
         expect(res.statusCode).toEqual(201);
 
     });
+
+    it("Sould not allow deletion of this food, redirect to home page and print a 401 error", async () => {
+
+        const testSession = session(app)
+    
+        const food = await Food.findOne({where : rawData});
+        
+        const res = await testSession
+            .delete('/api/admin/food/' + food.id)
+            .redirects(1);
+
+        const stringToParse = res.error.text;
+        const parsedString =  new JSDOM(stringToParse);
+        const DOM = parsedString.window.document;
+
+        const deletedFood = await Food.findOne({where : {id: food.id}});
+
+        expect(res.req.path).toEqual('/');
+        expect(deletedFood).toEqual(food);
+        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
+        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
+        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect(res.statusCode).toEqual(401);
+        
+
+    });
+
+    it("Sould not allow deletion of this food and redirect to home page", async () => {
+
+        const testSession = session(app)
+
+        const authReq = await testSession
+            .post('/login')
+            .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
+            .redirects(1);
+
+        expect(authReq.statusCode).toEqual(200);
+
+        const food = await Food.findOne({where : rawData});
+        
+        const res = await testSession
+            .delete('/api/admin/food/' + food.id)
+            .redirects(1);
+
+        const deletedFood = await Food.findOne({where : {id: food.id}});
+
+        expect(res.req.path).toEqual('/');
+        expect(deletedFood).toEqual(food);
+        
+
+    });
+
+    it("Sould delete this food", async () => {
+
+        const testSession = session(app)
+
+        const authReq = await testSession
+            .post('/login')
+            .send({email: 'admin@auto-coaching.fr', password: 'P4$$w0rd'})
+            .redirects(1);
+
+        expect(authReq.statusCode).toEqual(200);
+        const food = await Food.findOne({where : rawData});
+        
+        const res = await testSession
+            .delete('/api/admin/food/' + food.id)
+            .redirects(1);
+
+        const deletedFood = await Food.findOne({where : {id: food.id}});
+
+        expect(res.statusCode).toEqual(204);
+        expect(deletedFood).toEqual(null);
+        
+
+    });
+
 
 });
 
