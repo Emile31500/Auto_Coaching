@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router()
-var authenticationChecker = require('../middlewares/authenticationChecker');
-const { User, Performance } = require('../models');
+var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi');
+const { Performance } = require('../models');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
-router.get('/api/performance', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/api/performance', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     const userId = req.user.id;
 
@@ -13,20 +13,20 @@ router.get('/api/performance', authenticationChecker, premiumChecker, async (req
 
     if (performances) {
 
-        res.code = 200;
-        res.send({"code":200, "message":"Performances requêtées", "data": performances});
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message: "Performances requêtées", data: performances});
     
     } else {
 
-        res.code = 404;
-        res.send({'code': 404, 'message': 'Aucune performance trouvée'});   
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message: 'Aucune performance trouvée'});   
 
     }
 
 
 });
 
-router.post('/api/performance', authenticationChecker, premiumChecker, async (req, res) => {
+router.post('/api/performance', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     let data  = req.body;
 
@@ -34,18 +34,18 @@ router.post('/api/performance', authenticationChecker, premiumChecker, async (re
 
         data.userId = req.user.id;
 
-        let performance = Performance.create(data);
+        let performance = await Performance.create(data);
 
         if (performance) {
 
-            res.code = 201
-            res.send({"code" : 201, "message": "Les performances ont bien étées ajoutées.", "data": performance});
+            res.statusCode = 201
+            res.send({code : res.statusCode, message: "Les performances ont bien étées ajoutées.", data: performance});
 
 
         } else {
 
-            res.code = 400
-            res.send({"code" : 400, "message": "L'utilisateur n'a pas put être créé."});
+            res.statusCode = 400
+            res.send({code : res.statusCode, message: "L'utilisateur n'a pas put être créé."});
 
         }
 

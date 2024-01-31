@@ -1,5 +1,4 @@
 const request = require('supertest');
-const { JSDOM } = require('jsdom')
 const app = require('../app')
 const session = require('supertest-session');
 const { Food } = require('../models');
@@ -29,26 +28,23 @@ const foodTest = describe('Food tests', () => {
         is_egg: false
     }
 
-    it(' 0 : Should return a 401 error page because not auth', async () => {
+    it(' 0 : Should return a 401 error because not auth', async () => {
 
 
         const testSession = session(app)
         const res = await testSession
             .post('/api/admin/food')
             .send(rawData)
-            .redirects(1);
+            .redirects(1)
 
-        const stringToParse = res.error.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-        
         const food = Food.findOne({where : rawData});
 
-        expect(food.name).toBeUndefined();
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect(!food.name).toEqual(true);
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food');
         expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
+
 
     });
 
@@ -72,18 +68,14 @@ const foodTest = describe('Food tests', () => {
             .post('/api/admin/food')
             .send(rawData)
             .redirects(1);
-
-        const stringToParse = res.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
         
         const food = await Food.findOne({where : rawData});
 
-        expect(res.req.path).toEqual('/');
         expect(food).toEqual(null);
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
-        expect(res.statusCode).toEqual(200);
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food');
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
 
     });
 
@@ -149,18 +141,13 @@ const foodTest = describe('Food tests', () => {
             .send(rawData)
             .redirects(1);
 
-        //console.log(res.text)
-        const stringToParse = res.error.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-        
         const food = await Food.findOne({where : {id : foodSeq.id}});
 
         expect(food.name).toEqual(foodSeq.name);
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food/' + foodSeq.id);
         expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
 
     });
 
@@ -189,14 +176,10 @@ const foodTest = describe('Food tests', () => {
             .send({name : "New food name" + generateRandomString(5)})
             .redirects(1);
 
-        const stringToParse = res.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-
-        expect(res.req.path).toEqual('/');
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
-        expect(authReq.statusCode).toEqual(200);
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food/' + foodSeq.id);
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
         expect(foodBeforeUpdate.name).toEqual(foodSeq.name);
 
 
@@ -243,18 +226,13 @@ const foodTest = describe('Food tests', () => {
             .delete('/api/admin/food/' + food.id)
             .redirects(1);
 
-        const stringToParse = res.error.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-
         const deletedFood = await Food.findOne({where : {id: food.id}});
 
-        expect(res.req.path).toEqual('/');
         expect(deletedFood).toEqual(food);
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food/' + food.id);
         expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
         
 
     });
@@ -278,8 +256,11 @@ const foodTest = describe('Food tests', () => {
 
         const deletedFood = await Food.findOne({where : {id: food.id}});
 
-        expect(res.req.path).toEqual('/');
         expect(deletedFood).toEqual(food);
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food/' + food.id);
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
         
 
     });
@@ -304,8 +285,8 @@ const foodTest = describe('Food tests', () => {
 
         expect(res.statusCode).toEqual(204);
         expect(deletedFood).toEqual(null);
+        expect(res.req.path).toEqual('/api/admin/food/' + food.id);
         
-
     });
 
     it(" 9 : Should return a food instance", async () => {
@@ -332,6 +313,8 @@ const foodTest = describe('Food tests', () => {
         expect(res._body.code).toEqual(200);
         expect(foodApi.id).toEqual(foodSeq.id);
         expect(foodApi.name).toEqual(foodSeq.name);
+        expect(res.req.path).toEqual('/api/food/' + foodSeq.id);
+
 
     });
 

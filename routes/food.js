@@ -1,16 +1,16 @@
 const express = require('express');
-const { Food, Sequelize } = require('../models');
+const { Food } = require('../models');
 var parserJson = require('../middlewares/parserJson');
-var authenticationChecker = require('../middlewares/authenticationChecker')
+var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
+
 const { Op } = require('sequelize');
 const session = require('express-session');
-const http = require('http');
-const url = require('url');
-const adminChecker = require('../middlewares/adminChecker');
+const adminCheckerApi = require('../middlewares/adminCheckerApi');
+
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
-router.delete('/api/admin/food/:id_food', adminChecker, parserJson, async(req, res, next) => {
+router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req, res, next) => {
 
     const idFood = req.params.id_food;
     let food = await Food.findOne({where : {id: idFood}});
@@ -41,7 +41,7 @@ router.delete('/api/admin/food/:id_food', adminChecker, parserJson, async(req, r
 
 });
 
-router.get('/api/food/:id_food', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
+router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
     const id = req.params.id_food;
 
@@ -70,7 +70,7 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
 });
 
 
-    router.post('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
+    router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
 
         if (req.body){
 
@@ -93,7 +93,7 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
 
     });
 
-    router.post('/api/admin/food', parserJson, async (req, res, next) => {
+    router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
 
         if (req.body && req.session.token){
 
@@ -114,7 +114,7 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
         }
     });
 
-router.patch('/api/admin/food/:id_food', parserJson, adminChecker, async (req, res, next) => {
+router.patch('/api/admin/food/:id_food', parserJson, adminCheckerApi, async (req, res, next) => {
 
     if (req.body){
 

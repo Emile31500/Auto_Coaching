@@ -2,7 +2,9 @@ const express = require('express');
 const {ExerciseTrain, TrainRequest, PassedSport, Train, User, PassedInjury} = require('../models/');
 const router = express.Router();
 var authenticationChecker = require('../middlewares/authenticationChecker')
+var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
 var adminChecker = require('../middlewares/adminChecker');
+var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
@@ -13,7 +15,7 @@ router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
 })
 
-router.get('/api/train', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     const userId = req.user.id; 
 
@@ -41,7 +43,7 @@ router.get('/train/request', authenticationChecker, premiumChecker, (req, res) =
 
 })
 
-router.get('/api/admin/train/request/:id_train_request/train', adminChecker, async (req, res) => {
+router.get('/api/admin/train/request/:id_train_request/train', adminCheckerApi, async (req, res) => {
 
     const idTrainRequest = req.params.id_train_request;
     const train = await Train.findOne({where : {trainRequestId: idTrainRequest}})
@@ -73,7 +75,7 @@ router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
 
 })
 
-router.post('/api/admin/train', adminChecker, async (req, res) => {
+router.post('/api/admin/train', adminCheckerApi, async (req, res) => {
 
     const rawTrain = req.body.train;
     const rawExercisesTrain = req.body.exercicesTrain;
@@ -102,7 +104,7 @@ router.post('/api/admin/train', adminChecker, async (req, res) => {
 
 });
 
-router.patch('/api/admin/train', adminChecker, async (req, res) => {
+router.patch('/api/admin/train', adminCheckerApi, async (req, res) => {
 
     const rawTrain = req.body.train;
     const rawExercisesTrains = req.body.exercicesTrain;
@@ -136,7 +138,7 @@ router.patch('/api/admin/train', adminChecker, async (req, res) => {
 
 });
 
-router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res) => {
+router.get('/api/admin/train/request/:id_request', adminCheckerApi, async (req, res) => {
 
     const id = req.params.id_request
 
@@ -160,7 +162,7 @@ router.get('/api/admin/train/request/:id_request', adminChecker, async (req, res
     }
 })
 
-router.get('/api/admin/train/request', adminChecker, async (req, res) => {
+router.get('/api/admin/train/request', adminCheckerApi, async (req, res) => {
 
     trainRequests = await TrainRequest.findAll()
 
@@ -178,7 +180,7 @@ router.get('/api/admin/train/request', adminChecker, async (req, res) => {
 
 })
 
-router.post('/api/train/request', authenticationChecker, async (req, res) => {
+router.post('/api/train/request', authenticationCheckerApi, async (req, res) => {
 
     const userId = req.user.id;
 

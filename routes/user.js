@@ -58,11 +58,11 @@ router.post('/sign', parserJson, async (req, res) => {
 
         const hashedPassword = pbkdf2.hashSync(data.password);
         
-        const user = User.create({
-        name: data.name,
-        email: data.email,
-        password: hashedPassword,
-        role: ["user"]
+        const user = await User.create({
+            name: data.name,
+            email: data.email,
+            password: hashedPassword,
+            role: ["user"]
         });
 
         const customer = await stripe.customers.create({
