@@ -74,7 +74,7 @@
               <td> <%= food[i].proteine %> g </td>
               <td> <%= food[i].fat %> g </td>
               <td>
-                <form action="/api/food/eat" class="alimentForms" method="post">
+                <form action="/api/food/ate" class="alimentForms" method="post">
                   <div class="row"  style="max-width: 200px;">
                     <input type="number" name="foodId" hidden value=<%= food[i].id %> >
                     <div class="col">

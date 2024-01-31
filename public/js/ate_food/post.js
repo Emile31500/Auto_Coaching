@@ -19,11 +19,12 @@ alimentForms.forEach(form => {
         var raw = JSON.stringify({
             foodId: parseInt(data.get("foodId")),
             weight: parseInt(data.get("weight")),
+            userId: null,
             createdAt: ateFoodDate,
             updatedAt: ateFoodDate
             })
             
-        fetch('/api/food/eat', {
+        fetch('/api/food/ate', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
