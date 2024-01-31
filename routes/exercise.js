@@ -2,12 +2,12 @@ const express = require('express');
 const { Exercise } = require('../models');
 var parserJson = require('../middlewares/parserJson');
 var authenticationChecker = require('../middlewares/authenticationChecker')
-var adminChecker = require('../middlewares/adminChecker');
+var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
 
-router.get('/api/admin/exercise', adminChecker, parserJson, async(req, res, next) => {
+router.get('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, next) => {
 
     var exercise = await Exercise.findAll();
 
@@ -26,11 +26,11 @@ router.get('/api/admin/exercise', adminChecker, parserJson, async(req, res, next
 
 });
 
-router.post('/api/admin/exercise', adminChecker, parserJson, async(req, res, next) => {
+router.post('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, next) => {
 
     const rawData = req.body
 
-    var exercise =  Exercise.create(rawData);
+    var exercise = await Exercise.create(rawData);
 
     if (exercise) {
 
@@ -47,7 +47,7 @@ router.post('/api/admin/exercise', adminChecker, parserJson, async(req, res, nex
 
 });
 
-router.delete('/api/admin/exercise/:id_exercise', adminChecker, parserJson, async(req, res, next) => {
+router.delete('/api/admin/exercise/:id_exercise', adminCheckerApi, parserJson, async(req, res, next) => {
 
     const idExercise = req.params.id_exercise;
     let exercise = await Exercise.findOne({where : {id: idExercise}});

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router()
-var authenticationChecker = require('../middlewares/authenticationChecker');
+var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi');
 const { User, Measurment } = require('../models');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
-router.get('/api/measurment', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/api/measurment', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     let measurments = await Measurment.findAll({where: {userId: req.user.id}, order: [['createdAt', 'DESC']]});
 
@@ -24,7 +24,7 @@ router.get('/api/measurment', authenticationChecker, premiumChecker, async (req,
 
 });
 
-router.post('/api/measurment', authenticationChecker, premiumChecker, async (req, res) => {
+router.post('/api/measurment', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     let data  = req.body;
 
@@ -32,7 +32,7 @@ router.post('/api/measurment', authenticationChecker, premiumChecker, async (req
 
         data.userId = req.user.id;
 
-        let measurment = Measurment.create(data);
+        let measurment = await Measurment.create(data);
 
         if (measurment) {
 

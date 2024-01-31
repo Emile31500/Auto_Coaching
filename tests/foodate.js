@@ -5,7 +5,7 @@ const session = require('supertest-session');
 const { AteFood, Food, User } = require('../models');
 
 
-const AteFoodTest = describe('Food tests', () => {
+const AteFoodTest = describe('Ate food tests', () => {
 
     function getCurrentDateTime() {
         const now = new Date();
@@ -79,7 +79,7 @@ const AteFoodTest = describe('Food tests', () => {
 
     });
 
-    it(' 2 : Should return a 401 error page beacause user not auth', async () => {
+    it(' 2 : Should return a 401 error beacause user not auth', async () => {
 
         const currentDateTime = getCurrentDateTime();
 
@@ -102,15 +102,10 @@ const AteFoodTest = describe('Food tests', () => {
 
         const seqAteFood = await AteFood.findOne({where : raw});
 
-        const stringToParse = res.error.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
-        expect(seqAteFood).toEqual(null)
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/food/ate/');
         expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
 
 
     });
@@ -166,14 +161,9 @@ const AteFoodTest = describe('Food tests', () => {
             .get('/api/food/ate/' + currentDateTime + '/' + tomorowDateTime)
             .redirects(1);
 
-        const stringToParse = res.error.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
         expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
 
     });
 
@@ -192,8 +182,6 @@ const AteFoodTest = describe('Food tests', () => {
         expect(reqAuth.statusCode).toEqual(200);
 
         const user = await User.findOne({where : {email :  'emile00013+2@gmail.com'}});
-        const food = await Food.findOne()
-        const weight = Math.floor(Math.random() * 100) + 1;
 
         const res = await testSession
             .get('/api/food/ate/' + currentDateTime + '/' + tomorowDateTime)
