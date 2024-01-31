@@ -1,5 +1,5 @@
 const express = require('express');
-const { AteFood, User, Food, Sequelize } = require('../models');
+const { Food, Sequelize } = require('../models');
 var parserJson = require('../middlewares/parserJson');
 var authenticationChecker = require('../middlewares/authenticationChecker')
 const { Op } = require('sequelize');
@@ -69,33 +69,6 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
     
 });
 
-
-router.get('/api/food/eat/:start_date/:end_date', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
-
-    const dateStart = req.params.start_date;
-    const dateEnd = req.params.end_date;
-
-    let food = await AteFood.findAll({
-                                        where: {
-                                            userId: req.user.id,
-                                            createdAt: {
-                                                [Op.between]: [dateStart, dateEnd],
-                                                }
-                                        }
-                                    });
-
-    if (food){
-
-        res.statusCode = 200;
-        res.send({'code': res.statusCode, 'message': 'food elements successfully requested', 'data': food});
-
-    } else {
-
-        res.statusCode = 404
-        res.send({'code': res.statusCode, 'message' : 'Ate Food not found'});
-    } 
-    
-});
 
     router.post('/api/admin/food', parserJson, adminChecker, async (req, res, next) => {
 
@@ -179,24 +152,5 @@ router.patch('/api/admin/food/:id_food', parserJson, adminChecker, async (req, r
         }
     }
 });
-
-router.post('/api/food/eat', authenticationChecker, parserJson, async (req, res, next) => {
-
-    if (req.body && req.session.token){
-
-        req.body.userId = req.user.id;
-        ateFood = AteFood.create(req.body);
-        
-        res.statusCode = 201;
-        res.send(ateFood);
-
-    } else {
-
-        res.statusCode = 401;
-        res.send({"message" : "data required unprovided"});
-
-    }
-
-})
 
  module.exports = router

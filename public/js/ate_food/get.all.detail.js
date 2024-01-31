@@ -13,7 +13,7 @@ const dateEnd = year + "-" + month + "-" + 19 + ' 00:00:00';
 
 console.log(date + " à " + dateEnd)
 
-const url = '/api/food/eat/' + date + '/' + dateEnd
+const url = '/api/food/ate/' + date + '/' + dateEnd
 fetch(url, {
 
     method: 'GET',
