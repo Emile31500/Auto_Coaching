@@ -14,12 +14,12 @@ router.get('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, n
     if (exercise) {
 
         res.statusCode = 200;
-        res.send({'code' : res.statusCode, 'message': 'Exercises model successfully requested', 'data': exercise});
+        res.send({code : res.statusCode, message: 'Exercises model successfully requested', data: exercise});
 
     } else {
 
         res.statusCode = 404;
-        res.send({'code' : res.statusCode, 'message' : 'Exercises was not found   '});
+        res.send({code : res.statusCode, message : 'Exercises was not found'});
 
     }
     
@@ -35,12 +35,12 @@ router.post('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, 
     if (exercise) {
 
         res.statusCode = 201;
-        res.send({'code' : res.statusCode, 'message': 'Exercise instance successfully created', 'data': exercise});
+        res.send({code : res.statusCode, message: 'Exercise instance successfully created', data: exercise});
 
     } else {
 
         res.statusCode = 401;
-        res.send({'code' : res.statusCode, 'message' : 'Exercises was not found   '});
+        res.send({code : res.statusCode, message : 'Exercises was not found'});
 
     }
     
@@ -60,19 +60,19 @@ router.delete('/api/admin/exercise/:id_exercise', adminCheckerApi, parserJson, a
         if (!exerciseDel) {
     
             res.statusCode = 204;
-            res.send({'code' : res.statusCode, 'message': 'Exercise instance successfully delated'});
+            res.send({code : res.statusCode, message: 'Exercise instance successfully delated'});
     
         } else {
     
             res.statusCode = 500;
-            res.send({'code' : res.statusCode, 'message' : 'This exercise delation didn\'t works'});
+            res.send({code : res.statusCode, message : 'This exercise delation didn\'t works'});
     
         }
 
     } else {
 
         res.statusCode = 404;
-        res.send({'code' : res.statusCode, 'message' : 'This exercise was not found'});
+        res.send({code : res.statusCode, message : 'This exercise was not found'});
 
     }
 
