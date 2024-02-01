@@ -2,19 +2,13 @@ const request = require('supertest');
 const { JSDOM } = require('jsdom');
 const app = require('../app');
 const session = require('supertest-session');
-
+const { authUser } = require('./test.tools')
 
 const profileTest = describe('Profile test', () => {
 
   it('Should return a login page', async () => {
 
-    const testSession = session(app)
-    const authReq = await testSession
-      .post('/login')
-      .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
-      .redirects(1);
-
-    expect(authReq.statusCode).toBe(200)
+    const testSession = await authUser();
     
     const res = await testSession
       .get('/profile')
