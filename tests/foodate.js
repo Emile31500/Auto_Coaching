@@ -3,39 +3,14 @@ const { JSDOM } = require('jsdom')
 const app = require('../app')
 const session = require('supertest-session');
 const { AteFood, Food, User } = require('../models');
-
+const { getDate, randomInt } = require('./test.tools.js');
 
 const AteFoodTest = describe('Ate food tests', () => {
-
-    function getCurrentDateTime() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-
-    function getTomorowDateTime() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()+1).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-    
     
 
     it(' 0 : Should return a 401 error page because not auth', async () => {
 
-        const currentDateTime = getCurrentDateTime();
+        const currentDateTime = getDate();
         const testSession = session(app)
         const res = await testSession
             .get('/food/ate/' + currentDateTime)
@@ -54,7 +29,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 1 : Should return the ate food page', async () => {
 
-        const currentDateTime = getCurrentDateTime();
+        const currentDateTime = getDate();
         const testSession = session(app)
 
         const reqAuth = await testSession
@@ -81,12 +56,12 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 2 : Should return a 401 error beacause user not auth', async () => {
 
-        const currentDateTime = getCurrentDateTime();
+        const currentDateTime = getDate();
 
         const testSession = session(app)
 
         const food = await Food.findOne()
-        const weight = Math.floor(Math.random() * 100) + 1;
+        const weight = randomInt()
 
         const raw = {
             foodId : food.id,
@@ -100,8 +75,6 @@ const AteFoodTest = describe('Ate food tests', () => {
             .send(raw)
             .redirects(1);
 
-        const seqAteFood = await AteFood.findOne({where : raw});
-
         expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
         expect(res.req.path).toEqual('/api/food/ate/');
         expect(res.statusCode).toEqual(401);
@@ -112,7 +85,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 3 : Should create a new ate food', async () => {
 
-        const currentDateTime = getCurrentDateTime();
+        const currentDateTime = getDate();
 
         const testSession = session(app)
 
@@ -125,7 +98,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
         const user = await User.findOne({where : {email : 'emile00013+2@gmail.com'}});
         const food = await Food.findOne();
-        const weight = Math.floor(Math.random() * 100) + 1;
+        const weight = randomInt()
 
         const raw = {
             foodId : food.id,
@@ -153,8 +126,8 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 4 : Should return a 401 error page because not auth', async () => {
 
-        const currentDateTime = getCurrentDateTime();
-        const tomorowDateTime = getCurrentDateTime();
+        const currentDateTime = getDate();
+        const tomorowDateTime = getDate(1);
 
         const testSession = session(app)
         const res = await testSession
@@ -169,8 +142,8 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 5 : Should get a list of ate food', async () => {
 
-        const currentDateTime = getCurrentDateTime();
-        const tomorowDateTime = getTomorowDateTime();
+        const currentDateTime = getDate();
+        const tomorowDateTime = getDate(1);
 
         const testSession = session(app)
 
