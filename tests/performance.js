@@ -1,27 +1,16 @@
 const app = require('../app')
 const session = require('supertest-session');
 const { Performance } = require('../models');
+const { randomInt, getDate } = require('./test.tools')
 
 const PerformanceTest = describe('Performance tests', () => {
 
-    function getCurrentDateTime() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-
     const raw = {
-        squat : Math.floor(Math.random() * 100) + 1,
-        bench : Math.floor(Math.random() * 100) + 1,
-        deadlift : Math.floor(Math.random() * 100) + 1,
-        createdAt : getCurrentDateTime(),
-        updatedAt : getCurrentDateTime()
+        squat : randomInt(),
+        bench : randomInt(),
+        deadlift : randomInt(),
+        createdAt : getDate(),
+        updatedAt : getDate()
 
     }
 
@@ -31,8 +20,6 @@ const PerformanceTest = describe('Performance tests', () => {
         const res = await testSession
             .get('/api/performance/')
             .redirects(1);
-
-        res._body.data
 
         expect(res.req.path).toEqual('/api/performance/')
         expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");

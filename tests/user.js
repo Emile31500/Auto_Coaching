@@ -5,16 +5,7 @@ const { User } = require('../models')
 const express = require('express');
 const app = require('../app')
 const session = require('supertest-session');
-
-function generateRandomString(length) {
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-}
-
+const { generateRandomString } = require('./test.tools')
 
 const userTest = describe('User tests', () => {
 

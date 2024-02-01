@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router()
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi');
-const { User, Measurment } = require('../models');
+const { Measurment } = require('../models');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
@@ -11,13 +11,13 @@ router.get('/api/measurment', authenticationCheckerApi, premiumChecker, async (r
 
     if (measurments) {
 
-        res.code = 200;
-        res.send({"code":200, "message":"Measurments requêtées", "data": measurments});
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message : "Measurments requêtées", data: measurments});
     
     } else {
 
-        res.code = 404;
-        res.send({'code': 404, 'message': 'Aucune Measurment trouvée'});   
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message: 'Aucune Measurment trouvée'});   
 
     }
 
@@ -32,18 +32,18 @@ router.post('/api/measurment', authenticationCheckerApi, premiumChecker, async (
 
         data.userId = req.user.id;
 
-        let measurment = await Measurment.create(data);
+        const measurment = await Measurment.create(data);
 
         if (measurment) {
 
-            res.code = 201
-            res.send({"code" : 201, "message": "Les Measurments ont bien étées ajoutées.", "data": measurment});
+            res.statusCode = 201
+            res.send({code : res.statusCode, message :  "Les Measurments ont bien étées ajoutées.", data: measurment});
 
 
         } else {
 
-            res.code = 400
-            res.send({"code" : 400, "message": "L'utilisateur n'a pas put être créé."});
+            res.statusCode = 400
+            res.send({code : res.statusCode, message :  "L'utilisateur n'a pas put être créé."});
 
         }
 
