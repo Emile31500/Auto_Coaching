@@ -1,7 +1,7 @@
 const app = require('../app')
 const session = require('supertest-session');
 const { Performance } = require('../models');
-const { randomInt, getDate } = require('./test.tools')
+const { randomInt, getDate, authUser } = require('./test.tools')
 
 const PerformanceTest = describe('Performance tests', () => {
 
@@ -30,14 +30,7 @@ const PerformanceTest = describe('Performance tests', () => {
 
     it(' 1 : Should return a performance list', async () => {
 
-        const testSession = session(app)
-
-        const authReq = await testSession
-            .post('/login')
-            .send({email : "emile00013+2@gmail.com", password: "P4$$w0rd"})
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authUser();
 
         const res = await testSession
             .get('/api/performance/')
@@ -76,14 +69,7 @@ const PerformanceTest = describe('Performance tests', () => {
 
     it(' 3 : Should return a performance list', async () => {
 
-        const testSession = session(app)
-
-        const authReq = await testSession
-            .post('/login')
-            .send({email : "emile00013+2@gmail.com", password: "P4$$w0rd"})
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authUser();
 
         const res = await testSession
             .post('/api/performance/')

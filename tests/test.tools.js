@@ -50,7 +50,7 @@ async function authUser() {
 async function authAdmin() {
 
     const rawData = {
-        email : 'emile00013+2@gmail.com',
+        email : 'admin@auto-coaching.fr',
         password : 'P4$$w0rd'
     }
 

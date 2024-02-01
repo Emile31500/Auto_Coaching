@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app')
 const session = require('supertest-session');
 const { Food } = require('../models');
-const { generateRandomString, authUser } = require('./test.tools')
+const { generateRandomString, authUser, authAdmin } = require('./test.tools')
 
 const foodTest = describe('Food tests', () => {
 
@@ -42,18 +42,7 @@ const foodTest = describe('Food tests', () => {
     it(' 1 : Should return a home page because auth as user ', async () => {
 
 
-        const testSession = session(app)
-        const authenticationRawData = {
-            email: 'emile00013+2@gmail.com',
-            password: 'P4$$w0rd'
-        }
-
-        const authReq = await testSession
-            .post('/login')
-            .send(authenticationRawData)
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authUser();
 
         const res = await testSession
             .post('/api/admin/food')
@@ -73,18 +62,7 @@ const foodTest = describe('Food tests', () => {
     it(' 2 : Should create an instance of food', async () => {
 
 
-        const testSession = session(app)
-        const authenticationRawData = {
-            email: 'admin@auto-coaching.fr',
-            password: 'P4$$w0rd'
-        }
-
-        const authReq = await testSession
-            .post('/login')
-            .send(authenticationRawData)
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authAdmin();
 
         const res = await testSession
             .post('/api/admin/food')
@@ -145,18 +123,7 @@ const foodTest = describe('Food tests', () => {
     it(' 4 : Should return the home page', async () => {
 
 
-        const testSession = session(app)
-        const authenticationRawData = {
-            email: 'emile00013+2@gmail.com',
-            password: 'P4$$w0rd'
-        }
-
-        const authReq = await testSession
-            .post('/login')
-            .send(authenticationRawData)
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authUser();
 
         const foods = await Food.findAll({limits: 1});
         const foodSeq = foods[0];
@@ -178,19 +145,7 @@ const foodTest = describe('Food tests', () => {
 
     it(' 5 : Should update this food', async () => {
 
-
-        const testSession = session(app)
-        const authenticationRawData = {
-            email: 'admin@auto-coaching.fr',
-            password: 'P4$$w0rd'
-        }
-
-        const authReq = await testSession
-            .post('/login')
-            .send(authenticationRawData)
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authAdmin()
 
         const foods = await Food.findAll({limits: 1});
         const foodSeq = foods[0];
@@ -230,14 +185,7 @@ const foodTest = describe('Food tests', () => {
 
     it(" 7 : Sould not allow deletion of this food and redirect to home page", async () => {
 
-        const testSession = session(app)
-
-        const authReq = await testSession
-            .post('/login')
-            .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authUser();
 
         const food = await Food.findOne({where : rawData});
         
@@ -258,14 +206,8 @@ const foodTest = describe('Food tests', () => {
 
     it(" 8 :Sould delete this food", async () => {
 
-        const testSession = session(app)
+        const testSession = await authAdmin();
 
-        const authReq = await testSession
-            .post('/login')
-            .send({email: 'admin@auto-coaching.fr', password: 'P4$$w0rd'})
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
         const food = await Food.findOne({where : rawData});
         
         const res = await testSession
@@ -282,14 +224,7 @@ const foodTest = describe('Food tests', () => {
 
     it(" 9 : Should return a food instance", async () => {
 
-        const testSession = session(app)
-
-        const authReq = await testSession
-            .post('/login')
-            .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
-            .redirects(1);
-
-        expect(authReq.statusCode).toEqual(200);
+        const testSession = await authUser()
 
         const foods = await Food.findAll({limit: 1});
         const foodSeq = foods[0]; 

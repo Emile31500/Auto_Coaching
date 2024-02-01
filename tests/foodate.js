@@ -3,7 +3,7 @@ const { JSDOM } = require('jsdom')
 const app = require('../app')
 const session = require('supertest-session');
 const { AteFood, Food, User } = require('../models');
-const { getDate, randomInt } = require('./test.tools.js');
+const { getDate, randomInt, authUser } = require('./test.tools.js');
 
 const AteFoodTest = describe('Ate food tests', () => {
     
@@ -30,14 +30,7 @@ const AteFoodTest = describe('Ate food tests', () => {
     it(' 1 : Should return the ate food page', async () => {
 
         const currentDateTime = getDate();
-        const testSession = session(app)
-
-        const reqAuth = await testSession
-            .post('/login')
-            .send({email : 'emile00013+2@gmail.com', password : 'P4$$w0rd'})
-            .redirects(1);
-
-        expect(reqAuth.statusCode).toEqual(200);
+        const testSession = await authUser()
 
         const res = await testSession
             .get('/food/ate/' + currentDateTime)
@@ -87,14 +80,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
         const currentDateTime = getDate();
 
-        const testSession = session(app)
-
-        const reqAuth = await testSession
-            .post('/login')
-            .send({email : 'emile00013+2@gmail.com', password : 'P4$$w0rd'})
-            .redirects(1);
-
-        expect(reqAuth.statusCode).toEqual(200);
+        const testSession = await authUser()
 
         const user = await User.findOne({where : {email : 'emile00013+2@gmail.com'}});
         const food = await Food.findOne();
@@ -145,14 +131,7 @@ const AteFoodTest = describe('Ate food tests', () => {
         const currentDateTime = getDate();
         const tomorowDateTime = getDate(1);
 
-        const testSession = session(app)
-
-        const reqAuth = await testSession
-            .post('/login')
-            .send({email : 'emile00013+2@gmail.com', password : 'P4$$w0rd'})
-            .redirects(1);
-
-        expect(reqAuth.statusCode).toEqual(200);
+        const testSession = await authUser()
 
         const user = await User.findOne({where : {email :  'emile00013+2@gmail.com'}});
 
