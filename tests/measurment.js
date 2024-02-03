@@ -1,7 +1,7 @@
 const { Measurment, User } = require('../models')
 const app = require('../app')
 const session = require('supertest-session');
-const { getDate, randomInt, authUser } = require('./test.tools')
+const { randomInt, authUser } = require('./test.tools')
 
 const MeasurmentTest = describe('Measurments tests', () => {
 

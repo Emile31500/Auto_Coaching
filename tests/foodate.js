@@ -1,4 +1,3 @@
-const request = require('supertest');
 const { JSDOM } = require('jsdom')
 const app = require('../app')
 const session = require('supertest-session');

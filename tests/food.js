@@ -1,4 +1,3 @@
-const request = require('supertest');
 const app = require('../app')
 const session = require('supertest-session');
 const { Food } = require('../models');
