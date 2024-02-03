@@ -1,8 +1,6 @@
-const request = require('supertest');
-const { JSDOM } = require('jsdom')
 const app = require('../app')
 const session = require('supertest-session');
-const { Exercise, User } = require('../models');
+const { Exercise } = require('../models');
 const { generateRandomString, authUser, authAdmin } = require('./test.tools');
 
 
@@ -70,124 +68,124 @@ const ExerciseTest = describe('Exercises tests', () => {
     });
 
 
-    // it(' 3 : Should return a 401 error because admin not auth', async () => {
+    it(' 3 : Should return a 401 error because admin not auth', async () => {
 
-    //     const testSession = session(app);
+        const testSession = session(app);
 
-    //     const res = await testSession
-    //         .get('/api/admin/exercise')
-    //         .redirects(1);
+        const res = await testSession
+            .get('/api/admin/exercise')
+            .redirects(1);
             
-    //     expect(res._body.data).toBeUndefined();
-    //     expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
-    //     expect(res.req.path).toEqual('/api/admin/exercise');
-    //     expect(res.statusCode).toEqual(401);
-    //     expect(res._body.code).toEqual(401);
+        expect(res._body.data).toBeUndefined();
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/exercise');
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
     
 
-    // });
+    });
 
-    // it(' 4 : Should return a 401 error because auth as user', async () => {
+    it(' 4 : Should return a 401 error because auth as user', async () => {
 
-    //     const testSession = await authUser();
+        const testSession = await authUser();
 
-    //     const res = await testSession
-    //         .get('/api/admin/exercise')
-    //         .redirects(1);
+        const res = await testSession
+            .get('/api/admin/exercise')
+            .redirects(1);
             
-    //     expect(res._body.data).toBeUndefined();
-    //     expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
-    //     expect(res.req.path).toEqual('/api/admin/exercise');
-    //     expect(res.statusCode).toEqual(401);
-    //     expect(res._body.code).toEqual(401);
+        expect(res._body.data).toBeUndefined();
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual('/api/admin/exercise');
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
     
 
-    // });
+    });
 
-    // it(' 5 : Should list all exercises', async () => {
+    it(' 5 : Should list all exercises', async () => {
 
-    //     const testSession = await authAdmin()
+        const testSession = await authAdmin()
 
-    //     const res = await testSession
-    //         .get('/api/admin/exercise')
-    //         .redirects(1);
+        const res = await testSession
+            .get('/api/admin/exercise')
+            .redirects(1);
 
-    //     expect(res.req.path).toEqual('/api/admin/exercise');
-    //     expect(res.statusCode).toEqual(200);
-    //     expect(res._body.code).toEqual(200);
+        expect(res.req.path).toEqual('/api/admin/exercise');
+        expect(res.statusCode).toEqual(200);
+        expect(res._body.code).toEqual(200);
 
-    //     res._body.data.forEach(async (apiExercise) => {
+        res._body.data.forEach(async (apiExercise) => {
 
-    //         let seqExercise = await Exercise.findOne({where : {id : apiExercise.id}});
-    //         expect(apiExercise.id).toEqual(seqExercise.id);
+            let seqExercise = await Exercise.findOne({where : {id : apiExercise.id}});
+            expect(apiExercise.id).toEqual(seqExercise.id);
 
-    //     });
-    // });
+        });
+    });
 
-    // it(' 6 : Should return a 401 error because admin not auth', async () => {
+    it(' 6 : Should return a 401 error because admin not auth', async () => {
 
-    //     const testSession = session(app);
+        const testSession = session(app);
 
-    //     const exercise = await Exercise.findOne();
-    //     const url = '/api/admin/exercise/' + exercise.id;
+        const exercise = await Exercise.findOne();
+        const url = '/api/admin/exercise/' + exercise.id;
 
-    //     const res = await testSession
-    //         .delete(url)
-    //         .redirects(1);
+        const res = await testSession
+            .delete(url)
+            .redirects(1);
         
-    //     const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
+        const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
 
-    //     expect(seqExercise).toEqual(exercise);
-    //     expect(res._body.data).toBeUndefined();
-    //     expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
-    //     expect(res.req.path).toEqual(url);
-    //     expect(res.statusCode).toEqual(401);
-    //     expect(res._body.code).toEqual(401);
+        expect(seqExercise).toEqual(exercise);
+        expect(res._body.data).toBeUndefined();
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual(url);
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
     
 
-    // });
+    });
 
-    // it(' 7 : Should return a 401 error because auth as user', async () => {
+    it(' 7 : Should return a 401 error because auth as user', async () => {
 
-    //     const testSession = await authUser()
+        const testSession = await authUser()
         
-    //     const exercise = await Exercise.findOne();
-    //     const url = '/api/admin/exercise/' + exercise.id;
+        const exercise = await Exercise.findOne();
+        const url = '/api/admin/exercise/' + exercise.id;
 
-    //     const res = await testSession
-    //         .delete(url)
-    //         .redirects(1);
+        const res = await testSession
+            .delete(url)
+            .redirects(1);
 
-    //     const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
+        const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
 
-    //     expect(seqExercise).toEqual(exercise);
-    //     expect(res._body.data).toBeUndefined();
-    //     expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
-    //     expect(res.req.path).toEqual(url);
-    //     expect(res.statusCode).toEqual(401);
-    //     expect(res._body.code).toEqual(401);
+        expect(seqExercise).toEqual(exercise);
+        expect(res._body.data).toBeUndefined();
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res.req.path).toEqual(url);
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
     
 
-    // });
+    });
 
-    // it(' 8 : Should list all exercises', async () => {
+    it(' 8 : Should list all exercises', async () => {
 
-    //     const testSession = await authAdmin()
+        const testSession = await authAdmin()
 
-    //     const exercise = await Exercise.findOne();
-    //     const url = '/api/admin/exercise/' + exercise.id;
+        const exercise = await Exercise.findOne();
+        const url = '/api/admin/exercise/' + exercise.id;
     
-    //     const res = await testSession
-    //         .delete(url)
-    //         .redirects(1);
+        const res = await testSession
+            .delete(url)
+            .redirects(1);
 
-    //     const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
+        const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
 
-    //     expect(seqExercise).toBeNull();
-    //     expect(res.req.path).toEqual(url);
-    //     expect(res.statusCode).toEqual(204);
+        expect(seqExercise).toBeNull();
+        expect(res.req.path).toEqual(url);
+        expect(res.statusCode).toEqual(204);
 
-    // });
+    });
 
 
 });

@@ -1,5 +1,6 @@
 const app = require('../app')
 const session = require('supertest-session');
+const { User } = require('../models');
 
 
 function generateRandomString(length) {
@@ -30,12 +31,7 @@ function randomInt( max = 100) {
 
 }
 
-async function authUser() {
-
-    const rawData = {
-        email : 'emile00013+2@gmail.com',
-        password : 'P4$$w0rd'
-    }
+async function auth(rawData) {
 
     const testSession = session(app);
 
@@ -45,29 +41,49 @@ async function authUser() {
         .redirects(1)
 
     return testSession;
+}
+
+async function authUser() {
+
+    return auth({
+        email : 'emile00013+2@gmail.com',
+        password : 'P4$$w0rd'
+    });
 }
 
 async function authAdmin() {
 
-    const rawData = {
+    return auth({
         email : 'admin@auto-coaching.fr',
         password : 'P4$$w0rd'
+    });
+}
+
+async function createRandomUser() {
+
+    const rawData = {
+        username : 'User ' + generateRandomString(5),
+        email : generateRandomString(5) + '@' + generateRandomString(5) + '.' + generateRandomString(2),
+        password : generateRandomString(20)
     }
 
-    const testSession = session(app);
+    const sessionTest = session(app)
 
-    const res = await testSession
-        .post('/login')
+    const res = await sessionTest
+        .post('/sign')
         .send(rawData)
         .redirects(1)
+    
+    return rawData
 
-    return testSession;
 }
 
 module.exports = {
-    authUser,
+    auth,
     authAdmin,
+    authUser,
+    createRandomUser,
     generateRandomString,
+    getDate,
     randomInt,
-    getDate
 };

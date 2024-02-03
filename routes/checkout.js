@@ -4,12 +4,9 @@ const authenticationChecker = require('../middlewares/authenticationChecker');
 const parserJson = require('../middlewares/parserJson');
 const url = require('url');
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
-const http = require('http');
-const { User }= require('../models');
 
 router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
 
-    const authToken = req.session.token;
     const parsedUrl = url.parse(req.url, true);
     let error_message;
 
