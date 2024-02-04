@@ -1,5 +1,5 @@
 const express = require('express');
-const {ExerciseTrain, TrainRequest, PassedSport, Train, User, PassedInjury} = require('../models/');
+const { Exercise, ExerciseTrain, TrainRequest, PassedSport, Train, PassedInjury} = require('../models/');
 const router = express.Router();
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
@@ -13,6 +13,47 @@ router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
     res.render('../views/train',  {layout: '../views/main' });
 
+})
+
+router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req, res) => {
+
+    const userId = req.user.id; 
+    const trainId = req.params.id_train
+
+    const train = await Train.findOne({where : {
+            id : trainId,
+            isFinished : true,  
+            userId : userId
+        }, 
+        orderBy : [['day', 'ASC']]
+    });
+
+
+    const exerciseTrain = await ExerciseTrain.findAll({where : {
+            trainId : trainId
+        }
+    });
+
+    if (train && exerciseTrain) {
+
+        let jsonRes = train;
+        
+        jsonRes.exerciseTrain = exerciseTrain;
+        
+        for (let i = 0; i <jsonRes.exerciseTrain.length; i++) {
+
+            jsonRes.exerciseTrain[i].exercise = await Exercise.findOne({where : {id : jsonRes.exerciseTrain[i].exerciseId}});
+
+        }
+
+        res.render('../views/train-detail',  {layout: '../views/main', train : jsonRes });
+
+    } else {
+
+        res.statusCode = 404
+        res.render('../views/error/error', {layout: '../views/main', code : res.statusCode, message : 'L\'élément que vous recherchez n\'existe pas.'})
+
+    }
 })
 
 router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, res) => {
