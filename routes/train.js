@@ -56,6 +56,26 @@ router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req
     }
 })
 
+router.get('/train/:id_train/play/:day', authenticationChecker, premiumChecker, async (req, res) => {
+
+    const userId = req.user.id; 
+    const trainId = req.params.id_train
+    const day = req.params.day;
+
+    const train = await Train.findOne({where : {id : trainId, userId : userId}});
+
+    if (train) {
+
+        res.render('../views/train-detail-play',  {layout: '../views/main', day : day, train : train });
+
+    } else {
+
+        res.statusCode = 404
+        res.render('../views/error/error', {layout: '../views/main', code : res.statusCode, message : 'L\'élément que vous recherchez n\'existe pas.'})
+
+    }
+})
+
 router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     const userId = req.user.id; 
