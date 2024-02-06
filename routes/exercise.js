@@ -1,11 +1,31 @@
 const express = require('express');
 const { Exercise } = require('../models');
 var parserJson = require('../middlewares/parserJson');
-var authenticationChecker = require('../middlewares/authenticationChecker')
+var authenticationCheckerApi = require('../middlewares/authenticationChecker')
 var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
+
+router.get('/api/exercise/:id_exercise', authenticationCheckerApi, premiumChecker, parserJson, async(req, res, next) => {
+
+    const idEx = req.params.id_exercise;
+    const exercise = await Exercise.findOne({ where : {id : idEx}});
+
+    if (exercise) {
+
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message: 'Exercise  successfully requested', data: exercise});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message : 'Exercises was not found'});
+
+    }
+    
+
+});
 
 router.get('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, next) => {
 
