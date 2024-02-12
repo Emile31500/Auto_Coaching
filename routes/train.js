@@ -8,7 +8,6 @@ var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
-
 router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
     res.render('../views/train',  {layout: '../views/main' });
@@ -72,6 +71,28 @@ router.get('/train/:id_train/play/:day', authenticationChecker, premiumChecker, 
 
         res.statusCode = 404
         res.render('../views/error/error', {layout: '../views/main', code : res.statusCode, message : 'L\'élément que vous recherchez n\'existe pas.'})
+
+    }
+})
+
+router.get('/api/train/:id_train/exercise/:day', authenticationCheckerApi, premiumChecker, async (req, res) => {
+
+    const userId = req.user.id; 
+    const trainId = req.params.id_train
+    const day = req.params.day;
+
+    const train = await Train.findOne({where : {id : trainId, userId : userId}});
+    const exerciseTrain = await ExerciseTrain.findAll({where : {trainId : trainId, day : day}});
+
+    if (exerciseTrain && train) {
+
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message : 'All exercise of this train have been found', data : exerciseTrain})
+
+    } else {
+
+        res.statusCode = 404
+        res.send({code : res.statusCode, message : 'No exercise found for this train'})
 
     }
 })
