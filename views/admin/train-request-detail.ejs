@@ -267,18 +267,19 @@
 </script>
 <script>
 
-    let nameUserEl = document.querySelector('#nameUserEl');
+    /*let nameUserEl = document.querySelector('#nameUserEl');
     let ageUserEl = document.querySelector('#ageUserEl');
     let metabolismUserEl = document.querySelector('#metabolismUserEl');
     let objectifUserEl = document.querySelector('#objectifUserEl');
     let descriptionUserEl = document.querySelector('#descriptionUserEl');
     let emailUserEl = document.querySelector('#emailUserEl');
     let passedSportsEl = document.querySelector('#passedSportsEl');
-    let passedInjuriesEl = document.querySelector('#passedInjuriesEl');
+    let passedInjuriesEl = document.querySelector('#passedInjuriesEl');*/
 
-    let idRequest = document.querySelector('#idRequest').innerHTML; 
+    //let idRequest = document.querySelector('#idRequest').innerHTML; 
+    let idRequest = idRequest.innerHTML; 
     let userId; 
-    document.querySelector('#idRequest').remove();   
+    idRequest.remove();   
 
     const fetchTrainRequestUrl = '/api/admin/train/request/'+ idRequest
     fetch(fetchTrainRequestUrl, {
@@ -418,13 +419,13 @@
     });
 
     let addExerciseForThisDays = document.querySelectorAll('.addExerciseForThisDay')
-    let addExerciseZone = document.querySelector('#addExerciseZone')
+    /*let addExerciseZone = document.querySelector('#addExerciseZone')
     let addExerciseForm = document.querySelector('#addExerciseForm')
     let exerciceListEl = document.querySelector('#exerciceListEl');
     let sets = document.querySelector('#sets');
     let reps = document.querySelector('#reps');
     let repsMode = document.querySelector('#repsMode');
-    let dayEl = document.querySelector('#dayEl');
+    let dayEl = document.querySelector('#dayEl');*/
 
     addExerciseForThisDays.forEach(addExerciseForThisDay => {
 
@@ -483,8 +484,8 @@
 </script>
 <script>
 
-    let btnEnregistrer = document.querySelector('#btnEnregistrer');
-    let nameTrainEl = document.querySelector('#nameTrainEl')
+    /*let btnEnregistrer = document.querySelector('#btnEnregistrer');
+    let nameTrainEl = document.querySelector('#nameTrainEl')*/
 
     btnEnregistrer.addEventListener('click', function (event){
 
@@ -514,12 +515,17 @@
 
             if (data.code === 201){
 
+                // document.querySelector('#savingResult').innerHTML = 'Votre entraînement a bien été enregistré.<br>Appuyer sur Envoyer pour le transmettre à lutilisateur.'
                 document.querySelector('#savingResult').innerHTML = 'Votre entraînement a bien été enregistré.<br>Appuyer sur Envoyer pour le transmettre à lutilisateur.'
+
 
             } else {
 
-                document.querySelector('#savingErrorCode').innerHTML = 'Erreur : ' + data.code;
-                document.querySelector('#savingResult').innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+                // document.querySelector('#savingErrorCode').innerHTML = 'Erreur : ' + data.code;
+                // document.querySelector('#savingResult').innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+                savingErrorCode.innerHTML = 'Erreur : ' + data.code;
+                savingResult.innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+
 
             }
  
@@ -591,12 +597,17 @@
 
                 if (data.code === 201){
 
+                    // document.querySelector('#sendingResult').innerHTML = 'Votre entraînement a bien été envoyer.<br>.'
                     document.querySelector('#sendingResult').innerHTML = 'Votre entraînement a bien été envoyer.<br>.'
+
 
                 } else {
 
-                    document.querySelector('#sendingErrorCode').innerHTML = 'Erreur : ' + data.code;
-                    document.querySelector('#sendingResult').innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+                    // document.querySelector('#sendingErrorCode').innerHTML = 'Erreur : ' + data.code;
+                    // document.querySelector('#sendingResult').innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+                    sendingErrorCode.innerHTML = 'Erreur : ' + data.code;
+                    sendingResult.innerHTML = 'Il y a eu une erreur lors de l\'enregistrement de l\'entraînement';
+
 
                 }
     
@@ -604,6 +615,8 @@
         });
     });
 
-    document.querySelector('#envoyer').addEventListener('click', (event) => {event.preventDefault()});
+    // document.querySelector('#envoyer').addEventListener('click', (event) => {event.preventDefault()});
+    envoyer.addEventListener('click', (event) => {event.preventDefault()});
+
 </script>
 <%- contentFor('main') %>

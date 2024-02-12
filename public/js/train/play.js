@@ -1,43 +1,68 @@
-const previous = document.querySelector('#previous');
-const next = document.querySelector('#next');
-const play = document.querySelector('#play');
 let indexEx = 0;
-let indexSets = 0;
 let previousIndexEx = 0;
 let isPlayed = false;
-let fullTrain
 let temps = 5
-let interval;
-let timeout;
 let i = 0;
+let isPaused = false;
+let isStoped = false;
+let isTrainDone = false;
+let timerActivated = false;
+let startTimeout = 0;
+let interval, timeout;
+let fullTrain = [];
 
 play.addEventListener('click', async function(event){
 
-    if (!isPlayed) {
+    isPaused = false;
+    if (!isTrainDone){
 
-        fullTrain = await parseTrain();
-        isPlayed = true
-        indexEx = 0;
-        indexSets = 0;
+        if (!isPlayed) {
 
+            indexEx = 0;
+            fullTrain = await parseTrain();
+            isPlayed = true;
+    
+        }
+
+        printExercises()
     }
-   
-    printThisExercise();
-   
 });
 
 next.addEventListener('click', async function(event){
 
     event.preventDefault();
-    // debugger;
-    nextSets(printThisExercise);
-        
+
+
+    if (!timerActivated && !isTrainDone) {
+
+        nextSets();
+
+    }  else if (timerActivated) {
+
+        isStoped = true;
+        timerActivated = false;
+        isPaused = false;
+        previousIndexEx = indexEx;
+        nextSets();
+   
+    }
 });
 
-previous.addEventListener('click', function(event){
+previous.addEventListener('click', async function(event){
 
+    isPaused = false;
     event.preventDefault();
     previousSets();
+
+})
+
+pause.addEventListener('click', function (event){
+
+    event.preventDefault();
+    isPaused = true;
+    startTimeout = parseInt(secondTimer.innerHTML);
+    pause.classList.add('d-none');
+    play.classList.remove('d-none');
 
 })
 
@@ -51,80 +76,129 @@ function diminuerTemps() {
 
 }
 
-function delayedLoop(i=0, temps, callback) {
+function delayedLoop(i, temps, callback) {
 
-    // debugger;    
-    if (i < temps) {
-        
-        setTimeout(() => {
+    if (i <= temps) {
 
-            console.log(i)
-            delayedLoop(i + 1, temps, callback);
-        
-        }, 1000);
+        if (!isPaused){
+
+            if (!isStoped){
+
+                timerActivated = true;            
+                setTimeout(() => {
+
+                        i++
+                        delayedLoop(i, temps, callback);
+                
+                }, 1000);
+
+                secondTimer.innerHTML = i    
+                play.classList.add('d-none')
+                pause.classList.remove('d-none')
+
+            } else {
+
+                i = 0;
+                isStoped = false;
+                secondTimer.innerHTML = '';
+                return false;
+            }
+
+        } else {
+
+            return false;
+        }
 
     } else {
 
+        startTimeout = 0;
+        
         if (callback !== undefined) {
 
+            timerActivated = false
             callback();
 
         }
     }
 }
 
+function nextSets() {
 
+    indexEx++;
+    startTimeout = 0;
+    printExercises();
 
-function nextSets(nextSetsCallback) {
-
-    // debugger;
-    temps = fullTrain[indexEx].restTime;
-    temps = 5;
-
-    delayedLoop(0, temps, () => {
-        
-        indexSets++;
-        previousIndexEx = indexEx;
-
-        if (fullTrain[indexEx].sets <= indexSets) {
-
-            indexEx++;
-            indexSets = 0;
-
-        }
-
-        nextSetsCallback();
-    
-    });    
 }
 
 function previousSets () {
 
-    indexSets-=1;
-    if (indexSets < 0) {
-        
-        if (indexEx > 0) {
-            
-            indexEx -= 1;
-            indexSets = fullTrain[indexEx].sets-1;
-        
-        }
-    }
+    indexEx = indexEx-1;
+    isStoped = true;
+    startTimeout = 0;
+    printExercises();
 
-    printThisExercise();
-    
 }
 
-function printThisExercise(){
 
-    console.log(fullTrain[indexEx].exercise.name);
-    
-    if (fullTrain[indexEx].repsMode === 'scd') {
+function printExercises() {
 
-        temps = fullTrain[indexEx].reps
-        diminuerTemps();
-        nextSets(printThisExercise);
+    play.classList.add('d-none')
+    pause.classList.remove('d-none')
+    secondTimer.innerHTML = '';
+
+    console.log(indexEx)
+
+    if (fullTrain[indexEx] !== undefined){
+
+        currentExercise.innerHTML = fullTrain[indexEx].exercise.name + ' n° ' + (fullTrain[indexEx].sets +1);
+
+        if (fullTrain[indexEx].exercise.name !== 'Rest') {
+
+            printPreviousExercise();
+            printNextExercise();
+
+        }
+        
+        if (fullTrain[indexEx].repsMode === 'scd') {
+
+            isStoped = false;
+            temps = fullTrain[indexEx].reps
+            console.log('1')
+            delayedLoop(startTimeout, temps, nextSets)
+
+        }
+
+    } else {
+
+        isTrainDone = true;
+        currentExercise.innerHTML = 'Done !'
 
     }
 
+}
+
+function printNextExercise(){
+
+    if (fullTrain[indexEx+2] !== undefined){
+
+        nextExercise.innerHTML = fullTrain[indexEx+2].exercise.name + ' n° ' + (fullTrain[indexEx+2].sets+1);
+    
+    } else {
+
+        nextExercise.innerHTML = 'Done !';
+
+    }
+}
+
+function printPreviousExercise(){
+
+    if (indexEx <= 1) {
+
+         previousExercise.innerHTML = '';
+
+    } else {
+
+        nextExercise.innerHTML = fullTrain[indexEx-1].exercise.name + ' n° ' + (fullTrain[indexEx-1].sets + 1);
+        
+    }
 }
