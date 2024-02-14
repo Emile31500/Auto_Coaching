@@ -69,7 +69,7 @@
           <% for(var i=0; i<food.length; i++) {%>
             <tr>
               <th scope="row"><%= food[i].name %></th>
-              <td> <%=  parseFloat(food[i].carbohydrate *4+ food[i].proteine *4 + food[i].fat*9).toFixed(1)  %> kcal </td>
+              <td> <%=  parseFloat(food[i].carbohydrate *4.063+ food[i].proteine *4.063 + food[i].fat*9.08222).toFixed(1)  %> kcal </td>
               <td> <%= food[i].carbohydrate %> g </td>
               <td> <%= food[i].proteine %> g </td>
               <td> <%= food[i].fat %> g </td>
