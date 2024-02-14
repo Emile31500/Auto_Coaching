@@ -29,7 +29,9 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     authToken:  DataTypes.STRING,
     salt: DataTypes.STRING,
-    role: DataTypes.JSON
+    role: DataTypes.JSON,
+    sex: DataTypes.BOOLEAN
+
   }, {
     sequelize,
     modelName: 'User',

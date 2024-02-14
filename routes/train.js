@@ -1,5 +1,5 @@
 const express = require('express');
-const { Exercise, ExerciseTrain, TrainRequest, PassedSport, Train, PassedInjury} = require('../models/');
+const { Exercise, ExerciseTrain, TrainRequest, PassedSport, Train, PassedInjury, NutritionRequirement} = require('../models/');
 const router = express.Router();
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
@@ -262,6 +262,26 @@ router.get('/api/admin/train/request', adminCheckerApi, async (req, res) => {
 
 })
 
+router.get('/api/train/request', authenticationCheckerApi, premiumChecker, async (req, res) => {
+
+    const userId = req.user.id;
+
+    var trainRequest = await TrainRequest.findAll({where : {userId : userId}});
+
+    if (trainRequest) {
+
+        res.statusCode = 200,      
+        res.send({code: res.statusCode, message: 'Train request has been found', data: trainRequest});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({code: res.statusCode, message : 'This food was not found of id ' + id});
+
+    }
+
+})
+
 router.post('/api/train/request', authenticationCheckerApi, async (req, res) => {
 
     const userId = req.user.id;
@@ -297,19 +317,21 @@ router.post('/api/train/request', authenticationCheckerApi, async (req, res) => 
             return jsonArray;
         }
     }
-    
+
     if (trainRequest) {
 
-        res.statusCode = 201      
-        res.send({'code': res.statusCode, 'message': 'Train request has been created', 'data': req.body});
+        let nutritionRequirement = await NutritionRequirement.create()
+        nutritionRequirement.generateDefaultNutrient(rawDataTrainRequest, req.user.sex);
+
+        res.statusCode = 200      
+        res.send({code: res.statusCode, message: 'Train request has been created', data: trainRequest});
 
     } else {
 
-        res.statusCode = 404;
-        res.send({'code':res.statusCode, 'message' : 'This food was not found of id ' + id});
+        res.statusCode = 500;
+        res.send({code:res.statusCode, message : 'Can\'t create this train request'});
 
     }
+});
 
-})
-
- module.exports = router
+ module.exports = router;

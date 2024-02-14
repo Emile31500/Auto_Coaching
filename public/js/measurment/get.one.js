@@ -1,29 +1,13 @@
-async function fetchMeasurments() {
-
-    const res = await fetch('/api/measurment', {
-        methode: 'GET',
-        headers: {'Content-type': 'application/json'}
-    })
-    .then(response => { 
-    
-        return response.json();
-    
-    })
-    .then(data => { 
-    
-        return data;
-    
-    })
-    .catch(error => console.log('error', error));
-
-    return res;
-}
-
-async function printMeasurments() {
+async function fetchOneMesurments() {
 
     let row = '';
 
-    let res = await fetchMeasurments();
+    const promise = await fetch('/api/measurment', {
+    methode: 'GET',
+    headers: {'Content-type': 'application/json'}
+    }).catch(error => console.log('error', error));
+
+    let res = await promise.json();
 
     if (res.code == 200){
 
@@ -49,4 +33,4 @@ async function printMeasurments() {
     }
 
 }
-printMeasurments();
+fetchOneMesurments();

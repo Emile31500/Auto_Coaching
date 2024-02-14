@@ -84,7 +84,7 @@
             <th> Poids : </th>
             <td> <span id="weightZone"></span> kg </td>
             <th> Tour d'épaule : </th>
-            <td> <span id="suroundSouldersZone"> </span> cm </td>
+            <td> <span id="suroundShouldersZone"> </span> cm </td>
         </tr>
         <tr>
             <th> Taille : </th>
@@ -138,12 +138,12 @@
         </div>
         <div class="row my-1">
             <div class="col-2">
-                <label for="suroundSoulders">
+                <label for="suroundShoulders">
                     Tour d'épaule
                 </label>
             </div>
             <div class="col-3">
-                <input class="form-control" value="120" type="number" step="0.1" id="suroundSoulders"/>
+                <input class="form-control" value="120" type="number" step="0.1" id="suroundShoulders"/>
             </div>
             <div class="col-2">
                 <label for="size">
@@ -156,7 +156,7 @@
         </div>
         <div class="row my-1">
             <div class="col-2">
-                <label for="suroundSoulders">
+                <label for="suroundShoulders">
                     Tour de bras
                 </label>
             </div>
@@ -181,7 +181,7 @@
 </div>
 <div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletCompte">
     <h3 class="my-3">Compte : </h3>
-    <form id="userForm" class="my-3">
+    <form id=" Form" class="my-3">
         <p>
             <label for="email"> Email : </label>
             <input class="form-control" type="email" value='<%= user.email %>' id="email" required>
@@ -243,6 +243,7 @@
     </form>  
     <div id="ongletCompteAlert" class="alert d-none"></div>
 </div>
+<script src='/js/date.js'></script>
 <script src='/js/user/format.date.js'></script>
 <script src='/js/performance/add.js'></script>
 <script src='/js/performance/get.js'></script>
