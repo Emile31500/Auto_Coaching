@@ -16,7 +16,11 @@ async function fetchMeasurments() {
     })
     .catch(error => console.log('error', error));
 
-    return res;
+    if (res.code === 200) {
+
+        return res.data;
+
+    }
 }
 
 async function printMeasurments() {
@@ -25,18 +29,18 @@ async function printMeasurments() {
 
     let res = await fetchMeasurments();
 
-    if (res.code == 200){
+    if (res){
 
-        const lastMeasurment = res.data[0]
+        const lastMeasurment = res[0]
 
         weightZone.innerHTML = lastMeasurment.weight; 
         sizeZone.innerHTML = lastMeasurment.size; 
-        suroundShoulersZone.innerHTML = lastMeasurment.suroundShoulers; 
+        suroundShouldersZone.innerHTML = lastMeasurment.suroundShoulers; 
         suroundWaistZone.innerHTML = lastMeasurment.suroundWaist; 
         suroundArmsZone.innerHTML = lastMeasurment.suroundArms; 
         suroundChestZone.innerHTML = lastMeasurment.suroundChest;
 
-        res.data.forEach(measurment => {
+        res.forEach(measurment => {
 
             row += '<tr><td> ' + measurment.weight + ' kg </td><td>' + measurment.size + ' cm </td>';
             row += '<td>' + measurment.suroundShoulers + '</td><td> ' + measurment.suroundChest + '</td>';
