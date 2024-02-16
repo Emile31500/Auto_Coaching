@@ -20,8 +20,8 @@ form.addEventListener('submit', function(event) {
                     'Content-type': 'application/json'
                 },
                 body: JSON.stringify({
-                    'idProduct':  document.querySelector('#idProduct').value,
-                    'token': jsonToken
+                    idProduct:  idProduct.value,
+                    token: jsonToken
                 })
             }).then(response => { return response.json(); })
             .then(data => {

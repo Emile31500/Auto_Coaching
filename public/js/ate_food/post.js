@@ -1,5 +1,4 @@
 let alimentForms = document.querySelectorAll('.alimentForms');
-let nutrition_alert = document.querySelector('#nutrition-alert');
 
 alimentForms.forEach(form => {
 
@@ -8,11 +7,9 @@ alimentForms.forEach(form => {
         e.preventDefault();
         data = new FormData(this);
 
-        let ateFoodDate = document.querySelector('#ateFoodDate').value;
+        if (!ateFoodDate.value) {
 
-        if (!ateFoodDate) {
-
-        ateFoodDate = getTodayDate();
+        ateFoodDate.value = getTodayDate();
 
         }
 
@@ -20,8 +17,8 @@ alimentForms.forEach(form => {
             foodId: parseInt(data.get("foodId")),
             weight: parseInt(data.get("weight")),
             userId: null,
-            createdAt: ateFoodDate,
-            updatedAt: ateFoodDate
+            createdAt: ateFoodDate.value,
+            updatedAt: ateFoodDate.value
             })
             
         fetch('/api/food/ate', {
@@ -33,7 +30,7 @@ alimentForms.forEach(form => {
 
         }).then(response => {
 
-            calculateAteFood(ateFoodDate);
+            calculateAteFood(ateFoodDate.value);
             nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
             nutrition_alert.classList.add('alert-success');
             nutrition_alert.classList.remove('alert-danger');

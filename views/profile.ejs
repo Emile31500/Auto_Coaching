@@ -181,22 +181,22 @@
 </div>
 <div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletCompte">
     <h3 class="my-3">Compte : </h3>
-    <form id="userForm" class="my-3">
+    <form id="userForm"  lass="my-3">
         <p>
             <label for="email"> Email : </label>
             <input class="form-control" type="email" value='<%= user.email %>' id="email" required>
         </p>
         <p>
-            <label for="name"> Nom : </label>
-            <input class="form-control" type="text" value='<%= user.name %>' id="name" required>
+            <label for="username"> Nom : </label>
+            <input class="form-control" type="text" value='<%= user.name %>' id="username" required>
         </p>
         <p>
             <label for="password"> Mot de passe : </label>
-            <input class="form-control" type="password" id="password" required>
+            <input class="form-control" value="P4$$w0rd" type="password" id="password" required>
         </p>
         <p>
             <label for="confirmpassword"> Confirmer le mot de passe : </label>
-            <input class="form-control" type="password" id="confirmpassword" required>
+            <input class="form-control" value="P4$$w0rd" type="password" id="confirmpassword" required>
         </p> 
         <div class="my-3">
             <h4> Premium : </h4>
@@ -239,14 +239,14 @@
             <% } else { %>
             <% } %>
         </div>  
-        <input type="submit" class="btn btn-primary" value="Mettre à jour"/>
+        <input type="submit" class="btn btn-primary my-3" id="submitUserFormButton" value="Mettre à jour"/>
     </form>  
-    <div id="ongletCompteAlert" class="alert d-none"></div>
+    <div id="ongletCompteAlert" class="alert d-none my-3"></div>
 </div>
-<script src='/js/date.js'></script>
+ <script src='/js/date.js'></script>
 <script src='/js/user/format.date.js'></script>
 <script src='/js/performance/add.js'></script>
-<script src='/js/performance/get.js'></script>
+<script src='/js/performance/get.js'></script> 
 <script src='/js/user/update.js'></script>
 <script src="/js/onglet.js"></script>
 <script src='/js/measurment/get.js'></script>

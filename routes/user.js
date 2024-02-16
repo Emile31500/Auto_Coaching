@@ -14,6 +14,9 @@ const getStripeCustomer = require('../middlewares/getStripeCustomer')
 const premiumChecker = require('../middlewares/premiumChecker');
 const parserJson = require('../middlewares/parserJson');
 const authenticationChecker = require('../middlewares/authenticationChecker');
+const authenticationCheckerApi = require('../middlewares/authenticationCheckerApi');
+
+
 const adminChecker = require('../middlewares/adminChecker')
 
 router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker, async (req, res) => {
@@ -40,7 +43,6 @@ router.get('/login', async function(req, res, next) {
 
     res.statusCode = 200
     res.render('../views/login',  { error: false, layout: '../views/main' });
-
 
 });
   
@@ -101,9 +103,10 @@ router.get('/api/user', adminChecker, parserJson, async (req, res) => {
 
 });
 
-router.patch('/api/users', authenticationChecker, premiumChecker, async (req, res) => {
+router.patch('/api/users', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     let user = req.user;
+    const unupdatedUser = user;
 
     if (data = req.body){
 
@@ -116,19 +119,25 @@ router.patch('/api/users', authenticationChecker, premiumChecker, async (req, re
         const authToken = await user.getAuthenticationToken();
         req.session.token = authToken;
 
-        user.save();
-        res.statusCode = 201;
-        
-        res.send({
-                    'code':201,
-                    'message':'user created',
-                    'data': user
-                });
+        await user.save();
+        let savedUser = await User.findOne({where : {id : user.id}});
 
+        if (unupdatedUser !== savedUser) {
+
+            res.statusCode = 204;
+            res.send({code: res.statusCode, message : 'user has been succesfully updated'});
+
+        } else {
+
+            res.statusCode = 500;
+            res.send({code: res.statusCode, message : 'User update dosn\'t worked'});
+
+        }
+        
     } else {
 
         res.statusCode = 400;
-        res.json({'code': res.statusCode, 'message':'The user couldn\'t be edited', 'data': user});
+        res.send({code: res.statusCode, message:'The user couldn\'t be edited', data: user});
 
     }
 

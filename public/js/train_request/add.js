@@ -15,9 +15,6 @@ trainRequestForm.addEventListener('submit', function (event){
             }
         }
     }
-
-    console.log(passedSports)
-
     if (passedInjs.length > 0){
 
         for (let i = 0; i < passedInjs.length; i++) {
@@ -36,7 +33,7 @@ trainRequestForm.addEventListener('submit', function (event){
         trainRequest : {
             weight: weight.value,
             height: height.value,
-            birthDay: birthDay.value,
+            birthDay: birth_day.value,
             objectif: objectif.value,
             metabolism: metabolism.value,
             description: description.value

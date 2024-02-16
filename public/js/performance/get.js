@@ -1,10 +1,3 @@
-
-
-let performanceTableBody = document.querySelector('#performanceTableBody');
-let perfZoneB = document.querySelector('#perfZoneB');
-let perfZoneD = document.querySelector('#perfZoneD')
-let perfZoneS = document.querySelector('#perfZoneS')
-
 async function fetchData() {
     
     const promise = await fetch('/api/performance', {

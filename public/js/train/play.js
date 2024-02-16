@@ -69,7 +69,6 @@ pause.addEventListener('click', function (event){
 function diminuerTemps() {
 
     temps--;
-    console.log(temps)
     if (temps <= 0) {
         clearInterval(interval)
     }
@@ -146,8 +145,6 @@ function printExercises() {
     pause.classList.remove('d-none')
     secondTimer.innerHTML = '';
 
-    console.log(indexEx)
-
     if (fullTrain[indexEx] !== undefined){
 
         currentExercise.innerHTML = fullTrain[indexEx].exercise.name + ' n° ' + (fullTrain[indexEx].sets +1);
@@ -163,7 +160,6 @@ function printExercises() {
 
             isStoped = false;
             temps = fullTrain[indexEx].reps
-            console.log('1')
             delayedLoop(startTimeout, temps, nextSets)
 
         }

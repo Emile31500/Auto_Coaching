@@ -1,19 +1,3 @@
-// let measurmentForm = document.querySelector('#measurmentForm');
-    //     let weightZone = document.querySelector("#weightZone")
-    //     let sizeZone = document.querySelector("#sizeZone")
-    //     let suroundShouldersZone = document.querySelector("#suroundShouldersZone")
-    //     let suroundWaistZone = document.querySelector("#suroundWaistZone")
-    //     let suroundArmsZone = document.querySelector("#suroundArmsZone")
-    //     let suroundChestZone = document.querySelector("#suroundChestZone")
-
-    //     let weight = document.querySelector("#weight")
-    //     let size = document.querySelector("#size")
-    //     let suroundShoulers = document.querySelector("#suroundShoulders")
-    //     let suroundWaist = document.querySelector("#suroundWaist")
-    //     let suroundArms = document.querySelector("#suroundArms")
-    //     let suroundChest = document.querySelector('#suroundChest')
-    //     let ongletMeasurmentAlert = document.querySelector('#ongletMeasurmentAlert');
-    //     let measurmentTableBody = document.querySelector('#measurmentTableBody');
 let jsonData = {}
 
 
@@ -37,7 +21,6 @@ measurmentForm.addEventListener('submit', async function (event){
     if (objectif === 'volume' || objectif === 'force'){
 
         haveToGainWeight = true;
-        console.log(haveToGainWeight)
 
 
     } else if (objectif.include('perdre du poids')) {
@@ -59,33 +42,36 @@ measurmentForm.addEventListener('submit', async function (event){
         }
     }) 
 
-    if (haveToGainWeight)
-    {
+    let newKcalorieRequirement = nutritionRequirement.kcalorie;
+    let newProteinRequirement = nutritionRequirement.protein;
+
+    if (haveToGainWeight) {
+        
         if (previousMeasurment.weight >= weight.value) {
 
-            jsonData = JSON.stringify({
-                kcalorie : nutritionRequirement.kcalorie * 1.02,
-                fat : weight.value,
-                protein : weight.value * 2,
-                updatedAt : getTodayDate()
-            })
-
+            newKcalorieRequirement = nutritionRequirement.kcalorie * 1.02;
         }
+
+        newProteinRequirement = weight.value * 2;
 
     } else if (haveToLoseWeight) {
 
         if (previousMeasurment.weight <= weight.value) {
 
-            jsonData = JSON.stringify({
-                kcalorie : nutritionRequirement.kcalorie * 0.98,
-                fat : weight.value,
-                protein : weight.value * 2.2,
-                updatedAt : getTodayDate()
-            })
+            newKcalorieRequirement = nutritionRequirement.kcalorie * 0.98;
 
         }
 
+        newProteinRequirement = weight.value * 2.2;
+
     }
+
+    jsonData = JSON.stringify({
+        kcalorie : newKcalorieRequirement,
+        fat : weight.value,
+        protein : newProteinRequirement,
+        updatedAt : getTodayDate()
+    })
 
     await fetch('/api/nutrition/requirement/', {
         method : 'PATCH',

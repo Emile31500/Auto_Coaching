@@ -1,12 +1,4 @@
 alert('co')
-
-let addingFoodMessageElement = document.querySelector("#addingFoodMessageElement")
-    let addFoodForms = document.querySelector("#addFoodForms");
-    let name = document.querySelector("#name")
-    let carbohydrate = document.querySelector("#carbohydrate")
-    let proteine = document.querySelector("#proteine")
-    let fat = document.querySelector("#fat")
-    let trans_fat = document.querySelector("#trans_fat")
     let isEggEl = document.querySelectorAll(".isEgg")
     let isMeatEl = document.querySelectorAll(".isMeat")
     let isMilkEl = document.querySelectorAll(".isMilk")

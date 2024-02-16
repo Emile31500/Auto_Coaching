@@ -1,45 +1,45 @@
-    let userForm = document.getElementById("userForm");
-let email = document.getElementById("email");
-let name = document.getElementById("name");
-let confirmpassword = document.getElementById("confirmpassword");
-let password = document.getElementById("password");
-let ongletCompteAlert = document.getElementById("ongletCompteAlert");
-
-userForm.addEventListener('submit', function(event){
+submitUserFormButton.addEventListener('click', async (event) => {
 
     event.preventDefault();
 
-    const raw = JSON.stringify({
-        email: email.value,
-        name: name.value,
-        password: password.value,
-    });
+    if (confirmpassword.value === password.value) {
 
-    fetch('/api/users', {
-        method: 'PATCH',
-        headers: {"Content-Type": "application/json"},
-        body: raw,
-    }).then(response => response.json())
-    .then(data => {
+        const raw = JSON.stringify({
+            email: email.value,
+            name: username.value,
+            password: password.value
+        });
+
+        const res = await fetch('/api/users', {
+            method: "PATCH",
+            headers: {"Content-type": "application/json"},
+            body: raw
+
+        }).then(response =>  {
+
+            if (response.status === 204) {
+
+                ongletCompteAlert.classList.remove('alert-danger');
+                ongletCompteAlert.classList.remove('d-none');
+                ongletCompteAlert.classList.add('alert-success');
+                ongletCompteAlert.innerHTML = "Paramètres du compre mis à jour";
+
+            } else {
+
+                ongletCompteAlert.classList.add('alert-danger');
+                ongletCompteAlert.classList.remove('d-none');
+                ongletCompteAlert.classList.remove('alert-success');
+                ongletCompteAlert.innerHTML = "Error : " + response.status + " <br> Unkown error, this user can't be updated";
+
+            } 
+        })
+
+    } else {
         
-        
-        if(data.code != 201){
-
-            ongletCompteAlert.classList.remove('alert-danger');
-            ongletCompteAlert.classList.remove('d-none');
-            ongletCompteAlert.classList.add('alert-success');
-            ongletCompteAlert.innerHTML = "Error : " + data.code + " <br> " + data.message;
-
-        } else {
-
-            ongletCompteAlert.classList.remove('alert-danger');
-            ongletCompteAlert.classList.remove('d-none');
-            ongletCompteAlert.classList.add('alert-success');
-            ongletCompteAlert.innerHTML = "Paramètres du compre mis à jour";
-
-        }
-
-    })
-    .catch(error => console.log('error', error));
+        ongletCompteAlert.classList.add('alert-danger');
+        ongletCompteAlert.classList.remove('d-none');
+        ongletCompteAlert.classList.remove('alert-success');
+        ongletCompteAlert.innerHTML = "Attention : vos mots de passes ne sont pas identitique";
+    }
 
 });

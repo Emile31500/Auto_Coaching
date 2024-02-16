@@ -14,9 +14,9 @@ module.exports = (sequelize, DataTypes) => {
         models.User.hasOne(NutritionRequirement);
       }
 
-      calculateAge(birthDay) {
+      calculateAge(birth_day) {
 
-        const birthDate = new Date(birthDay);
+        const birthDate = new Date(birth_day);
 
         const currentDate = new Date();
         let age = currentDate.getFullYear() - birthDate.getFullYear();

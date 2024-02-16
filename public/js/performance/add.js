@@ -1,12 +1,3 @@
-
-
-let performanceForm = document.querySelector('#performanceForm');
-let squat = document.querySelector('#squat');
-let benchPress = document.querySelector('#benchPress');
-let deadLift = document.querySelector('#deadLift');
-let date = document.querySelector('#date');
-let ongletPerformanceAlert = document.querySelector('#ongletPerformanceAlert');
-
 performanceForm.addEventListener('submit', async function(event){
 
     event.preventDefault();

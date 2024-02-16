@@ -1,19 +1,11 @@
-
-let responseFoodAteRequest = document.querySelector('#responseFoodAteRequest');
-let date = document.querySelector('#date').innerHTML;
-
-let tempDate = new Date(date);
+let tempDate = new Date(date.innerHTML);
 let day = ("0" + (tempDate.getDate()+1)).slice(-2);
 let month = ("0" + (tempDate.getMonth()+1)).slice(-2);
 let year = tempDate.getFullYear();
-let listAteFoodHTML = document.querySelector('#listAteFoodHTML');
 
+const dateEnd = year + "-" + month + "-" + day + ' 00:00:00';
 
-const dateEnd = year + "-" + month + "-" + 19 + ' 00:00:00';
-
-console.log(date + " à " + dateEnd)
-
-const url = '/api/food/ate/' + date + '/' + dateEnd
+const url = '/api/food/ate/' + tempDate + '/' + dateEnd
 fetch(url, {
 
     method: 'GET',

@@ -40,8 +40,6 @@ const MeasurmentTest = describe('Measurments tests', () => {
             .post('/api/measurment')
             .send(rawData)
             .redirects(1);
-
-        console.log(res._body);
         
         const apiMeasurment = res._body.data;
         const seqMeasurment = await Measurment.findOne({where : {id : apiMeasurment.id}});

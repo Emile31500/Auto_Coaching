@@ -14,8 +14,6 @@ cancelSubscriptions.forEach(cancelSubscription => {
                 'Content-Type': 'application/json'
             }
         }).then(response => { 
-            
-            console.log(response.status)
           
             ongletCompteAlert.classList.remove('d-none');
 

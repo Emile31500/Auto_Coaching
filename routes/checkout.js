@@ -119,7 +119,6 @@ router.delete('/api/subscription/:id_subscription', parserJson, authenticationCh
     var currentDate = new Date();
     var integerDate = currentDate.getTime();
     
-    console.log(subscription);
     productId = subscription.plan.product;
 
     if (productId === 'prod_KKjy9S91iB6qYP'){
