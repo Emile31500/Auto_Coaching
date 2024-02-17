@@ -43,7 +43,6 @@ async function getEatingAliment(daySearched){
 
 
     let url = "/api/food/ate/" + daySearched +"/" + endDate;
-    console.log(url);
 
 
     const res = await fetch(url, {
@@ -105,8 +104,6 @@ async function calculateAteFood(currentDate){
             } else {
                 console.log('No data or an error occurred.');
             }
-
-            console.log(ttlEnergie)
 
             macro = JSON.stringify({
                 energie: ttlEnergie,
@@ -190,10 +187,7 @@ function printMacroOnDashbord(ttlMacro) {
 
 async function printMacroInPrcnt(ttlMacro, requirement) {
 
-    console.log(requirement)
-
     ttlMacro = JSON.parse(ttlMacro)
-
 
     var prcntProt =  ttlMacro.proteine / requirement.proteine * 100
     var prcntFat =  ttlMacro.fat / requirement.fat * 100

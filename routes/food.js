@@ -58,10 +58,39 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
         res.send({'code' : res.statusCode, 'message' : 'This food was not found of id ' + id});
 
     }
-    
-
 });
 
+router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
+
+    const arrayWord = req.params.word.split(" ");
+    let nameSelector = []
+
+    arrayWord.forEach(word => {
+
+        nameSelector.push({[Op.like] : '%'+word+'%'});
+        
+    });
+
+    var foods = await Food.findAll({
+        where: {
+            name: {
+                [Op.or] : nameSelector
+            }
+        }
+    });
+
+    if (foods) {
+
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message: 'Those food models successfully requested', data: foods});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message : 'Those food was not found for this request'});
+
+    }
+});
 
 router.get('/food/add', premiumChecker, async(req, res, next) => {
 
@@ -70,49 +99,49 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
 });
 
 
-    router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
+router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
 
-        if (req.body){
+    if (req.body){
 
-            req.body.is_veggie = !(req.body.is_meat || req.body.is_milk || req.body.is_egg)
+        req.body.is_veggie = !(req.body.is_meat || req.body.is_milk || req.body.is_egg)
 
-            food = await Food.create(req.body);
-            
-            if (food){
+        food = await Food.create(req.body);
+        
+        if (food){
 
-                res.statusCode = 201
-                res.send({code: res.statusCode, message: 'This food has been has been created', data: food});
+            res.statusCode = 201
+            res.send({code: res.statusCode, message: 'This food has been has been created', data: food});
 
-            } else {
+        } else {
 
-                res.statusCode = 401
-                res.send({"message" : "Food not created"});
+            res.statusCode = 401
+            res.send({"message" : "Food not created"});
 
-            }
         }
+    }
 
-    });
+});
 
-    router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
+router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
 
-        if (req.body && req.session.token){
+    if (req.body && req.session.token){
 
-            const rawData = req.body
+        const rawData = req.body
 
-            const food = Food.create(rawData);
-            if (food){
+        const food = Food.create(rawData);
+        if (food){
 
-                res.statusCode = 201
-                res.send({'code': res.statusCode, 'message': 'This food has been created', 'data': food});
+            res.statusCode = 201
+            res.send({'code': res.statusCode, 'message': 'This food has been created', 'data': food});
 
-            } else {
+        } else {
 
-                res.statusCode = 400
-                res.send({'code': res.statusCode, "message" : "Food not created"});
+            res.statusCode = 400
+            res.send({'code': res.statusCode, "message" : "Food not created"});
 
-            }
         }
-    });
+    }
+});
 
 router.patch('/api/admin/food/:id_food', parserJson, adminCheckerApi, async (req, res, next) => {
 
