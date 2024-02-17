@@ -75,6 +75,36 @@ router.get('/train/:id_train/play/:day', authenticationChecker, premiumChecker, 
     }
 })
 
+router.get('/api/train/:id_train/day', authenticationCheckerApi, premiumChecker, async (req, res) => {
+
+    const userId = req.user.id; 
+    const trainId = req.params.id_train
+
+    const train = await Train.findOne({where : {id : trainId, userId : userId}});
+
+    if (train) {
+           
+        const days = await train.getDays();
+
+        if (days) {
+
+            res.statusCode = 200;
+            res.send({code : res.statusCode, message : 'Days where user trains has been found', data : days})
+
+        } else {
+
+            res.statusCode = 404;
+            res.send({code : res.statusCode, message : 'Days where user trains hasn\'t been found', data : days})
+        }
+        
+    } else {
+
+        res.statusCode = 404
+        res.send({code : res.statusCode, message : 'This train dosn\'t exist'});
+
+    }
+})
+
 router.get('/api/train/:id_train/exercise/:day', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     const userId = req.user.id; 

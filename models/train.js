@@ -1,4 +1,7 @@
 'use strict';
+
+
+
 const {
   Model
 } = require('sequelize');
@@ -13,6 +16,22 @@ module.exports = (sequelize, DataTypes) => {
       Train.belongsTo(models.TrainRequest)
       models.TrainRequest.hasOne(Train);
     }
+
+    async getDays() {
+
+      const { ExerciseTrain } = require('./')
+
+      const days = await ExerciseTrain.findAll({
+        attributes: [
+          [sequelize.fn('DISTINCT', sequelize.col('day')), 'day'] 
+        ],
+        group: ['day'],
+        where : {id: this.id} // Group by the specified column
+      })
+
+      return days;
+
+    }
   }
   Train.init({
     name: DataTypes.STRING,
@@ -25,3 +44,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Train
 };
+
+
+
+
