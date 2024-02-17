@@ -43,10 +43,6 @@ async function getEatingAliment(daySearched){
 
 
     let url = "/api/food/ate/" + daySearched +"/" + endDate;
-<<<<<<< HEAD
-=======
-
->>>>>>> nutrition
 
     const res = await fetch(url, {
         method: 'GET',
