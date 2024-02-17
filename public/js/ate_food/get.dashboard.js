@@ -43,6 +43,10 @@ async function getEatingAliment(daySearched){
 
 
     let url = "/api/food/ate/" + daySearched +"/" + endDate;
+<<<<<<< HEAD
+=======
+
+>>>>>>> nutrition
 
     const res = await fetch(url, {
         method: 'GET',
@@ -186,10 +190,7 @@ function printMacroOnDashbord(ttlMacro) {
 
 async function printMacroInPrcnt(ttlMacro, requirement) {
 
-    console.log(requirement)
-
     ttlMacro = JSON.parse(ttlMacro)
-
 
     var prcntProt =  ttlMacro.proteine / requirement.proteine * 100
     var prcntFat =  ttlMacro.fat / requirement.fat * 100

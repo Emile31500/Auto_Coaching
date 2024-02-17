@@ -57,7 +57,7 @@
     <table class="table table-striped my-3">
         <thead class="table-dark">
           <tr>
-            <th scope="col">Nom </th>
+            <th scope="col"><input type="text" class="form-control d-inline" id="alimentName"/><label for="alimentName">Nom</label> </th>
             <th scope="col">Kcalorie</th>
             <th scope="col">Glucide</th>
             <th scope="col">Proteine</th>
@@ -65,7 +65,7 @@
             <th scope="col"><input type="date" id="ateFoodDate" class="form-control"/></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="foodTableBody"> 
           <% for(var i=0; i<food.length; i++) {%>
             <tr>
               <th scope="row"><%= food[i].name %></th>
@@ -93,3 +93,5 @@
 </div>
 <script src="/js/ate_food/get.dashboard.js"></script>
 <script src="/js/ate_food/post.js"></script>
+<script src="/js/food/print.js"></script>
+<script src="/js/food/get.all.js"></script>
