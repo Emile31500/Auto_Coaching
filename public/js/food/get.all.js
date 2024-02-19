@@ -1,10 +1,15 @@
-console.log('linked')
-
 alimentName.addEventListener('input', async function(event){
     event.preventDefault();
 
-    const wordList = alimentName.value.replace(" ", ",");
-    const url = '/api/food/' + wordList + '/all'
+    let url = '/api/food';
+    let wordList = ''
+
+    if (alimentName.value.length > 0){
+
+        wordList = alimentName.value.replace(" ", ",");
+        url = url + '/' + wordList + '/all'
+
+    }
 
     await fetch(url, {
         method : 'GET',
@@ -15,12 +20,15 @@ alimentName.addEventListener('input', async function(event){
     .then(data => {
 
         if (data.code === 200) {
-
+            
             printFoods(data.data)
+
+        } else {
+
+            foodTableBody.innerHTML = '<div class=\'alert alert-danger\'> Error : ' + data.code + '<br> ' + data.message + '</div>'
 
         }
 
     }) 
-
 
 })

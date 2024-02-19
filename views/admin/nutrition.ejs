@@ -15,7 +15,7 @@
                 <th scope="col" colspan="3" >Lipide dont saturé</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="alimentTable">
             <% for(var i=0; i<food.length; i++) {%>
                 <tr id='alimentRow<%= food[i].id %>'>
                     <th scope="row"><%= food[i].name %></th>
@@ -37,9 +37,9 @@
             <input class="d-none" id='isUpdated' type='checkbox' disabled/>
             <input class="d-none" id='idFoodEl' type='text' disabled/>
             <div class='my-3'>
-                <label for='name'> Nom : </label>
+                <label for='nameAliment'> Nom : </label>
                 <br>
-                <input id='name' class='form-control name' name='name'/>
+                <input id='nameAliment' class='form-control' name='nameAliment'/>
             </div>
             <div class='my-3 row'>
                 <div class="col">
@@ -112,191 +112,8 @@
         </div>
     </div>
 </div>
-<script>
-    let editAliments = document.querySelectorAll('.edit-aliment')
-    let carbohydrateEl = document.querySelector('#carbohydrateEl');
-    let transFatEl = document.querySelector('#transFatEl');
-    let isUpdated = document.querySelector('#isUpdated');
-    let proteinEl = document.querySelector('#proteinEl');
-    let sugarEl = document.querySelector('#sugarEl');
-    let idFoodEl = document.querySelector('#idFoodEl');
-    let foodForm = document.querySelector('#foodForm');
-    let fatEl = document.querySelector('#fatEl');
-    let name = document.querySelector('#name');
-    let isMeatEl = document.querySelector('#isMeatEl');
-    let isEggEl = document.querySelector('#isEggEl');
-    let isMilkEl = document.querySelector('#isMilkEl');
-    let alimentAlert = document.querySelector('#alimentAlert')
-    let idAliment;
-
-    editAliments.forEach(editAliment => {
-
-        editAliment.addEventListener('click', function(event){
-
-            document.querySelectorAll('.table-warning').forEach(row => { row.classList.remove('table-warning')});
-            
-            let macroNutrients = editAliment.getAttribute('data-macro-nutrient');
-            idAliment = editAliment.getAttribute('data-id-aliment');
-
-            let jsonMacroNutrients = JSON.parse(macroNutrients);
-            
-            isUpdated.checked = true;
-            name.value = jsonMacroNutrients.name;
-            proteinEl.value = jsonMacroNutrients.protein;
-            sugarEl.value = jsonMacroNutrients.sugar;
-            fatEl.value = jsonMacroNutrients.fat;
-            transFatEl.value = jsonMacroNutrients.trans_fat;
-            carbohydrateEl.value = jsonMacroNutrients.carbohydrate;
-            idFoodEl.value = idAliment;
-            isMeatEl.checked = jsonMacroNutrients.is_meat;
-            isEggEl.checked = jsonMacroNutrients.is_egg;
-            isMilkEl.checked = jsonMacroNutrients.is_milk;
-            //sugar.value = jsonMacroNutrients.;
-
-            let selector = '#alimentRow'+idAliment;
-            isUpdated.setAttribute('checked', 'true')
-            document.querySelector(selector).classList.add('table-warning')
-
-        })
-
-    });
-
-    foodForm.addEventListener('submit', function(event){
-
-        event.preventDefault();
-        let rawData;
-        let verb;
-        let url = '/api/admin/food'
-
-        const dataElment = JSON.stringify({
-            "name": name.value,
-            "carbohydrate": carbohydrateEl.value,
-            "sugar": sugarEl.value,
-            "proteine": proteinEl.value,
-            "fat": fatEl.value,
-            "trans_fat": transFatEl.value,
-            "is_meat" : isMeatEl.checked,
-            "is_milk" : isEggEl.checked,
-            "is_egg" : isMilkEl.checked, 
-            "is_veggie" : !(isMilkEl.checked || isMeatEl.checked || isEggEl.checked )
-
-        })
-        if (isUpdated.checked){
-
-            verb = 'PATCH';
-            rawData = JSON.stringify({
-                "selector" : {"id" : idAliment},
-                "element" : {
-                    "name": name.value,
-                    "carbohydrate": carbohydrateEl.value,
-                    "sugar": sugarEl.value,
-                    "proteine": proteinEl.value,
-                    "fat": fatEl.value,
-                    "trans_fat": transFatEl.value,
-                    "is_meat" : isMeatEl.checked,
-                    "is_milk" : isEggEl.checked,
-                    "is_egg" : isMilkEl.checked, 
-                    "is_veggie" : !(isMilkEl.checked || isMeatEl.checked || isEggEl.checked )
-                }
-            });
-            rawData.element = dataElment;
-            url += '/'+idAliment
-
-        } else {
-
-            verb = 'POST';
-            rawData = dataElment
-
-        }
-        console.log(dataElment);
-        console.log(rawData);
-
-        fetch(url, {
-            method: verb,
-            headers: {'Content-Type': 'application/json'},
-            body: rawData
-
-        }).then(response => response.json())
-        .then(data => {
-
-            if (data.code === 201){
-
-                alimentAlert.classList.remove('d-none')
-                alimentAlert.classList.add('alert-success')
-                alimentAlert.innerHTML = 'L\'aliment a été créé avec succès';
-
-            } else if (data.code === 202){
-
-                alimentAlert.classList.remove('d-none')
-                alimentAlert.classList.add('alert-success')
-                alimentAlert.innerHTML = 'L\'aliment a été mis à jour avec succès';
-
-            } else {
-
-                alimentAlert.classList.remove('d-none')
-                alimentAlert.classList.add('alert-danger')
-                alimentAlert.innerHTML = 'Error : ' + data.code +'<br>'
-                alimentAlert.innerHTML += data.message;
-                
-            }
-        });
-    });
-
-
-</script>
-<script>
-
-    let delAlimentBtns = document.querySelectorAll('.delAlimentBtns');
-    let confirmDeletionBtn = document.querySelector('#confirmDeletionBtn');
-
-    delAlimentBtns.forEach(delAlimentBtn => {
-
-        delAlimentBtn.addEventListener('click', function(){
-
-            let idAliment = this.getAttribute('data-id-aliment');
-            confirmDeletionBtn.setAttribute('data-id-aliment', idAliment)
-
-        });
-
-    })
-
-    confirmDeletionBtn.addEventListener('click', func = function(event){
-
-        let idAliment = this.getAttribute('data-id-aliment');
-        const url = '/api/admin/food/'+idAliment
-        fetch(url, {
-
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json'}
-
-        }).then(response => {
-                
-            if (response.status === 204) {
-
-                alimentAlert.classList.remove('d-none')
-                alimentAlert.classList.add('alert-success')
-                alimentAlert.innerHTML = 'L\'aliment a été supprimé avec succès';
-
-                let rowAliement = document.querySelector('#alimentRow'+idAliment);
-                rowAliement.remove();
-                return true;
-
-            } else {
-
-                alimentAlert.classList.remove('d-none')
-                alimentAlert.classList.add('alert-danger')
-                alimentAlert.innerHTML = 'Error : ' + data.code +'<br>'
-                alimentAlert.innerHTML += data.message;
-                return false;
-
-            }
-
-            return false;
-
-        }).then(data => {return data});
-
-        colse-del-modal.click();
-        confirmDeletionBtn.removeEventListener("click", func);
-    });
-</script>
+<script src="/js/admin/food/edit.selector.js"></script>
+<script src="/js/admin/food/delete.js"></script>
+<script src="/js/admin/food/add.js"></script>
+<script src="/js/admin/food/get.js"></script>
 <%- contentFor('main') %>

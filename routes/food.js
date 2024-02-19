@@ -41,6 +41,42 @@ router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req
 
 });
 
+router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
+
+    var food = await Food.findAll();
+
+    if (food) {
+
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message: 'This food model successfully requested', data : food});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message : 'None food have been found'});
+
+    }  
+
+});
+
+router.get('/api/admin/food', adminCheckerApi, parserJson, async(req, res, next) => {
+
+    var food = await Food.findAll();
+
+    if (food) {
+
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message: 'This food model successfully requested', data : food});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message : 'None food have been found'});
+
+    }  
+
+});
+
 router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
     const id = req.params.id_food;

@@ -240,7 +240,6 @@ const foodTest = describe('Food tests', () => {
         expect(foodApi.name).toEqual(foodSeq.name);
         expect(res.req.path).toEqual('/api/food/' + foodSeq.id);
 
-
     });
 
 });
