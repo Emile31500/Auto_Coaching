@@ -8,14 +8,17 @@
         <table class="table table-striped my-3">
             <thead class="table-dark">
             <tr>
-                <th scope="col">Nom </th>
-                <th scope="col">Kcalorie</th>
-                <th scope="col" colspan="2">Glucide dont Sucre</th>
-                <th scope="col">Proteine</th>
-                <th scope="col" colspan="3" >Lipide dont saturé</th>
+                <th scope="col">
+                    <input type="text" class="form-control d-inline" id="alimentNameSearch"/>
+                    <a href="#" class="link-light orderByButton" data-parameter="name">Nom</a> 
+                  </th>
+                <th scope="col"><a href="#" class="link-light">Kcalorie</a></th>
+                <th scope="col" colspan="2"><a href="#" class="link-light orderByButton" data-parameter="carbohydrate">Glucide</a> dont sucre</th>
+                <th scope="col"><a href="#" class="link-light orderByButton" data-parameter="proteine">Proteine</a></th>
+                <th scope="col" colspan="3"><a href="#" class="link-light orderByButton" data-parameter="fat">Lipide</a> dont saturé</th>
             </tr>
             </thead>
-            <tbody id="alimentTable">
+            <tbody id="foodTableBody">
             <% for(var i=0; i<food.length; i++) {%>
                 <tr id='alimentRow<%= food[i].id %>'>
                     <th scope="row"><%= food[i].name %></th>
@@ -115,5 +118,9 @@
 <script src="/js/admin/food/edit.selector.js"></script>
 <script src="/js/admin/food/delete.js"></script>
 <script src="/js/admin/food/add.js"></script>
-<script src="/js/admin/food/get.js"></script>
+<script>
+    isAdmin = true;
+</script>
+<script src="/js/food/get.all.js"></script>
+<script src="/js/food/print.js"></script>
 <%- contentFor('main') %>

@@ -7,6 +7,7 @@ const { Op } = require('sequelize');
 const session = require('express-session');
 const adminCheckerApi = require('../middlewares/adminCheckerApi');
 
+const url = require('url')
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
@@ -43,7 +44,11 @@ router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req
 
 router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
-    var food = await Food.findAll();
+    const parsedUrl = url.parse(req.url, true);
+    const order_parameter = parsedUrl.query.orderParameter;
+    const order_by = parsedUrl.query.orderBy;
+
+    var food = await Food.findAll({order: [[order_parameter, order_by]]});
 
     if (food) {
 
@@ -61,7 +66,11 @@ router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, as
 
 router.get('/api/admin/food', adminCheckerApi, parserJson, async(req, res, next) => {
 
-    var food = await Food.findAll();
+    const parsedUrl = url.parse(req.url, true);
+    const order_parameter = parsedUrl.query.orderParameter;
+    const order_by = parsedUrl.query.orderBy;
+
+    var food = await Food.findAll({order: [[order_parameter, order_by]]});
 
     if (food) {
 
@@ -98,6 +107,10 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
 
 router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
+    const parsedUrl = url.parse(req.url, true);
+    const order_parameter = parsedUrl.query.orderParameter;
+    const order_by = parsedUrl.query.orderBy;
+
     const arrayWord = req.params.word.split(" ");
     let nameSelector = []
 
@@ -112,7 +125,46 @@ router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumC
             name: {
                 [Op.or] : nameSelector
             }
-        }
+        },
+        order: [[order_parameter, order_by]]
+    });
+
+    if (foods) {
+
+        res.statusCode = 200;
+        res.send({code : res.statusCode, message: 'Those food models successfully requested', data: foods});
+
+    } else {
+
+        res.statusCode = 404;
+        res.send({code : res.statusCode, message : 'Those food was not found for this request'});
+
+    }
+});
+
+router.get('/api/admin/food/:word/all', adminCheckerApi, parserJson, async(req, res, next) => {
+
+    const parsedUrl = url.parse(req.url, true);
+    const order_parameter = parsedUrl.query.orderParameter;
+    const order_by = parsedUrl.query.orderBy;
+
+
+    const arrayWord = req.params.word.split(" ");
+    let nameSelector = []
+
+    arrayWord.forEach(word => {
+
+        nameSelector.push({[Op.like] : '%'+word+'%'});
+        
+    });
+
+    var foods = await Food.findAll({
+        where: {
+            name: {
+                [Op.or] : nameSelector
+            }
+        },
+        order: [[order_parameter, order_by]]
     });
 
     if (foods) {

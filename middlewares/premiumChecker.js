@@ -38,7 +38,6 @@ const premiumChecker = async function (req, res, next) {
     var timestampA = new Date(expireDate).getTime()
     var timestampB = new Date(currentDateTime).getTime()
 
-
     if (timestampB < timestampA || req.isPremium) {
 
         next();

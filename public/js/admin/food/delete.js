@@ -1,5 +1,4 @@
 let delAlimentBtns = document.querySelectorAll('.delAlimentBtns');
-// let confirmDeletionBtn = document.querySelector('#confirmDeletionBtn');
 
 delAlimentBtns.forEach(delAlimentBtn => {
 
