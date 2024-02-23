@@ -7,7 +7,7 @@ function printFoods (foods) {
         foods.forEach(food => {
 
             htmlTable += '<tr><th scope="row">' + food.name+ '</th>'
-            htmlTable += '<td> ' + Math.round(food.carbohydrate *4.063 + food.proteine *4.063 + food.fat*9.08222) + ' kcal </td>'
+            htmlTable += '<td> ' + food.kcalorie + ' kcal </td>'
             
             
             if (isAdmin){ 

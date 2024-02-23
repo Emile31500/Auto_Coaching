@@ -20,6 +20,7 @@ alert('co')
             },
             body: JSON.stringify({
                 name: name.value,
+                kcalorie: kcalorie.value,
                 carbohydrate: carbohydrate.value,
                 proteine: proteine.value,
                 fat: fat.value,

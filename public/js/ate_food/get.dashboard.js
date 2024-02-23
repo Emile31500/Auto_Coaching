@@ -94,11 +94,12 @@ async function calculateAteFood(currentDate){
 
             if (food) {
 
-                ttlProt += food.proteine * (eatenAliment.weight / 100)
-                ttlFat += food.fat * (eatenAliment.weight / 100)
-                ttlTransFat += food.trans_fat * (eatenAliment.weight / 100)
-                ttlCarbo += food.carbohydrate * (eatenAliment.weight / 100)
-                ttlEnergie = ttlFat*9.08222 + ttlCarbo*4.063 + ttlProt*4.063;
+                let divisor = (eatenAliment.weight / 100);
+                ttlProt += food.proteine * divisor
+                ttlFat += food.fat * divisor
+                ttlTransFat += food.trans_fat * divisor
+                ttlCarbo += food.carbohydrate * divisor
+                ttlEnergie += food.kcalorie * divisor;
 
             } else {
                 console.log('No data or an error occurred.');
@@ -177,8 +178,9 @@ function printMacroOnDashbord(ttlMacro) {
     ttlMacro = JSON.parse(ttlMacro)
 
     protAteAbs.innerHTML = Math.round((ttlMacro.proteine) * 10) / 10;
-    kcalAteAbs.innerHTML = Math.round((ttlMacro.energie) * 10) / 10;;
-    fatAteAbs.innerHTML = Math.round((ttlMacro.fat) * 10) / 10;;
+    kcalAteAbs.innerHTML = Math.round((ttlMacro.energie) * 10) / 10;
+    fatAteAbs.innerHTML = Math.round((ttlMacro.fat) * 10) / 10;
+
 
     return true;
 
@@ -193,8 +195,8 @@ async function printMacroInPrcnt(ttlMacro, requirement) {
     var prcntEner =  ttlMacro.energie / requirement.kcalorie * 100
 
     protAtePrct.innerHTML = Math.round((prcntProt) * 10) / 10;
-    kcalAtePrct.innerHTML = Math.round((prcntEner) * 10) / 10;;
-    fatAtePrct.innerHTML = Math.round((prcntFat) * 10) / 10;;
+    kcalAtePrct.innerHTML = Math.round((prcntEner) * 10) / 10;
+    fatAtePrct.innerHTML = Math.round((prcntFat) * 10) / 10;
 
     return true;
 
