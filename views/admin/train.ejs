@@ -66,7 +66,6 @@
 
 <script>
     let deleteThisExercise;
-    let bodyTrainRequestTable = document.querySelector('#bodyTrainRequestTable');   
 
 
     fetch('/api/admin/train/request', {
@@ -144,17 +143,11 @@
     }
 </script>
 <script>
-
-    let name =  document.querySelector('#name');
-    let addExerciseForm = document.querySelector('#addExerciseForm');
-    let confirmDeletionBtn = document.querySelector('#confirmDeletionBtn');
-    let exerciseAlert = document.querySelector('#exerciseAlert');
+    
     let idExerciseToDelete;
 
     function loadAllExercise() {
-
-        let bodyExerciseList = document.querySelector('#bodyExerciseList');
-
+        
         fetch('/api/admin/exercise', {
             method: 'GET',
             headers: {'Content-Type': 'application/json'}

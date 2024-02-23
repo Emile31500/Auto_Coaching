@@ -7,6 +7,7 @@ foodForm.addEventListener('submit', function(event){
 
     const dataElment = JSON.stringify({
         name: nameAliment.value,
+        kcalorie: kcalorieEl.value,
         carbohydrate: carbohydrateEl.value,
         sugar: sugarEl.value,
         proteine: proteinEl.value,
