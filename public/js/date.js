@@ -41,3 +41,27 @@ function getTomorowDate(date = undefined) {
     return (year + "-" + month + "-" + day + ' 00:00:00');
 
 }
+   
+function calculateAge(birthDay) {
+
+    const birthDate = new Date(birthDay);
+
+    const currentDate = new Date();
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const hasBirthdayOccurred = (
+        currentDate.getMonth() > birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate()) ||
+        (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() >= birthDate.getHours()) ||
+        (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() >= birthDate.getMinutes()) ||
+        (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() === birthDate.getMinutes() && currentDate.getSeconds() >= birthDate.getSeconds())
+    );
+
+    if (hasBirthdayOccurred) {
+
+        age = age - 1;
+        
+    }
+
+    const intAge = age;
+    return intAge;
+}

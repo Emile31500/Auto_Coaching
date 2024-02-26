@@ -10,13 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      AteFood.belongsTo(models.User)
-      models.User.hasOne(AteFood);
+      Food.belongsTo(models.User)
+      models.User.hasMany(Food);
     
     }
   }
   Food.init({
-    idUser: DataTypes.INTEGER,
     name: DataTypes.STRING,
     kcalorie: DataTypes.FLOAT,
     carbohydrate: DataTypes.FLOAT,
@@ -27,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     is_meat: DataTypes.BOOLEAN,
     is_egg: DataTypes.BOOLEAN,
     is_milk: DataTypes.BOOLEAN,
-    is_veggie: DataTypes.BOOLEAN
+    is_veggie: DataTypes.BOOLEAN,
+    userId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Food',

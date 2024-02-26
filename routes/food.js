@@ -14,12 +14,12 @@ const router = express.Router();
 router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req, res, next) => {
 
     const idFood = req.params.id_food;
-    let food = await Food.findOne({where : {id: idFood}});
+    let food = await Food.findOne({where : {id: idFood, idUser : null}});
 
     if (food){
 
-        Food.destroy({where: {id: idFood}});
-        let foodDel = await Food.findOne({where : {id: idFood}});
+        Food.destroy({where: {id: idFood, idUser : null}});
+        let foodDel = await Food.findOne({where : {id: idFood, idUser : null}});
 
         if (!foodDel) {
     
@@ -48,7 +48,7 @@ router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, as
     const order_parameter = parsedUrl.query.orderParameter;
     const order_by = parsedUrl.query.orderBy;
 
-    var food = await Food.findAll({order: [[order_parameter, order_by]]});
+    var food = await Food.findAll({order: [[order_parameter, order_by]], where : {idUser : [req.user.id, null]}});
 
     if (food) {
 
@@ -70,7 +70,7 @@ router.get('/api/admin/food', adminCheckerApi, parserJson, async(req, res, next)
     const order_parameter = parsedUrl.query.orderParameter;
     const order_by = parsedUrl.query.orderBy;
 
-    var food = await Food.findAll({order: [[order_parameter, order_by]]});
+    var food = await Food.findAll({where : {idUser : null}, order: [[order_parameter, order_by]]});
 
     if (food) {
 
@@ -90,7 +90,7 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
 
     const id = req.params.id_food;
 
-    var food = await Food.findOne({where: {id: id}});
+    var food = await Food.findOne({where: {id: id, idUser : [req.user.id, null]}});
 
     if (food) {
 
@@ -124,7 +124,8 @@ router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumC
         where: {
             name: {
                 [Op.or] : nameSelector
-            }
+            },
+           idUser : [req.user.id, null]
         },
         order: [[order_parameter, order_by]]
     });
@@ -162,7 +163,8 @@ router.get('/api/admin/food/:word/all', adminCheckerApi, parserJson, async(req, 
         where: {
             name: {
                 [Op.or] : nameSelector
-            }
+            },
+            idUser : null,
         },
         order: [[order_parameter, order_by]]
     });
@@ -186,29 +188,6 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
     
 });
 
-
-router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
-
-    if (req.body){
-
-        req.body.is_veggie = !(req.body.is_meat || req.body.is_milk || req.body.is_egg)
-
-        food = await Food.create(req.body);
-        
-        if (food){
-
-            res.statusCode = 201
-            res.send({code: res.statusCode, message: 'This food has been has been created', data: food});
-
-        } else {
-
-            res.statusCode = 401
-            res.send({"message" : "Food not created"});
-
-        }
-    }
-
-});
 
 router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
 
@@ -237,7 +216,7 @@ router.patch('/api/admin/food/:id_food', parserJson, adminCheckerApi, async (req
 
         const idFood = req.params.id_food;
 
-        var food = await Food.findOne({where : {id: idFood}});
+        var food = await Food.findOne({where : {id: idFood,  idUser : null}});
         const foodUnUpdated = food;
         await food.update(req.body);
         await food.save();
