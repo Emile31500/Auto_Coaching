@@ -15,6 +15,7 @@ const premiumChecker = require('../middlewares/premiumChecker');
 const parserJson = require('../middlewares/parserJson');
 const authenticationChecker = require('../middlewares/authenticationChecker');
 const authenticationCheckerApi = require('../middlewares/authenticationCheckerApi');
+const isAuth = require('../middlewares/isAuth')
 
 
 const adminChecker = require('../middlewares/adminChecker')
@@ -42,13 +43,13 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
 router.get('/login', async function(req, res, next) {
 
     res.statusCode = 200
-    res.render('../views/login',  { error: false, layout: '../views/main' });
+    res.render('../views/login',  { user : req.user, error: false, layout: '../views/main' });
 
 });
   
 router.get('/signup', function(req, res, next) {
 
-    res.render('../views/signup',  { layout: '../views/main' });
+    res.render('../views/signup',  { user : req.user, layout: '../views/main' });
 
 });
 
@@ -143,7 +144,7 @@ router.patch('/api/users', authenticationCheckerApi, premiumChecker, async (req,
 
 });
 
-router.post('/login', parserJson, async (req, res, next) => {
+router.post('/login', isAuth, parserJson, async (req, res, next) => {
 
     if (req.body){
 
@@ -162,22 +163,35 @@ router.post('/login', parserJson, async (req, res, next) => {
 
                 } else {
                     
-                    res.redirect('/');
+                    res.redirect('/nutrition');
 
                 }
             
             } else {
             
-                res.render('../views/login',  { error: true, message: "Incorrect password or login", layout: '../views/main' });
+                res.render('../views/login',  { user : req.user, error: true, message: "Incorrect password or login", layout: '../views/main' });
             
             }
 
         } else {
 
-            res.render('../views/login',  { error: true, message: "Incorrect password or login", layout: '../views/main' });
+            res.render('../views/login',  { user : req.user, error: true, message: "Incorrect password or login", layout: '../views/main' });
 
         }
     }
 });
   
- module.exports = router
+
+router.get('/logout', authenticationChecker, premiumChecker, async(req, res) => {
+
+    if (req.session.token) {
+
+        req.session.token = '';
+
+    }
+
+    res.redirect('/');
+
+})
+
+module.exports = router

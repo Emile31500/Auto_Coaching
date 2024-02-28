@@ -14,12 +14,12 @@ const router = express.Router();
 router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req, res, next) => {
 
     const idFood = req.params.id_food;
-    let food = await Food.findOne({where : {id: idFood, idUser : null}});
+    let food = await Food.findOne({where : {id: idFood, userId : null}});
 
     if (food){
 
-        Food.destroy({where: {id: idFood, idUser : null}});
-        let foodDel = await Food.findOne({where : {id: idFood, idUser : null}});
+        Food.destroy({where: {id: idFood, userId : null}});
+        let foodDel = await Food.findOne({where : {id: idFood, userId : null}});
 
         if (!foodDel) {
     
@@ -48,7 +48,15 @@ router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, as
     const order_parameter = parsedUrl.query.orderParameter;
     const order_by = parsedUrl.query.orderBy;
 
-    var food = await Food.findAll({order: [[order_parameter, order_by]], where : {idUser : [req.user.id, null]}});
+    var food = await Food.findAll({
+        order: [[order_parameter, order_by]],
+        where : { 
+            [Op.or] : [
+                { userId : req.user.id },
+                { userId : null }
+            ]
+        }
+    }); 
 
     if (food) {
 
@@ -70,7 +78,7 @@ router.get('/api/admin/food', adminCheckerApi, parserJson, async(req, res, next)
     const order_parameter = parsedUrl.query.orderParameter;
     const order_by = parsedUrl.query.orderBy;
 
-    var food = await Food.findAll({where : {idUser : null}, order: [[order_parameter, order_by]]});
+    var food = await Food.findAll({where : {userId : null}, order: [[order_parameter, order_by]]});
 
     if (food) {
 
@@ -90,7 +98,14 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
 
     const id = req.params.id_food;
 
-    var food = await Food.findOne({where: {id: id, idUser : [req.user.id, null]}});
+    var food = await Food.findOne({where: {
+            id: id,
+            [Op.or] : [
+                { userId : req.user.id },
+                { userId : null }
+            ]
+        }
+    });
 
     if (food) {
 
@@ -122,10 +137,13 @@ router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumC
 
     var foods = await Food.findAll({
         where: {
-            name: {
+            name : { 
                 [Op.or] : nameSelector
             },
-           idUser : [req.user.id, null]
+            [Op.or] : [
+                { userId : req.user.id },
+                { userId : null }
+            ]
         },
         order: [[order_parameter, order_by]]
     });
@@ -216,7 +234,7 @@ router.patch('/api/admin/food/:id_food', parserJson, adminCheckerApi, async (req
 
         const idFood = req.params.id_food;
 
-        var food = await Food.findOne({where : {id: idFood,  idUser : null}});
+        var food = await Food.findOne({where : {id: idFood,  userId : null}});
         const foodUnUpdated = food;
         await food.update(req.body);
         await food.save();

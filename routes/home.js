@@ -1,18 +1,12 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router()
-const authenticationChecker = require('../middlewares/authenticationChecker');
-const premiumChecker = require('../middlewares/premiumChecker');
-const parserJson = require('../middlewares/parserJson');
-const url = require('url');
-const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
-const http = require('http');
-const { User }= require('../models');
+const isAuth = require('../middlewares/isAuth')
 
-router.get('/', authenticationChecker, premiumChecker, (req, res) => {
+router.get('/', isAuth, (req, res) => {
 
-    res.render('../views/home',  { layout: '../views/main' });
+    res.render('../views/home',  { user : req.user,  layout: '../views/main' });
 
 })
 
-
- module.exports = router
+ module.exports = router;

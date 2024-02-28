@@ -34,10 +34,6 @@ orderByButtons.forEach(orderByButton => {
 
         }
 
-        console.log(orderParameter)
-        console.log(orderBy)
-
-
         getAllFood();
 
     });    

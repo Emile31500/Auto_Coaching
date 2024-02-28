@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/');
 const session = require('express-session');
 
-const authenticationChecker =  async function (req, res, next) {
+const isAuth =  async function (req, res, next) {
+        
     try {
         
         const authToken = req.session.token;
@@ -19,16 +20,17 @@ const authenticationChecker =  async function (req, res, next) {
         } else {
 
             req.user = user;
-            next();
 
         }
         
     } catch (e) {
-  
-        res.statusCode = 401;
-        res.render('../views/error/error', {layout: '../views/main', user : false, code : res.statusCode, message : "Vous devez être authentifié pour accéder à cette page."});
+
+        req.user = false;
   
     }
+
+    next();
+
 }
 
-module.exports = authenticationChecker;
+module.exports = isAuth;
