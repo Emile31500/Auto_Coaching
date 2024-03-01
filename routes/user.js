@@ -194,4 +194,22 @@ router.get('/logout', authenticationChecker, premiumChecker, async(req, res) => 
 
 })
 
+router.get('/api/user/authenticated', authenticationCheckerApi, premiumChecker, async(req, res)=>{
+
+    const user = req.user
+
+    if (user) {
+
+        res.statusCode = 200
+        res.send({code : res.statusCode, message : 'Authenticcated user has been successfully got', data : user});
+
+    } else {
+
+        res.statusCode = 404
+        res.send({code : res.statusCode, message : 'Authenticcated user has been not found'});
+
+    }
+
+});
+
 module.exports = router
