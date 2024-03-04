@@ -10,6 +10,7 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "hash-password-pbkdf2": "^1.0.0",
+    "http": "^0.0.1-security",
     "jest-cli": "^29.7.0",
     "jsdom": "^24.0.0",
     "jsonwebtoken": "^9.0.2",
@@ -21,6 +22,7 @@
     "sequelize": "^6.33.0",
     "sequelize-cli": "^6.6.1",
     "should": "^13.2.3",
+    "socket.io": "^4.7.4",
     "stripe": "^14.11.0"
   },
   "devDependencies": {

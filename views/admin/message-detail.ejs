@@ -1,8 +1,8 @@
-<% title = "Child Template" %>
-
-<%- contentFor('main') %>
+<% title = 'Child Template' %>
+<%- contentFor('mainNotMarged') %>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> 
 <body>
+    <div class="d-none" id='idReciepientElement'><%= idRecipient %></div>
     <div class="container mt-5">
         <div class="row clearfix">
             <div class="col-lg-12">
@@ -23,7 +23,6 @@
                         </div>
                         <div class="chat-history">
                             <ul class="m-b-0" id="messageHistoryZone">
-                                
                             </ul>
                         </div>
                         <div class="chat-message clearfix">
@@ -40,11 +39,11 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>    
 </body>
-<script src="/js/date.js"></script>
+<script src="/js/date.js"></script> 
 <script src="/js/authenticated.user.js"></script>
-<script src="/js/message/get.js"></script>
-<script src="/js/message/send.js"></script>
+<script src="/js/admin/message/get.js"></script>
+<script src="/js/admin/message/send.js"></script>
 <link href="/css/message.css" rel="stylesheet" />
-</html>
+<%- contentFor('main') %>
