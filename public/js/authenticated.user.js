@@ -23,4 +23,6 @@ async function getAuthenticatedUser() {
 
    })
 
+   return res
+
 }

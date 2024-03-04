@@ -1,7 +1,6 @@
 sendButton.addEventListener('click', async function (event){
 
     event.preventDefault();
-    
     message = messageInput.value;
     const todayDateTime =  getTodayDateTime()
 
@@ -15,7 +14,7 @@ sendButton.addEventListener('click', async function (event){
         userIdRecipient : null
     });
 
-    const res = await fetch('/api/message', {
+    const res = await fetch('/api/admin/message/' + idRecipient , {
         method : 'POST',
         headers : {
             'Content-type' : 'application/json'
@@ -26,11 +25,10 @@ sendButton.addEventListener('click', async function (event){
         return data;
     })
     
-    messageInput.value = ''
-
     let sinceDate = getTodayDateTime();
     await wrightMessageSince(sinceDate)
-
+    
+    messageInput.value = ''
     if (201 !== res.code){
 
         alert('error')    

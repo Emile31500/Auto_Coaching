@@ -10,6 +10,8 @@ var router = express.Router();
 const { sequelize } = require('./models');
 var layout = require('express-ejs-layouts');
 
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 app.set('view engine', 'ejs');
 app.use(layout);
 
@@ -34,6 +36,16 @@ const user = require('./routes/user');
 
 const { User } = require('./models');
 const pbkdf2 = require("hash-password-pbkdf2");
+
+io.on('connection', (socket) => {
+
+  socket.on('chat message', (msg) => {  
+
+    console.log('message: ' + msg); 
+
+  });
+  
+});
 
 app.use(express.static('public'))
 app.use(bodyParser.json());

@@ -181,7 +181,6 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
     }
 });
   
-
 router.get('/logout', authenticationChecker, premiumChecker, async(req, res) => {
 
     if (req.session.token) {
@@ -194,7 +193,7 @@ router.get('/logout', authenticationChecker, premiumChecker, async(req, res) => 
 
 })
 
-router.get('/api/user/authenticated', authenticationCheckerApi, premiumChecker, async(req, res)=>{
+router.get('/api/user/authenticated', isAuth, async(req, res)=>{
 
     const user = req.user
 
