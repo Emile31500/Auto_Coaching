@@ -11,11 +11,25 @@
         <th scope="col"></th>
     </thead>
     <tbody id="listAteFoodHTML">
+        <% for (var i = 0; i < ateFoods.length ;  i++ ) { %>
+            
+            <tr id="ate-food-<%= ateFoods[i].Food.id  %>">
+                <td> <%= ateFoods[i].Food.name   %></td>
+                <td> <%= ateFoods[i].weight %></td>
+                <td>
+                    <button data-id-food="<%= ateFoods[i].id %>" class='delete-ate-food-btn btn btn-danger' > x </button>
+                </td>
+            </tr>
+
+        <% } %>
 
     </tbody>
 </table>
 <div id="responseFoodAteRequest" class="my-3 alert d-none">
 
+    
+
 </div>
 <script src="/js/date.js"></script>
+<script src="/js/ate_food/delete.js"></script>
 <script src="/js/ate_food/get.all.detail.js"></script>

@@ -17,11 +17,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Message.init({
-    userId: DataTypes.INTEGER,
     isDelated: DataTypes.BOOLEAN,
     isViewed: DataTypes.BOOLEAN,
     message: DataTypes.STRING,
-    userIdRecipient: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Message',

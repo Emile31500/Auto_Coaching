@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Measurment.belongsTo(models.User)
-      models.User.hasOne(Measurment);
+      Measurment.belongsTo(models.User, {
+        foreignKey : 'userId'
+      })
     }
   }
   Measurment.init({
-    userId: DataTypes.INTEGER,
     weight: DataTypes.FLOAT,
     size: DataTypes.FLOAT,
     suroundShoulers: DataTypes.FLOAT,

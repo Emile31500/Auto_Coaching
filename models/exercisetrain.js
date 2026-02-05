@@ -10,20 +10,20 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      ExerciseTrain.belongsTo(models.Train)
-      models.Train.hasOne(ExerciseTrain);
+      ExerciseTrain.belongsTo(models.Train, {
+        foreignKey: 'trainId',
+      })
 
-      ExerciseTrain.belongsTo(models.Exercise)
-      models.Exercise.hasOne(ExerciseTrain);
+      ExerciseTrain.belongsTo(models.Exercise, {
+        foreignKey : 'exerciseId'
+      })
     }
   }
   ExerciseTrain.init({
     repsMode: DataTypes.STRING(5),
     day: DataTypes.STRING(8),
-    exerciseId: DataTypes.INTEGER,
     reps: DataTypes.INTEGER,
     sets: DataTypes.INTEGER,
-    trainId: DataTypes.INTEGER
     
   }, {
     sequelize,

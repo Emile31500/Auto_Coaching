@@ -13,8 +13,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Train.belongsTo(models.TrainRequest)
-      models.TrainRequest.hasOne(Train);
+      Train.belongsTo(models.TrainRequest, {
+        foreignKey : 'trainRequestId'
+      })
+      Train.belongsTo(models.User, 
+        {
+        foreignKey: {
+          name : 'userId'
+        },
+      })
     }
 
     async getDays() {
@@ -36,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
   Train.init({
     name: DataTypes.STRING,
     isFinished: DataTypes.BOOLEAN,
-    trainRequestId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Train',

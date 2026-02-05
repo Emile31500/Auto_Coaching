@@ -213,7 +213,8 @@ router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, nex
 
         const rawData = req.body
 
-        const food = Food.create(rawData);
+        let food = Food.create(rawData);
+        food.kcalorie = food.proteine * 4 + food.fat * 9 +  food.carbohydrate * 4  
         if (food){
 
             res.statusCode = 201

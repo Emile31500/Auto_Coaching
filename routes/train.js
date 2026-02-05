@@ -8,6 +8,12 @@ var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 
 
+router.get('/train/request', authenticationChecker, premiumChecker, async (req, res) => {
+
+    res.render('../views/train-request',  {layout: '../views/main' });
+
+})
+
 router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
     res.render('../views/train',  {layout: '../views/main' });
@@ -16,14 +22,14 @@ router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
 router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req, res) => {
 
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const trainId = req.params.id_train
 
     const train = await Train.findOne({where : {
             id : trainId,
-            isFinished : true,  
+            isFinished : true,
             userId : userId
-        }, 
+        },
         orderBy : [['day', 'ASC']]
     });
 
@@ -36,9 +42,9 @@ router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req
     if (train && exerciseTrain) {
 
         let jsonRes = train;
-        
+
         jsonRes.exerciseTrain = exerciseTrain;
-        
+
         for (let i = 0; i <jsonRes.exerciseTrain.length; i++) {
 
             jsonRes.exerciseTrain[i].exercise = await Exercise.findOne({where : {id : jsonRes.exerciseTrain[i].exerciseId}});
@@ -57,7 +63,7 @@ router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req
 
 router.get('/train/:id_train/play/:day', authenticationChecker, premiumChecker, async (req, res) => {
 
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const trainId = req.params.id_train
     const day = req.params.day;
 
@@ -77,13 +83,13 @@ router.get('/train/:id_train/play/:day', authenticationChecker, premiumChecker, 
 
 router.get('/api/train/:id_train/day', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const trainId = req.params.id_train
 
     const train = await Train.findOne({where : {id : trainId, userId : userId}});
 
     if (train) {
-           
+
         const days = await train.getDays();
 
         if (days) {
@@ -96,7 +102,7 @@ router.get('/api/train/:id_train/day', authenticationCheckerApi, premiumChecker,
             res.statusCode = 404;
             res.send({code : res.statusCode, message : 'Days where user trains hasn\'t been found', data : days})
         }
-        
+
     } else {
 
         res.statusCode = 404
@@ -107,7 +113,7 @@ router.get('/api/train/:id_train/day', authenticationCheckerApi, premiumChecker,
 
 router.get('/api/train/:id_train/exercise/:day', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const trainId = req.params.id_train
     const day = req.params.day;
 
@@ -129,14 +135,14 @@ router.get('/api/train/:id_train/exercise/:day', authenticationCheckerApi, premi
 
 router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     var trains = await Train.findAll({where:{userId: userId}});
 
     if (trains) {
 
         res.statusCode = 200
-        
+
         res.send({code: res.statusCode, message: 'Trains models have been requested', data: trains});
 
     } else {
@@ -148,20 +154,13 @@ router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, r
 
 })
 
-router.get('/train/request', authenticationChecker, premiumChecker, (req, res) => {
-
-    res.render('../views/train-request',  {layout: '../views/main' });
-
-
-})
-
 router.get('/api/admin/train/request/:id_train_request/train', adminCheckerApi, async (req, res) => {
 
     const idTrainRequest = req.params.id_train_request;
     const train = await Train.findOne({where : {trainRequestId: idTrainRequest}})
 
     if (train) {
-    
+
         res.statusCode = 200
         res.send({code: res.statusCode, message: 'The train associated to this train request has been found', data : train});
 
@@ -182,7 +181,7 @@ router.get('/admin/train', adminChecker, (req, res) => {
 router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
 
     const idRequest = req.params.id_request;
-    
+
     res.render('../views/admin/train-request-detail',  {layout: '../views/main-admin', id_request: idRequest});
 
 })
@@ -196,7 +195,7 @@ router.post('/api/admin/train', adminCheckerApi, async (req, res) => {
     let train = await Train.create(rawTrain);
 
     rawExercisesTrain.forEach(async(rawExerciseTrain) => {
-        
+
         let exerciseTrain = await ExerciseTrain.create(rawExerciseTrain)
         await train.setExerciseTrain(exerciseTrain);
         exercisesTrains.push(exerciseTrain);
@@ -229,11 +228,11 @@ router.patch('/api/admin/train', adminCheckerApi, async (req, res) => {
     await ExerciseTrain.destroy({where : {trainId : train.id}});
 
     rawExercisesTrains.forEach(async(rawExerciseTrain) => {
-        
+
         let exerciseTrain = await ExerciseTrain.create(rawExerciseTrain)
         await train.setExerciseTrain(exerciseTrain);
         exercisesTrains.push(exerciseTrain);
-    
+
     });
 
     if (train){
@@ -300,7 +299,7 @@ router.get('/api/train/request', authenticationCheckerApi, premiumChecker, async
 
     if (trainRequest) {
 
-        res.statusCode = 200,      
+        res.statusCode = 200,
         res.send({code: res.statusCode, message: 'Train request has been found', data: trainRequest});
 
     } else {
@@ -332,9 +331,9 @@ router.post('/api/train/request', authenticationCheckerApi, async (req, res) => 
 
             var index = 0;
             var jsonArray = []
-            
+
             await Promise.all(array.map(async (row) => {
-    
+
                 jsonArray[index] = await model.create(row);
                 jsonArray[index].userId = userId;
 
@@ -342,7 +341,7 @@ router.post('/api/train/request', authenticationCheckerApi, async (req, res) => 
                 await jsonArray[index].save();
                 index++;
 
-            }));    
+            }));
 
             return jsonArray;
         }
@@ -353,7 +352,7 @@ router.post('/api/train/request', authenticationCheckerApi, async (req, res) => 
         let nutritionRequirement = await NutritionRequirement.create()
         nutritionRequirement.generateDefaultNutrient(rawDataTrainRequest, req.user.sex);
 
-        res.statusCode = 200      
+        res.statusCode = 200
         res.send({code: res.statusCode, message: 'Train request has been created', data: trainRequest});
 
     } else {

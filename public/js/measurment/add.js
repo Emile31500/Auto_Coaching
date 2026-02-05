@@ -12,74 +12,13 @@ measurmentForm.addEventListener('submit', async function (event){
     event.preventDefault();
 
     let measurments = await fetchMeasurments();
+    console.log(measurments);
     let previousMeasurment = measurments[0];
     let haveToGainWeight = false, haveToLoseWeight = false
 
     let objectif = await getObjectif()
-    objectif = objectif.toLowerCase();
+    updateBelongWithResults(objectif); 
 
-    if (objectif === 'volume' || objectif === 'force'){
-
-        haveToGainWeight = true;
-
-
-    } else if (objectif.include('perdre du poids')) {
-
-        haveToLoseWeight = true;
-    }
-
-    let nutritionRequirement = await fetch('/api/nutrition/requirement/', {
-        method : 'GET',
-        headers : {
-            'Content-Type':'application/json'
-        }
-
-    }).then(response => {
-        return response.json()
-    }).then(data => {
-        if (data.code === 200){
-            return data.data;
-        }
-    }) 
-
-    let newKcalorieRequirement = nutritionRequirement.kcalorie;
-    let newProteinRequirement = nutritionRequirement.protein;
-
-    if (haveToGainWeight) {
-        
-        if (previousMeasurment.weight >= weight.value) {
-
-            newKcalorieRequirement = nutritionRequirement.kcalorie * 1.02;
-        }
-
-        newProteinRequirement = weight.value * 2;
-
-    } else if (haveToLoseWeight) {
-
-        if (previousMeasurment.weight <= weight.value) {
-
-            newKcalorieRequirement = nutritionRequirement.kcalorie * 0.98;
-
-        }
-
-        newProteinRequirement = weight.value * 2.2;
-
-    }
-
-    jsonData = JSON.stringify({
-        kcalorie : newKcalorieRequirement,
-        fat : weight.value,
-        protein : newProteinRequirement,
-        updatedAt : getTodayDate()
-    })
-
-    await fetch('/api/nutrition/requirement/', {
-        method : 'PATCH',
-        headers : {
-            'Content-Type' : 'application/json'
-        },
-        body : jsonData
-    }) 
 
     const rawData = JSON.stringify({
         weight: weight.value,
@@ -120,6 +59,70 @@ measurmentForm.addEventListener('submit', async function (event){
     .catch(error => console.log('error', error));
 });
 
+
+async function updateBelongWithResults(objectif) {
+
+        if (objectif != undefined) {
+        objectif = objectif.toLowerCase();
+
+        if (objectif === 'volume' || objectif === 'force') haveToGainWeight = true;
+        if (objectif.include('perdre du poids'))haveToLoseWeight = true;
+
+        let nutritionRequirement = await fetch('/api/nutrition/requirement/', {
+            method : 'GET',
+            headers : {
+                'Content-Type':'application/json'
+            }
+
+        }).then(response => {
+            return response.json()
+        }).then(data => {
+            if (data.code === 200){
+                return data.data;
+            }
+        }) 
+
+        let newKcalorieRequirement = nutritionRequirement.kcalorie;
+        let newProteinRequirement = nutritionRequirement.protein;
+
+        if (haveToGainWeight) {
+            
+            if (previousMeasurment.weight >= weight.value) {
+
+                newKcalorieRequirement = nutritionRequirement.kcalorie * 1.02;
+            }
+
+            newProteinRequirement = weight.value * 2;
+
+        } else if (haveToLoseWeight) {
+
+            if (previousMeasurment.weight <= weight.value) {
+
+                newKcalorieRequirement = nutritionRequirement.kcalorie * 0.98;
+
+            }
+
+            newProteinRequirement = weight.value * 2.2;
+
+        }
+
+        jsonData = JSON.stringify({
+            kcalorie : newKcalorieRequirement,
+            fat : weight.value,
+            protein : newProteinRequirement,
+            updatedAt : getTodayDate()
+        })
+
+        await fetch('/api/nutrition/requirement/', {
+            method : 'PATCH',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : jsonData
+        }) 
+    }
+}
+
 async function getObjectif(){
 
 
@@ -133,7 +136,11 @@ async function getObjectif(){
 
     if (res.code === 200) {
 
-        return res.data[0].objectif;
+        if (res.data[0] != undefined) {
+           return res.data[0].objectif;
+        } else {
+            return null
+        }
 
     }
 }

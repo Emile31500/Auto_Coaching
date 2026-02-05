@@ -10,8 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
       static associate(models) {
-        NutritionRequirement.belongsTo(models.User)
-        models.User.hasOne(NutritionRequirement);
+        NutritionRequirement.belongsTo(models.User, {
+          foreignKey : 'userId'
+        })
       }
 
       calculateAge(birth_day) {

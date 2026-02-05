@@ -10,8 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Food.belongsTo(models.User)
-      models.User.hasMany(Food);
+      Food.belongsTo(models.User, {
+        foreignKey : 'userId',
+      })
     
     }
   }
@@ -27,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     is_egg: DataTypes.BOOLEAN,
     is_milk: DataTypes.BOOLEAN,
     is_veggie: DataTypes.BOOLEAN,
-    userId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Food',
