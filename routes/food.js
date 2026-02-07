@@ -13,13 +13,20 @@ const url = require('url')
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
-router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req, res, next) => {
+router.delete('/api/food/:id_food', authenticationCheckerApi, parserJson, async(req, res, next) => {
 
     const idFood = req.params.id_food;
-    let food = await Food.findOne({where : {id: idFood, userId : null}});
+    
+    if (user.role.includes('admin') == true) {
+        whereUserId = null;
+    } else {
+        whereUserId = req.use.id;
+    }
+
+    let food = await Food.findOne({where : {id: idFood, userId : whereUserId}});
 
     if (food){
-
+        
         Food.destroy({where: {id: idFood, userId : null}});
         let foodDel = await Food.findOne({where : {id: idFood, userId : null}});
 
@@ -47,29 +54,7 @@ router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req
 router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
-    let food = await FoodService.getForMainPage(parsedUrl.query, req.user.id)
-
-    if (food) {
-
-        res.statusCode = 200;
-        res.send({code : res.statusCode, message: 'This food model successfully requested', data : food});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({code : res.statusCode, message : 'None food have been found'});
-
-    }  
-
-});
-
-router.get('/api/admin/food', adminCheckerApi, parserJson, async(req, res, next) => {
-
-    const parsedUrl = url.parse(req.url, true);
-    const order_parameter = parsedUrl.query.orderParameter;
-    const order_by = parsedUrl.query.orderBy;
-
-    var food = await Food.findAll({where : {userId : null}, order: [[order_parameter, order_by]]});
+    let food = await FoodService.getForMainPage(parsedUrl.query, req.user)
 
     if (food) {
 
@@ -111,86 +96,6 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
     }
 });
 
-/*router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
-
-    const parsedUrl = url.parse(req.url, true);
-    const order_parameter = parsedUrl.query.orderParameter;
-    const order_by = parsedUrl.query.orderBy;
-
-    const arrayWord = req.params.word.split(" ");
-    let nameSelector = []
-
-    arrayWord.forEach(word => {
-
-        nameSelector.push({[Op.like] : '%'+word+'%'});
-        
-    });
-
-    var foods = await Food.findAll({
-        where: {
-            name : { 
-                [Op.or] : nameSelector
-            },
-            [Op.or] : [
-                { userId : req.user.id },
-                { userId : null }
-            ]
-        },
-        order: [[order_parameter, order_by]]
-    });
-
-    if (foods) {
-
-        res.statusCode = 200;
-        res.send({code : res.statusCode, message: 'Those food models successfully requested', data: foods});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({code : res.statusCode, message : 'Those food was not found for this request'});
-
-    }
-});*/
-
-router.get('/api/admin/food/:word/all', adminCheckerApi, parserJson, async(req, res, next) => {
-
-    const parsedUrl = url.parse(req.url, true);
-    const order_parameter = parsedUrl.query.orderParameter;
-    const order_by = parsedUrl.query.orderBy;
-
-
-    const arrayWord = req.params.word.split(" ");
-    let nameSelector = []
-
-    arrayWord.forEach(word => {
-
-        nameSelector.push({[Op.like] : '%'+word+'%'});
-        
-    });
-
-    var foods = await Food.findAll({
-        where: {
-            name: {
-                [Op.or] : nameSelector
-            },
-            idUser : null,
-        },
-        order: [[order_parameter, order_by]]
-    });
-
-    if (foods) {
-
-        res.statusCode = 200;
-        res.send({code : res.statusCode, message: 'Those food models successfully requested', data: foods});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({code : res.statusCode, message : 'Those food was not found for this request'});
-
-    }
-});
-
 router.get('/food/add', premiumChecker, async(req, res, next) => {
 
     res.render('../views/food-add',  {layout: '../views/main' });
@@ -198,14 +103,22 @@ router.get('/food/add', premiumChecker, async(req, res, next) => {
 });
 
 
-router.post('/api/admin/food', parserJson, adminCheckerApi, async (req, res, next) => {
+router.post('/api/food', parserJson, adminCheckerApi, async (req, res, next) => {
 
     if (req.body && req.session.token){
 
         const rawData = req.body
 
+         if (user.role.includes('admin') == true) {
+            userIdValue = null;
+        } else {
+            userIdValue = req.use.id;
+        }
+
+
         let food = Food.create(rawData);
-        food.kcalorie = food.proteine * 4 + food.fat * 9 +  food.carbohydrate * 4  
+        food.userId = userIdValue 
+
         if (food){
 
             res.statusCode = 201
