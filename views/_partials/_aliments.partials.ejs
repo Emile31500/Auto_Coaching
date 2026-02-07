@@ -1,0 +1,67 @@
+<div class="alert my-3 d-none" id="nutrition_alert" role="alert">
+    </div>
+    <h3 class="my-5 ">Aliments 
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addFoodModal">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </h3>
+    <table class="table table-striped my-3">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">
+              <a href="#" class="link-light orderByButton" data-parameter="name">Nom</a> 
+            </th>
+            <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light">Kcalorie</a></th>
+            <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="carbohydrate">Glucide</a></th>
+            <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="protein">Proteine</a></th>
+            <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="fat">Lipide</a></th>
+            <th scope="col" class="d-xl-none d-print-table-cell" >Valeurs nutritionelle</td>
+            <th scope="col">
+              <div class="row w-auto p-0 m-0">
+                <div class="col-auto">
+                  <input type="date" id="ateFoodDate" class="form-control"/>
+                </div>
+                <button class="col-auto btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
+                  <i class="fa-solid fa-filter"></i> Filtrer
+                  <% if (countFilter) { %> 
+                      <span class="badge badge-light"><%=  countFilter %></span>
+                  <% }%> 
+                    
+                </button>
+              </div>
+              
+            </th>
+          </tr>
+        </thead>
+        <tbody id="foodTableBody"> 
+          <% for(var i=0; i<food.length; i++) {%>
+            <tr>
+              <th scope="row"><%= food[i].name %></th>
+              <td class="d-none d-xl-table-cell"> <span class="kcal"><%=  parseFloat(food[i].carbohydrate *4.063+ food[i].proteine *4.063 + food[i].fat*9.08222).toFixed(1)  %> kcal </span></td>
+              <td class="d-none d-xl-table-cell"> <span class="carbo"><%= food[i].carbohydrate %></span> g </td>
+              <td class="d-none d-xl-table-cell"> <span class="protein"><%= food[i].proteine %></span> g </td>
+              <td class="d-none d-xl-table-cell"> <span class="fat"><%= food[i].fat %></span> g </td>
+              <td class="d-xl-none d-print-table-cell">
+                <button class="btn btn-outline-secondary get-detail" data-bs-toggle="modal" data-bs-target="#detailFoodModal">...</button> 
+              </td>
+              <td>
+                <form action="/api/food/ate" class="alimentForms" method="post">
+                  <div class="row"  style="max-width: 200px;">
+                    <input type="number" name="foodId" hidden value=<%= food[i].id %> >
+                    <div class="col">
+                      <input type="number" name="weight" class="form-control" placeholder="g / ml">
+                    </div>
+                    <div class="col-3">
+                      <button class="btn btn-outline-primary">
+                      
+                        <i class="fa-solid fa-plus"></i>
+                        Mangé 
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>

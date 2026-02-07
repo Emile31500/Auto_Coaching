@@ -1,0 +1,169 @@
+<% title = "Child Template" %>
+
+<%- contentFor('main') %>
+<h3 class="my-5 ">Aliments 
+    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addFoodModal">
+    <i class="fa-solid fa-plus"></i>
+    </button>
+</h3>
+
+<div>
+    <form class="row my-2 foodFishForm" method="POST">
+        <div class="col-auto"> <input type="text" name="name" class="form-control" required /></div>
+        <input type="hidden" name="foodsDish" id="foodsDish"/>
+        <input class=" col-auto  btn btn-outline-primary" type="submit"/>
+    </form>
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">
+                    <a href="#" class="link-light orderByButton" data-parameter="name">Nom</a> 
+                </th>
+                <th scope="col" colspan="2" >
+                    <a href="#" class="link-light">Poids</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="addedFood"></tbody> 
+    </table>
+        
+
+</div>
+
+
+<table class="table table-striped my-3">
+    <thead class="table-dark">
+        <tr>
+        <th scope="col">
+            <a href="#" class="link-light orderByButton" data-parameter="name">Nom</a> 
+        </th>
+        <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light">Kcalorie</a></th>
+        <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="carbohydrate">Glucide</a></th>
+        <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="protein">Proteine</a></th>
+        <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="fat">Lipide</a></th>
+        <th scope="col" class="d-xl-none d-print-table-cell" >Valeurs nutritionelle</td>
+        <th scope="col">
+            <div class="row w-auto p-0 m-0">
+            <div class="col-auto">
+            </div>
+            <button class="col-auto btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
+                <i class="fa-solid fa-filter"></i> Filtrer
+                <% if (countFilter) { %> 
+                    <span class="badge badge-light"><%=  countFilter %></span>
+                <% }%> 
+                
+            </button>
+            </div>
+            
+        </th>
+        </tr>
+    </thead>
+    <tbody id="foodTableBody"> 
+        <% for(var i=0; i<food.length; i++) {%>
+        <tr>
+            <th scope="row"><%= food[i].name %></th>
+            <td class="d-none d-xl-table-cell"> <span class="kcal"><%=  parseFloat(food[i].carbohydrate *4.063+ food[i].proteine *4.063 + food[i].fat*9.08222).toFixed(1)  %> kcal </span></td>
+            <td class="d-none d-xl-table-cell"> <span class="carbo"><%= food[i].carbohydrate %></span> g </td>
+            <td class="d-none d-xl-table-cell"> <span class="protein"><%= food[i].proteine %></span> g </td>
+            <td class="d-none d-xl-table-cell"> <span class="fat"><%= food[i].fat %></span> g </td>
+            <td class="d-xl-none d-print-table-cell">
+            <button class="btn btn-outline-secondary get-detail" data-bs-toggle="modal" data-bs-target="#detailFoodModal">...</button> 
+            </td>
+            <td>
+            <form action="/api/food/ate" class="alimentForms" method="post">
+                <div class="row"  style="max-width: 200px;">
+                <input type="number" name="foodId" hidden value=<%= food[i].id %> >
+                <div class="col">
+                    <input type="number" name="weight" class="form-control" placeholder="g / ml">
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-outline-primary addFoodToDish" idFood="<%= food[i].id %>">
+                        <i class="fa-solid fa-plus"></i>
+                            Ajouter 
+                    </button>
+                </div>
+                </div>
+            </form>
+            </td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>
+<script>
+    const addFoodToDishs = document.querySelectorAll('.addFoodToDish')
+    const foodFishForm = document.querySelector('.foodFishForm');
+    const addedFood = document.querySelector('#addedFood');
+    const foodsDish = document.querySelector('#foodsDish')
+
+    foodFishForm.addEventListener('submit', function (event) {
+
+        event.preventDefault();
+
+        
+        const foodWeightElements = document.querySelectorAll('.foodWeight');
+        var foodWeight = [];
+        
+        foodWeightElements.forEach(foodWeightElement => {
+            foodWeight.push('{foodId: '+foodWeightElement.getAttribute("foodId")+', weight: '+foodWeightElement.value+'}')
+        })
+
+        foodsDish.setAttribute('value', "["+foodWeight.toString()+"]");
+        console.log(foodWeight);
+
+        data = new FormData(this)
+        this.submit(data);
+
+        
+    })
+
+    function initDelete() {
+        const deleteFoodButtons = document.querySelectorAll('.deleteFoodButton');
+
+        console.log(deleteFoodButtons);
+        deleteFoodButtons.forEach(deleteFoodButton => {
+            // deleteFoodButton.removeEventListener('click')
+            deleteFoodButton.addEventListener('click', function (event) {
+
+                console.log("Init delete");
+                event.preventDefault();
+                this.parentElement.parentElement.remove();
+                
+            });
+
+        });
+
+    }
+    initDelete();
+    
+
+    addFoodToDishs.forEach(addFoodToDish => {
+
+        addFoodToDish.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            const id = addFoodToDish.getAttribute('idFood')
+            const body = {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'}
+            }
+            
+            fetch('/api/food/'+id, body)
+            .then(response => response.json())
+            .then(data => {
+                if (data.data !== undefined) {
+                    const tr = document.createElement('tr')
+                    tr.innerHTML = '<th scope="row">'+data.data.name+'</th><td><input type="number" foodId='+data.data.id+' class="form-control foodWeight" placeholder="g / ml"/></td><td><button class="btn btn-outline-danger deleteFoodButton"><i class="fa-regular fa-trash-can"></i> Supprimer</button></td>';
+                    
+                    addedFood.appendChild(tr)
+                    initDelete()
+
+                }
+            });
+
+        });
+        
+    });
+
+    foodFishForm
+</script>
