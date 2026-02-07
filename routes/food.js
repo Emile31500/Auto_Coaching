@@ -1,5 +1,7 @@
 const express = require('express');
 const { Food } = require('../models');
+const FoodService = require('../services/food');
+
 var parserJson = require('../middlewares/parserJson');
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
 
@@ -45,18 +47,7 @@ router.delete('/api/admin/food/:id_food', adminCheckerApi, parserJson, async(req
 router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
-    const order_parameter = parsedUrl.query.orderParameter;
-    const order_by = parsedUrl.query.orderBy;
-
-    var food = await Food.findAll({
-        order: [[order_parameter, order_by]],
-        where : { 
-            [Op.or] : [
-                { userId : req.user.id },
-                { userId : null }
-            ]
-        }
-    }); 
+    let food = await FoodService.getForMainPage(parsedUrl.query, req.user.id)
 
     if (food) {
 
@@ -120,7 +111,7 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
     }
 });
 
-router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
+/*router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
     const order_parameter = parsedUrl.query.orderParameter;
@@ -159,7 +150,7 @@ router.get('/api/food/:word/all', authenticationCheckerApi, parserJson, premiumC
         res.send({code : res.statusCode, message : 'Those food was not found for this request'});
 
     }
-});
+});*/
 
 router.get('/api/admin/food/:word/all', adminCheckerApi, parserJson, async(req, res, next) => {
 
@@ -253,7 +244,7 @@ router.patch('/api/admin/food/:id_food', parserJson, adminCheckerApi, async (req
             } else {
 
                 res.statusCode = 422
-                 res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
+                res.send({'code': res.statusCode, 'message': 'Update of this food is a failure'});
 
             }
 

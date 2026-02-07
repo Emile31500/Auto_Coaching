@@ -21,7 +21,7 @@ const ExerciseTest = describe('Exercises tests', () => {
             .send(rawData)
             .redirects(1);
             
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/exercise');
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -39,7 +39,7 @@ const ExerciseTest = describe('Exercises tests', () => {
             .redirects(1);
             
         expect(res._body.data).toBeUndefined();
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/exercise');
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -77,7 +77,7 @@ const ExerciseTest = describe('Exercises tests', () => {
             .redirects(1);
             
         expect(res._body.data).toBeUndefined();
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/exercise');
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -94,7 +94,7 @@ const ExerciseTest = describe('Exercises tests', () => {
             .redirects(1);
             
         expect(res._body.data).toBeUndefined();
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/exercise');
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -137,7 +137,7 @@ const ExerciseTest = describe('Exercises tests', () => {
 
         expect(seqExercise).toEqual(exercise);
         expect(res._body.data).toBeUndefined();
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual(url);
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -160,7 +160,7 @@ const ExerciseTest = describe('Exercises tests', () => {
 
         expect(seqExercise).toEqual(exercise);
         expect(res._body.data).toBeUndefined();
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual(url);
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);

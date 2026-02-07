@@ -1,7 +1,10 @@
 <% title = "Détais de la diette de ce jour" %>
 
 <%- contentFor('main') %>
-<h2 class="my-5">Détais de la diette de ce jour :</h2>
+<h2 class="my-5">
+    <a href="/nutrition" class="btn btn-primary"><i class="fa-solid fa-arrow-left-long"></i></a> 
+    Détails de la diette de ce jour :
+</h2>
 <h3  id="date"><%= date %></h3>
 
 <table class="my-3 table">
@@ -15,9 +18,24 @@
             
             <tr id="ate-food-<%= ateFoods[i].Food.id  %>">
                 <td> <%= ateFoods[i].Food.name   %></td>
-                <td> <%= ateFoods[i].weight %></td>
+                <td> 
+                    <form action="/food/ate/<%= ateFoods[i].Food.id  %>" method="POST" class="row">
+                        <input type="hidden" name="date" class="weight form-control" id="weight" value="<%= date %>"/> 
+                        <div class="col-auto">
+                            <input type="number" name="weight" class="weight form-control" id="weight" value="<%= ateFoods[i].weight %>" placeholder=" g / ml"/> 
+                        </div>
+                        <div class="col-auto">
+                            g / ml
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-outline-primary">update</button>
+                        </div>
+                    </form>
+                </td>
                 <td>
-                    <button data-id-food="<%= ateFoods[i].id %>" class='delete-ate-food-btn btn btn-danger' > x </button>
+                    <button data-id-food="<%= ateFoods[i].id %>" class='delete-ate-food-btn btn btn-outline-danger' > 
+                        <i class="fa-regular fa-trash-can"></i> 
+                    </button>
                 </td>
             </tr>
 

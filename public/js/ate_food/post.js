@@ -1,80 +1,85 @@
-let alimentForms = document.querySelectorAll('.alimentForms');
+function postAteFood() {
 
-alimentForms.forEach(form => {
+    let alimentForms = document.querySelectorAll('.alimentForms');
 
-    form.addEventListener("submit", async function(e){
+    alimentForms.forEach(form => {
 
-        e.preventDefault();
-        data = new FormData(this);
+        form.addEventListener("submit", async function(e){
 
-        if (!ateFoodDate.value) {
+            e.preventDefault();
+            data = new FormData(this);
 
-        ateFoodDate.value = getTodayDate();
+            if (!ateFoodDate.value) {
 
-        }
+            ateFoodDate.value = getTodayDate();
 
-        var raw = JSON.stringify({
-            foodId: parseInt(data.get("foodId")),
-            weight: parseInt(data.get("weight")),
-            userId: null,
-            createdAt: ateFoodDate.value,
-            updatedAt: ateFoodDate.value
-            })
+            }
+
+            var raw = JSON.stringify({
+                foodId: parseInt(data.get("foodId")),
+                weight: parseInt(data.get("weight")),
+                userId: null,
+                createdAt: ateFoodDate.value,
+                updatedAt: ateFoodDate.value
+                })
+                
+            fetch('/api/food/ate', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: raw
+
+            }).then(response => {
+
+                calculateAteFood(ateFoodDate.value);
+                nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
+                nutrition_alert.classList.add('alert-success');
+                nutrition_alert.classList.remove('alert-danger');
+                nutrition_alert.classList.remove('d-none');
+
+                if(response.status == 201){
+
+                    let interv = setInterval(function (){
+
+                        nutrition_alert.classList.add('d-none');
+                        clearInterval(interv);
+
+                    }, 2000);
+                    form.reset();
+
+                } else {
+
+                    nutrition_alert.innerHTML = "Erreur : "
+
+                    nutrition_alert.classList.remove('d-none');
+                    nutrition_alert.classList.remove('alert-success');
+                    nutrition_alert.classList.add('alert-danger');
+
+                }
+
+                return response.json();
+
+            }).then(data => {
             
-        fetch('/api/food/ate', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: raw
+            if(data['message'] != undefined) {
 
-        }).then(response => {
+                nutrition_alert.innerHTML =  data['message'];
 
-            calculateAteFood(ateFoodDate.value);
-            nutrition_alert.innerHTML = "Votre aliment a bien été enregistré";
-            nutrition_alert.classList.add('alert-success');
-            nutrition_alert.classList.remove('alert-danger');
-            nutrition_alert.classList.remove('d-none');
 
-            if(response.status == 201){
+            }
 
-            let interv = setInterval(function (){
-
-                nutrition_alert.classList.add('d-none');
-                clearInterval(interv);
-
-            }, 2000);
-            
-
-            } else {
+            }).catch(error => {
 
             nutrition_alert.innerHTML = "Erreur : "
-
             nutrition_alert.classList.remove('d-none');
             nutrition_alert.classList.remove('alert-success');
             nutrition_alert.classList.add('alert-danger');
 
-            }
-
-            return response.json();
-
-        }).then(data => {
-        
-        if(data['message'] != undefined) {
-
-            nutrition_alert.innerHTML = '<b>Erreure :</b> <br>' + data['message']+ '';
-
-
-        }
-
-        }).catch(error => {
-
-        nutrition_alert.innerHTML = "Erreur : "
-        nutrition_alert.classList.remove('d-none');
-        nutrition_alert.classList.remove('alert-success');
-        nutrition_alert.classList.add('alert-danger');
+            });
 
         });
-
     });
-});
+}
+
+postAteFood()

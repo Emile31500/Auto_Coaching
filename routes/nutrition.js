@@ -1,16 +1,28 @@
 const express = require('express');
 const { Food, NutritionRequirement } = require('../models/');
+const FoodService = require('../services/food');
+
 
 const router = express.Router();
 const authenticationChecker = require('../middlewares/authenticationChecker');
 const adminChecker = require('../middlewares/adminChecker');
 const premiumChecker = require('../middlewares/premiumChecker');
+const url = require('url')
+
+const NUTRITION_ROUTE = '/nutrition'
 
 
-router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res) => {
-    
-    var food = await Food.findAll();
-    res.render('../views/nutrition',  { food: food, layout: '../views/main' });
+
+router.get(NUTRITION_ROUTE, authenticationChecker, premiumChecker, async (req, res) => {
+
+    const parsedUrl = url.parse(req.url, true);
+    var food = await FoodService.getForMainPage(parsedUrl.query, req.user.id)
+
+    res.render('../views/nutrition',  { 
+        food: food, 
+        baseResearchUrl: req.url.replace(NUTRITION_ROUTE, ''),
+        layout: '../views/main'
+    });
 
 })
 

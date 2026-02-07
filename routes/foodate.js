@@ -133,4 +133,44 @@ router.post('/api/food/ate', authenticationCheckerApi, parserJson, async (req, r
 
 })
 
+router.post('/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
+
+    const id = req.params.id;
+    const date = req.body.date;
+
+    if (req.body && req.session.token) await updateAteFood(id, req);
+
+    res.redirect('/food/ate/'+date);
+
+})
+
+router.patch('/api/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
+
+    if (req.body && req.session.token){
+        
+        ateFood = await updateAteFood(id, req)
+        
+        res.statusCode = 201;
+        res.send({code: res.statusCode, message: 'This ate food has been updated' , data : ateFood});
+
+    } else {
+
+        res.statusCode = 401;
+        res.send({code: res.statusCode, message: "data required unprovided"});
+
+    }
+
+    
+})
+
+async function updateAteFood(id, req) {
+
+    let ateFood = await AteFood.findOne({where : { id : id, userId: req.user.id}})
+    await ateFood.update(req.body);
+    await ateFood.save();
+
+    return ateFood;
+
+}
+
 module.exports = router

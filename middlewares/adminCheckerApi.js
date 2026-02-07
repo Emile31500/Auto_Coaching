@@ -31,7 +31,7 @@ const adminChecker = async function (req, res, next) {
 
 
         res.statusCode = 401
-        res.send({code : res.statusCode, message : "Vous n'êtes pas autorisé à exécuré cette tâche"});
+        res.send({code : res.statusCode, message : "Vous n'êtes pas autorisé à exécuter cette tâche"});
   
     }
 }

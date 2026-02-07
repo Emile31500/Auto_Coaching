@@ -22,7 +22,7 @@ const PerformanceTest = describe('Performance tests', () => {
             .redirects(1);
 
         expect(res.req.path).toEqual('/api/performance/')
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
 
@@ -61,7 +61,7 @@ const PerformanceTest = describe('Performance tests', () => {
         res._body.data
 
         expect(res.req.path).toEqual('/api/performance/')
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
 

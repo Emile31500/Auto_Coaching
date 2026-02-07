@@ -30,7 +30,7 @@ const foodTest = describe('Food tests', () => {
         const food = Food.findOne({where : rawData});
 
         expect(!food.name).toEqual(true);
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/food');
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -51,7 +51,7 @@ const foodTest = describe('Food tests', () => {
         const food = await Food.findOne({where : rawData});
 
         expect(food).toEqual(null);
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/food');
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -112,7 +112,7 @@ const foodTest = describe('Food tests', () => {
         const food = await Food.findOne({where : {id : foodSeq.id}});
 
         expect(food.name).toEqual(foodSeq.name);
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/food/' + foodSeq.id);
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -133,7 +133,7 @@ const foodTest = describe('Food tests', () => {
             .send({name : "New food name" + generateRandomString(5)})
             .redirects(1);
 
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/food/' + foodSeq.id);
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -174,7 +174,7 @@ const foodTest = describe('Food tests', () => {
         const deletedFood = await Food.findOne({where : {id: food.id}});
 
         expect(deletedFood).toEqual(food);
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/food/' + food.id);
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
@@ -195,7 +195,7 @@ const foodTest = describe('Food tests', () => {
         const deletedFood = await Food.findOne({where : {id: food.id}});
 
         expect(deletedFood).toEqual(food);
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuré cette tâche");
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
         expect(res.req.path).toEqual('/api/admin/food/' + food.id);
         expect(res.statusCode).toEqual(401);
         expect(res._body.code).toEqual(401);
