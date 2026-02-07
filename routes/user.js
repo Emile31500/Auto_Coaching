@@ -162,7 +162,7 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
                     res.redirect('/admin/train')
 
                 } else {
-                    
+                    console.log('test')
                     res.redirect('/nutrition');
 
                 }

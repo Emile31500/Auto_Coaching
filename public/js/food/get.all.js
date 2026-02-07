@@ -44,24 +44,23 @@ orderByButtons.forEach(orderByButton => {
 async function getAllFood(){
 
     
-    let url = '/api/food';
-
-    if (isAdmin) {
-
-        url = '/api/admin/food'
-
-    }
+    let url = document.querySelector('#baseResearchUrl').innerHTML;
+    document.querySelector('#baseResearchUrl').remove();
     
-    let wordList = ''
+    if (isAdmin) url.replace('api/food','api/admin/food');
+    
+    // let wordList = ''
 
-    if (alimentNameSearch.value.length > 0){
+    /*if (alimentNameSearch.value.length > 0){
 
         wordList = alimentNameSearch.value.replace(" ", ",");
         url = url + '/' + wordList + '/all'
 
-    }
+    }*/
 
     url = url + '?orderParameter=' + orderParameter+'&orderBy=' + orderBy +'';
+
+    console.log(url);
 
     await fetch(url, {
         method : 'GET',
@@ -82,5 +81,7 @@ async function getAllFood(){
         }
 
     }) 
+
+    postAteFood();
 
 }

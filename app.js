@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session)
 const dotenv = require('dotenv').config();
 
 const app = express();
@@ -19,6 +20,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  },
+  store: new MemoryStore({
+    checkPeriod: 86400000 //24h
+  }),
 }));
 
 const checkout = require('./routes/checkout');

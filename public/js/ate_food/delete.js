@@ -26,9 +26,7 @@ deleteAteFoodBtns.forEach(deleteAteFoodBtn => {
                 responseFoodAteRequest.classList.remove('d-none')
                 responseFoodAteRequest.classList.add('alert-success')
                 responseFoodAteRequest.innerHTML = 'L\'aliment a été supprimé avec succès';
-
-                let rowAliement = document.querySelector('#ate-food-'+idAteFood);
-                rowAliement.remove();
+                deleteAteFoodBtn.parentElement.parentElement.remove();
             }
 
             return response.json();
