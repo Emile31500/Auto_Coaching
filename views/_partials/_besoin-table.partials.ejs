@@ -1,0 +1,37 @@
+<h3 class="my-5"> Besoins </h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th class=" w-25">
+            <form id="ateAlimentsForm" class="input-group m-0 p-0 ">
+              <input type="date" class="form-control d-inline-block w-auto " id="dateAteAliments"/>
+              <button class="btn btn-outline-primary" id="dateAteAlimentsSubmit"><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
+            </form> 
+          </th>
+          <th>Besoin</th>
+          <th>Mangé</th>
+          <th>En pourcentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><span class="text-responsive">Energie</span></th>
+          <td> kcal </td>
+          <td> <span id="kcalAteAbs"></span> kcal </td>
+          <td> <span id="kcalAtePrct"></span> % </td>
+        </tr>
+        <tr>
+          <th scope="row">Proteine</th>
+          <td> g </td>
+          <td> <span id="protAteAbs"></span> g </td>
+          <td> <span id="protAtePrct"></span> % </td>
+        </tr>
+        <tr>
+          <th scope="row">Lipide</th>
+          <td> g </td>
+          <td> <span id="fatAteAbs"></span> g </td>
+          <td> <span id="fatAtePrct"></span> % </td>
+        </tr>
+      </tbody>
+    </table>
+    <a href="" id="detailsAteFoods">Details</a>

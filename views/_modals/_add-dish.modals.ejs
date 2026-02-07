@@ -1,0 +1,46 @@
+<div class="modal fade" id="addDishModal" tabindex="-1" aria-labelledby="addDishModalLabel" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-xl-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-4" id="addDishModalLabel">Ajouter un nouvel aliment</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped my-3">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">
+                <span class="link-light orderByButton" data-parameter="name">Nom</span> 
+              </th>
+              <th scope="col" ><span href="#" class="link-light">Kcalorie</span></th>
+              <th scope="col">
+              </th>
+            </tr>
+          </thead>
+          <tbody id="foodTableBody"> 
+            <% for(var i=0; i<food.length; i++) {%>
+              <tr>
+                <th scope="row"><%= food[i].name %></th>
+                <td>
+                  <form action="/api/food/ate" class="alimentForms" method="post">
+                    <div class="row"  style="max-width: 200px;">
+                      <input type="number" name="foodId" hidden value=<%= food[i].id %> >
+                      <div class="col">
+                        <input type="number" name="weight" class="form-control" placeholder="g / ml">
+                      </div>
+                      <div class="col-3">
+                        <button class="btn btn-outline-primary">
+                          <i class="fa-solid fa-plus"></i> Ajouter 
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>  
+    </div>
+  </div>
+</div>

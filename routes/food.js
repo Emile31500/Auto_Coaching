@@ -9,7 +9,7 @@ const { Op } = require('sequelize');
 const session = require('express-session');
 const adminCheckerApi = require('../middlewares/adminCheckerApi');
 
-const url = require('url')
+const url = require('url');
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 

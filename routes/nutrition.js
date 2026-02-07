@@ -12,7 +12,7 @@ const url = require('url')
 router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res) => {
 
     const parsedUrl = url.parse(req.url, true);
-    var food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
 
     res.render('../views/nutrition',  { 
