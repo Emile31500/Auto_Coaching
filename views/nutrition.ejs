@@ -5,22 +5,6 @@
 <h2 class="my-5">Nutrition</h2>
 <div class="col my-5 pb-3">
     <h3 class="my-5"> Besoins </h3>
-
-    <!-- <form id="ateAlimentsForm" class="row">
-      <p>
-        <div class="col-1">
-          <label class="" for="dateAteAliments">Date : </label>
-        </div>
-        <div class="col-2">
-          <input type="date" class="form-control " id="dateAteAliments"/>
-        </div>
-      </p>
-      <p>
-      <input type="submit" class="btn btn-primary" id="dateAteAlimentsSubmit"> 
-      </p>
-
-    </form>  -->
-
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -59,13 +43,15 @@
     <a href="" id="detailsAteFoods">Details</a>
     <div class="alert my-3 d-none" id="nutrition_alert" role="alert">
     </div>
-    <h3 class="my-5 ">Aliments </h3>baseResearchUrl
+    <h3 class="my-5 ">Aliments 
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addFoodModal">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </h3>
     <table class="table table-striped my-3">
         <thead class="table-dark">
           <tr>
             <th scope="col">
-              <input type="text" class="form-control d-inline" id="alimentNameSearch"/>
-              <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal"><i class="fa-solid fa-filter"></i> Filter</button>
               <a href="#" class="link-light orderByButton" data-parameter="name">Nom</a> 
             </th>
             <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light">Kcalorie</a></th>
@@ -73,7 +59,21 @@
             <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="protein">Proteine</a></th>
             <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="fat">Lipide</a></th>
             <th scope="col" class="d-xl-none d-print-table-cell" >Valeurs nutritionelle</td>
-            <th scope="col"><input type="date" id="ateFoodDate" class="form-control"/></th>
+            <th scope="col">
+              <div class="row w-auto p-0 m-0">
+                <div class="col-auto">
+                  <input type="date" id="ateFoodDate" class="form-control"/>
+                </div>
+                <button class="col-auto btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
+                  <i class="fa-solid fa-filter"></i> Filtrer
+                  <% if (countFilter) { %> 
+                      <span class="badge badge-light"><%=  countFilter %></span>
+                  <% }%> 
+                    
+                </button>
+              </div>
+              
+            </th>
           </tr>
         </thead>
         <tbody id="foodTableBody"> 
@@ -105,92 +105,9 @@
         </tbody>
       </table>
 </div> 
-<div class="modal" id="detailFoodModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-modal="true" role="dialog">
-  <div class="modal-dialog modal-xl-down">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-4" id="exampleModalLabel">Extra large modal</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="input-group input-group-lg my-5">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> Énergie</span>
-          <input type="text" class="kcal form-control w-50" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> Kcal </span>
-        </div>
-
-        <div class="input-group input-group-lg my-5">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> Glucide</span>
-          <input type="text" class="carbo form-control w-50" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> G </span>
-        </div>
-
-        <div class="input-group input-group-lg my-5">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> Protéine</span>
-          <input type="text" class="protein form-control w-50" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> G </span>
-        </div>
-
-        <div class="input-group input-group-lg my-5">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> Lipide</span>
-          <input type="text" class="fat form-control w-50" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
-          <span class="input-group-text w-25" id="inputGroup-sizing-lg"> G </span>
-        </div>
-      </div>
-    </div>  
-  </div>
-</div>
-
-<div class="modal " id="filterFoodModal" tabindex="-1" aria-labelledby="filterFoodModallLabel" aria-modal="true" role="dialog">
-  <div class="modal-dialog modal-xl-down">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-4" id="filterFoodModallLabel">Filtrer</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="GET">
-          <div class="my-3">
-            <label for="words">Nom</label><br>
-            <div class="row">
-              <input class="form-control col me-1" placeholder="Min" type="text" id="words" name="words" step="0.1" /> 
-            </div>
-          </div>
-          <div class="my-3">
-            <label for="kcalFilter">Kcal</label><br>
-            <div class="row">
-              <input class="form-control col me-1" placeholder="Min" type="number" id="kcalFilterMin" name="kcalFilterMin" step="0.1" /> 
-              <input class="form-control col ms-1" placeholder="Max" type="number" id="kcalFilterMax" name="kcalFilterMax" step="0.1" /> 
-            </div>
-          </div>
-          <div class="my-3">
-            <label for="proteinFilter">Protéine</label><br>
-            <div class="row">
-              <input class="form-control col me-1" placeholder="Min" type="number" id="proteinFilterMin" name="proteinFilterMin" step="0.1" /> 
-              <input class="form-control col ms-1" placeholder="Max" type="number" id="proteinFilterMax" name="proteinFilterMax" step="0.1" /> 
-            </div>
-          </div>
-          <div class="my-3">
-            <label for="fatFilter">Gras</label><br>
-            <div class="row">
-              <input class="form-control col me-1" placeholder="Min" type="number" id="fatFilterMin" name="fatFilterMin" step="0.1" /> 
-              <input class="form-control col ms-1" placeholder="Max" type="number" id="fatFilterMax" name="fatFilterMax" step="0.1" /> 
-            </div>
-          </div>
-          <div class="my-3">
-            <label for="carboFilter">Glucide</label><br>
-            <div class="row">
-              <input class="form-control col me-1" placeholder="Min" type="number" id="carboFilterMin" name="carboFilterMin" step="0.1" /> 
-              <input class="form-control col ms-1" placeholder="Max" type="number" id="carboFilterMax" name="carboFilterMax" step="0.1" /> 
-            </div>
-          </div>
-
-          <button class="btn btn-outline-primary">Valider</button>
-        </form>
-      </div>
-    </div>  
-  </div>
-</div> 
+<%- include('_modals/_add-food.modals.ejs'); %>
+<%- include('_modals/_detail-food.modals.ejs'); %>
+<%- include('_modals/_filter.modals.ejs', { parsedUrlQuey : parsedUrlQuey} ); %>
 <link rel="stylesheet" href="/css/nutrition.css" />
 <script src="/js/ate_food/get.dashboard.js"></script>
 <script src="/js/ate_food/post.js"></script>

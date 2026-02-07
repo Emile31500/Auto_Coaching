@@ -16,7 +16,7 @@ function initDelete () {
     confirmDeletionBtn.addEventListener('click', func = function(event){
 
         let idAliment = this.getAttribute('data-id-aliment');
-        const url = '/api/admin/food/'+idAliment
+        const url = '/api/food/'+idAliment
         fetch(url, {
 
             method: 'DELETE',

@@ -2,7 +2,7 @@ const { Food } = require('../models');
 const { Op } = require('sequelize');
 
 
-const getForMainPage = async (parsedUrlQuery, userId) => {
+const getForMainPage = async (parsedUrlQuery, user) => {
 
     const orderParameter = parsedUrlQuery.orderParameter ?? 'name';
     const orderBy = parsedUrlQuery.orderBy ?? "ASC";
@@ -51,29 +51,34 @@ const getForMainPage = async (parsedUrlQuery, userId) => {
         carboFilterMax = maxCarboFood.carbohydrate;
     }
 
+    let where = ({
+        kcalorie : {[Op.between] : [kcalFilterMin, kcalFilterMax]},
+        proteine : {[Op.between] : [proteinFilterMin, proteinFilterMax]},
+        fat : {[Op.between] : [fatFilterMin, fatFilterMax]},
+        carbohydrate : {[Op.between] : [carboFilterMin, carboFilterMax]},
+        name : { 
+            [Op.or] : nameSelector
+        },
+        userId : {[Op.or] : [ user.id, null]}
+    });
 
+    if(user.role.includes('admin') == true) delete where.userId;
 
     let food = await Food.findAll({
         order: [[orderParameter, orderBy]],
-        where : { 
-            kcalorie : {[Op.between] : [kcalFilterMin, kcalFilterMax]},
-            proteine : {[Op.between] : [proteinFilterMin, proteinFilterMax]},
-            fat : {[Op.between] : [fatFilterMin, fatFilterMax]},
-            carbohydrate : {[Op.between] : [carboFilterMin, carboFilterMax]},
-            name : { 
-                [Op.or] : nameSelector
-            },
-            [Op.or] : [
-                { userId : userId },
-                { userId : null }
-            ]
-        }
+        where : where
     }); 
 
     return food;
 };
 
+const countFilters = async (parsedUrlQuery) => {
+    count = 0;
+    Object.values(parsedUrlQuery).forEach(element => {if (element !== undefined && element !== '') count++;});
+    return count;
+}
 
 module.exports = {
   getForMainPage,
+  countFilters,
 };

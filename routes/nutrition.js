@@ -2,27 +2,38 @@ const express = require('express');
 const { Food, NutritionRequirement } = require('../models/');
 const FoodService = require('../services/food');
 
-
+var parserJson = require('../middlewares/parserJson');
 const router = express.Router();
 const authenticationChecker = require('../middlewares/authenticationChecker');
 const adminChecker = require('../middlewares/adminChecker');
 const premiumChecker = require('../middlewares/premiumChecker');
 const url = require('url')
 
-const NUTRITION_ROUTE = '/nutrition'
-
-
-
-router.get(NUTRITION_ROUTE, authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res) => {
 
     const parsedUrl = url.parse(req.url, true);
-    var food = await FoodService.getForMainPage(parsedUrl.query, req.user.id)
+    var food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    const countFilter = await FoodService.countFilters(parsedUrl.query)
 
     res.render('../views/nutrition',  { 
-        food: food, 
-        baseResearchUrl: req.url.replace(NUTRITION_ROUTE, ''),
+        food: food,
+        parsedUrlQuey : parsedUrl.query,
+        countFilter : countFilter,
         layout: '../views/main'
     });
+
+})
+
+router.post('/nutrition', parserJson, authenticationChecker, premiumChecker, async (req, res) => {
+
+    if (req.body && req.session.token){
+
+        const rawData = req.body
+        const food = Food.create(rawData);
+
+    }
+
+    res.redirect('/nutrition');
 
 })
 

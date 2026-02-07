@@ -23,7 +23,7 @@ const foodTest = describe('Food tests', () => {
 
         const testSession = session(app)
         const res = await testSession
-            .post('/api/admin/food')
+            .')
             .send(rawData)
             .redirects(1)
 
@@ -44,7 +44,7 @@ const foodTest = describe('Food tests', () => {
         const testSession = await authUser();
 
         const res = await testSession
-            .post('/api/admin/food')
+            .')
             .send(rawData)
             .redirects(1);
         
@@ -64,7 +64,7 @@ const foodTest = describe('Food tests', () => {
         const testSession = await authAdmin();
 
         const res = await testSession
-            .post('/api/admin/food')
+            .')
             .send(rawData)
             .redirects(1);
 
@@ -168,7 +168,7 @@ const foodTest = describe('Food tests', () => {
         const food = await Food.findOne({where : rawData});
         
         const res = await testSession
-            .delete('/api/admin/food/' + food.id)
+            .delete('/api/food/' + food.id)
             .redirects(1);
 
         const deletedFood = await Food.findOne({where : {id: food.id}});
@@ -189,7 +189,7 @@ const foodTest = describe('Food tests', () => {
         const food = await Food.findOne({where : rawData});
         
         const res = await testSession
-            .delete('/api/admin/food/' + food.id)
+            .delete('/api/food/' + food.id)
             .redirects(1);
 
         const deletedFood = await Food.findOne({where : {id: food.id}});
@@ -210,7 +210,7 @@ const foodTest = describe('Food tests', () => {
         const food = await Food.findOne({where : rawData});
         
         const res = await testSession
-            .delete('/api/admin/food/' + food.id)
+            .delete('/api/food/' + food.id)
             .redirects(1);
 
         const deletedFood = await Food.findOne({where : {id: food.id}});

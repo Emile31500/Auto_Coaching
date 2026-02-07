@@ -1,0 +1,50 @@
+<div class="modal " id="filterFoodModal" tabindex="-1" aria-labelledby="filterFoodModallLabel" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-xl-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-4" id="filterFoodModallLabel">Filtrer</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="GET">
+          <div class="my-3">
+            <label for="words">Nom</label><br>
+            <div class="row">
+              <input class="form-control col me-1" type="text" id="words" name="words" value="<%= parsedUrlQuey.words %>" step="0.1" /> 
+            </div>
+          </div>
+          <div class="my-3">
+            <label for="kcalFilter">Kcal</label><br>
+            <div class="row">
+              <input class="form-control col me-1" placeholder="Min" type="number" name="kcalFilterMin" value="<%= parsedUrlQuey.kcalFilterMin %>" step="0.1" /> 
+              <input class="form-control col ms-1" placeholder="Max" type="number" name="kcalFilterMax" value="<%= parsedUrlQuey.kcalFilterMax %>" step="0.1" /> 
+            </div>
+          </div>
+          <div class="my-3">
+            <label for="proteinFilter">Protéine</label><br>
+            <div class="row">
+              <input class="form-control col me-1" placeholder="Min" type="number" name="proteinFilterMin" value="<%= parsedUrlQuey.proteinFilterMin %>" step="0.1" /> 
+              <input class="form-control col ms-1" placeholder="Max" type="number" name="proteinFilterMax" value="<%= parsedUrlQuey.proteinFilterMax %>" step="0.1" /> 
+            </div>
+          </div>
+          <div class="my-3">
+            <label for="fatFilter">Gras</label><br>
+            <div class="row">
+              <input class="form-control col me-1" placeholder="Min" type="number" name="fatFilterMin" value="<%= parsedUrlQuey.fatFilterMin %>" step="0.1" /> 
+              <input class="form-control col ms-1" placeholder="Max" type="number" name="fatFilterMax" value="<%= parsedUrlQuey.fatFilterMax %>" step="0.1" /> 
+            </div>
+          </div>
+          <div class="my-3">
+            <label for="carboFilter">Glucide</label><br>
+            <div class="row">
+              <input class="form-control col me-1" placeholder="Min" type="number" name="carboFilterMin" value="<%= parsedUrlQuey.carboFilterMin %>" step="0.1" /> 
+              <input class="form-control col ms-1" placeholder="Max" type="number" name="carboFilterMax" value="<%= parsedUrlQuey.carboFilterMax %>" step="0.1" /> 
+            </div>
+          </div>
+
+          <button class="btn btn-outline-primary">Valider</button>
+        </form>
+      </div>
+    </div>  
+  </div>
+</div> 

@@ -3,7 +3,7 @@ foodForm.addEventListener('submit', function(event){
     event.preventDefault();
     let rawData;
     let verb;
-    let url = '/api/admin/food'
+    let url = '/api/food'
 
     const dataElment = JSON.stringify({
         name: nameAliment.value,
