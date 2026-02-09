@@ -5,9 +5,25 @@ const url = require('url');
 
 const router = express.Router();
 const FoodService = require('../services/food');
+const FileService = require('../services/file');
 const { Op } = require('sequelize');
 const { Dish, DishFood, Food } = require('../models');
+const multer  = require('multer')
+const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+const finalName = 'dish-image-' + uniqueSuffix;
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/media/photo/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, finalName);
+    }
+})
+
+
+
+// const upload = multer({ dest: 'public/media/photo/' })
 
 router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => {
 
@@ -15,8 +31,6 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
 
     const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
-
-
     
     res.render('../views/dish',  {
         food : food,
@@ -29,23 +43,29 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
 
 })
 
-router.post('/dish', authenticationChecker, parserJson, async(req, res, next) => {
+router.post('/dish', authenticationChecker, parserJson, multer({
+                storage: storage, 
+                limits: {
+                    fileSize: 1024 * 5 * 1024
+                }
+            }).single('image'),  async(req, res, next) => {
     
 
     if (req.body && req.session.token){
 
         try {
         
-            const rawData = req.body
-            console.log(rawData)
-
-
+            const rawData = req.body;
+            
             const jsonSafe = rawData.foodsDish.replace(/(\w+):/g, '"$1":');
             const foodsDish = JSON.parse(jsonSafe);
+            const upload = multer({ dest: 'uploads/' })
+            console.log(rawData.image)
 
             const dish = await Dish.create({
                 name : rawData.name,
-                userId : req.user.id
+                userId : req.user.id,
+                imageUrl : finalName,
             })
             
             foodsDish.forEach(async(foodDish) => {
@@ -68,7 +88,6 @@ router.post('/dish', authenticationChecker, parserJson, async(req, res, next) =>
             });
 
             res.redirect('/nutrition')
-
         
         } catch (error) {
 

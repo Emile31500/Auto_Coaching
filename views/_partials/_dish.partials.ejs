@@ -6,18 +6,52 @@
 </h3>
 
 <div>
-    <div class="card" style="width: 18rem;">
-    <img src="https://res.cloudinary.com/happybiote/q_auto:good,f_auto/wordpress/2017/12/filet-de-turbo.jpg" class="card-img-top" alt="...">
-    <div class="card-body">
-        <h5 class="card-title">
-            <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal">Turbo rôti</a>
-            <button class="btn btn-outline-primary">
-                <i class="fa-solid fa-plus"></i> Mangé
-            </button>
-        </h5>
-        <p class="card-text"></p>
-    </div>
-    </div>
+    <% for(var i=0; i < dish.length; i++) {%>
+      <div class="card" style="width: 18rem;">
+        <img src="/media/photo/<%= dish[i].imageUrl %>" class="card-img-top" alt="...">
+
+          <div class="card-body">
+              <h5 class="card-title">
+                  <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"><%= dish[i].name %></a>
+                  <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#eatDishModal-<%= dish[i].id %>">
+                      <i class="fa-solid fa-plus"></i> Mangé
+                  </button>
+              </h5>
+              <p class="card-text"></p>
+          </div>
+      </div>
+
+      <div class="modal fade" id="eatDishModal-<%= dish[i].id %>" tabindex="-1" aria-labelledby="eatDishModal-<%= dish[i].id %>Label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="eatDishModal-<%= dish[i].id %>Label">Plat mangé : <%= dish[i].name %> </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action='/ate/dish/<%= dish[i].id %>' method="POST">
+                <div class="my-2">
+                  <label class="my-1">Dtae du repas</label>
+                  <input type="date" class="form-control"/>
+                </div>
+                <% for(var e=0; e < dish[i].DishFoods.length; e++) { %> 
+                  <div class="my-2">
+                    <label class="my-1"><%= dish[i].DishFoods[e].Food.name %></label>
+                    <input type="hidden" name="dish_food_id_<%= e %>"  value="<%= dish[i].DishFoods[e].Food.id %>"/> 
+                    <input type="number" name="dish_food_weight_<%= e %>" class="form-control" required value="<%= dish[i].DishFoods[e].weight %>"/> 
+
+                  </div>
+                <% } %>  
+                <input type="submit" class="btn btn-primary"/>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
 </div>
 
 

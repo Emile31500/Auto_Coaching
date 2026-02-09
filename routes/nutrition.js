@@ -1,5 +1,5 @@
 const express = require('express');
-const { Food, NutritionRequirement } = require('../models/');
+const { Food, NutritionRequirement, Dish, DishFood } = require('../models/');
 const FoodService = require('../services/food');
 
 var parserJson = require('../middlewares/parserJson');
@@ -13,10 +13,25 @@ router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res)
 
     const parsedUrl = url.parse(req.url, true);
     const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+
+    const dish = await Dish.findAll({
+        include : [{
+            model : DishFood,
+            include : [
+                Food
+            ]
+        }
+    ],
+        where : {
+            userId : req.user.id
+        }
+    })
+
     const countFilter = await FoodService.countFilters(parsedUrl.query)
 
     res.render('../views/nutrition',  { 
         food: food,
+        dish: dish,
         parsedUrlQuey : parsedUrl.query,
         countFilter : countFilter,
         layout: '../views/main'

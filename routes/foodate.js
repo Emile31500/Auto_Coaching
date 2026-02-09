@@ -14,20 +14,16 @@ router.get('/food/ate/:date', authenticationChecker, parserJson, premiumChecker,
 
     const dateStart = date;
     const dateEnd = date.replace('00:00:00', '23:59:59');
-    console.log(dateStart)
-    console.log(dateEnd)
 
     let ateFoods = await AteFood.findAll({
-                                        include : [User, Food],
-                                        where: {
-                                            userId: req.user.id,
-                                            createdAt: {
-                                                [Op.between]: [dateStart, dateEnd],
-                                                }
-                                        }
-                                    });
-    console.log(ateFoods[0])
-
+        include : [User, Food],
+        where: {
+            userId: req.user.id,
+            createdAt: {
+                [Op.between]: [dateStart, dateEnd],
+                }
+        }
+    });
 
 
     if(date) {
