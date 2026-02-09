@@ -8,10 +8,17 @@
 </h3>
 
 <div>
-    <form class="row my-2 foodFishForm" method="POST">
-        <div class="col-auto"> <input type="text" name="name" class="form-control" required /></div>
-        <input type="hidden" name="foodsDish" id="foodsDish"/>
-        <input class=" col-auto  btn btn-outline-primary" type="submit"/>
+    <form class="row my-2 foodFishForm" method="POST"  enctype="multipart/form-data">
+        <div class="row  my-2 ">
+            <div class="col-auto">
+                <input type="file" name="image" class="form-control"/>
+            </div>
+        </div>
+        <div class="row  my-2 ">
+            <div class="col-auto"> <input type="text" name="name" class="form-control " required /></div>
+            <input type="hidden" name="foodsDish" id="foodsDish"/>
+            <input class=" col-auto  btn btn-outline-primary" type="submit"/>
+        </div>
     </form>
     <table class="table table-striped">
         <thead class="table-dark">
@@ -43,7 +50,7 @@
         <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="fat">Lipide</a></th>
         <th scope="col" class="d-xl-none d-print-table-cell" >Valeurs nutritionelle</td>
         <th scope="col">
-            <div class="row w-auto p-0 m-0">
+            <div class="row w-auto p-0 m-0"imageBAckgroundElement>
             <div class="col-auto">
             </div>
             <button class="col-auto btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
@@ -99,7 +106,6 @@
 
         event.preventDefault();
 
-        
         const foodWeightElements = document.querySelectorAll('.foodWeight');
         var foodWeight = [];
         
@@ -108,18 +114,19 @@
         })
 
         foodsDish.setAttribute('value', "["+foodWeight.toString()+"]");
-        console.log(foodWeight);
 
         data = new FormData(this)
-        this.submit(data);
-
+        if (isRightExt(data.get('image').name, ['.jpeg', '.jpg', '.png', '.gif']) && data.get('image').size <= 5*1024*1024) {
+            this.submit(data);
+        } else {
+            alert('Vous ne pouvez publier un fichier que de 5 Mo maximum et d\'extension : jpeg, jpg, png ou gif.')
+        }
         
     })
 
     function initDelete() {
         const deleteFoodButtons = document.querySelectorAll('.deleteFoodButton');
 
-        console.log(deleteFoodButtons);
         deleteFoodButtons.forEach(deleteFoodButton => {
             // deleteFoodButton.removeEventListener('click')
             deleteFoodButton.addEventListener('click', function (event) {
@@ -166,4 +173,20 @@
     });
 
     foodFishForm
+
+    function isRightExt(fileName, extArray) {
+
+        
+        let result = false;
+
+        for (let i=0; i < extArray.length; i++){
+            console.log(result)
+            if(fileName.endsWith(extArray[i])) result = true;
+        
+        }
+
+        console.log(result)
+        return result
+    }
+
 </script>

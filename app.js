@@ -28,6 +28,7 @@ app.use(session({
   }),
 }));
 
+const atedish = require('./routes/atedish');
 const checkout = require('./routes/checkout');
 const dish = require('./routes/dish');
 const exercise = require('./routes/exercise');
@@ -57,6 +58,7 @@ io.on('connection', (socket) => {
 
 app.use(express.static('public'))
 app.use(bodyParser.json());
+app.use(atedish);
 app.use(checkout);
 app.use(dish);
 app.use(exercise);
