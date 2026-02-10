@@ -31,9 +31,30 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
 
     const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
-    
+    const rawDishFoods = String(parsedUrl.query.dishFoods);
+    let myDishFoods;
+
+   if (rawDishFoods !== undefined) {
+
+        myDishFoods = rawDishFoods.split(',')
+
+        for (let index = 0; index < myDishFoods.length; index++) {
+
+            myDishFood = myDishFoods[index].split('=')
+
+            myDishFoods[index] = { 
+                foodId : myDishFood[0],
+                weight : myDishFood[1]
+            };
+            
+        }
+    }
+
+    console.log(myDishFoods)
+
     res.render('../views/dish',  {
         food : food,
+        myDishFoods : myDishFoods,
         countFilter : countFilter,
         parsedUrlQuery : parsedUrl.query,
         layout: '../views/main' 

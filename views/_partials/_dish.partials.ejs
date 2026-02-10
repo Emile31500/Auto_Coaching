@@ -1,25 +1,34 @@
 <h3>
     Plats 
-    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addDishModal">
+    <a href="/dish" class="btn btn-outline-primary">
         <i class="fa-solid fa-plus"></i>
-    </button>
+    </a>
 </h3>
+<style>
+  .card > img {
 
-<div>
+    height: 286px; 
+    object-fit: cover;
+  }
+</style>
+<div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4">
     <% for(var i=0; i < dish.length; i++) {%>
-      <div class="card" style="width: 18rem;">
-        <img src="/media/photo/<%= dish[i].imageUrl %>" class="card-img-top" alt="...">
+      <div class="col">
+        <div class="card" style="width: 18rem;">
+          <img src="/media/photo/<%= dish[i].imageUrl %>" class="card-img-top" alt="...">
 
-          <div class="card-body">
-              <h5 class="card-title">
-                  <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"><%= dish[i].name %></a>
-                  <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#eatDishModal-<%= dish[i].id %>">
-                      <i class="fa-solid fa-plus"></i> Mangé
-                  </button>
-              </h5>
-              <p class="card-text"></p>
-          </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"><%= dish[i].name %></a>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#eatDishModal-<%= dish[i].id %>">
+                        <i class="fa-solid fa-plus"></i> Mangé
+                    </button>
+                </h5>
+                <p class="card-text"></p>
+            </div>
+        </div>
       </div>
+      
 
       <div class="modal fade" id="eatDishModal-<%= dish[i].id %>" tabindex="-1" aria-labelledby="eatDishModal-<%= dish[i].id %>Label" aria-hidden="true">
         <div class="modal-dialog">
@@ -72,4 +81,3 @@
     </div>
   </div>
 </div>
-

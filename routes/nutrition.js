@@ -32,7 +32,7 @@ router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res)
     res.render('../views/nutrition',  { 
         food: food,
         dish: dish,
-        parsedUrlQuey : parsedUrl.query,
+        parsedUrlQuery : parsedUrl.query,
         countFilter : countFilter,
         layout: '../views/main'
     });
