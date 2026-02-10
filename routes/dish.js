@@ -32,18 +32,27 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
     const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
     const rawDishFoods = String(parsedUrl.query.dishFoods);
-    let myDishFoods;
+    let myDishFoods = [];
 
-   if (rawDishFoods !== undefined) {
+   if (rawDishFoods !== 'undefined') {
 
         myDishFoods = rawDishFoods.split(',')
-
+        console.log(myDishFoods)
+        console.log(myDishFoods.length)
         for (let index = 0; index < myDishFoods.length; index++) {
 
-            myDishFood = myDishFoods[index].split('=')
+            myDishFood = myDishFoods[index].split('=');
+
+            myFood = await Food.findOne({where : {
+                id :  myDishFood[0],
+                [Op.or] : [
+                    { userId : req.user.id },
+                    { userId : null }
+                ]
+            }})
 
             myDishFoods[index] = { 
-                foodId : myDishFood[0],
+                food : myFood,
                 weight : myDishFood[1]
             };
             
