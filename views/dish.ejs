@@ -8,7 +8,7 @@
 </h3>
 
 <div>
-    <form class="row my-2 foodFishForm" method="POST"  enctype="multipart/form-data">
+    <form class="row my-2 foodDishForm" method="POST"  enctype="multipart/form-data">
         <div class="row  my-2 ">
             <div class="col-auto">
                 <input type="file" name="image" class="form-control"/>
@@ -16,7 +16,6 @@
         </div>
         <div class="row  my-2 ">
             <div class="col-auto"> <input type="text" name="name" class="form-control " required /></div>
-            <input type="hidden" name="foodsDish" id="foodsDish"/>
             <input class=" col-auto  btn btn-outline-primary" type="submit"/>
         </div>
     </form>
@@ -31,7 +30,23 @@
                 </th>
             </tr>
         </thead>
-        <tbody id="addedFood"></tbody> 
+        <tbody id="addedFood">
+            <% for(var i=0; i < myDishFoods.length; i++) {%> 
+                <tr>
+                    <th scope="row">
+                        <%= myDishFoods[i].food.name %>
+                    </th>
+                    <td>
+                        <input type="number" foodId='<%= myDishFoods[i].food.id %>' value='<%= myDishFoods[i].weight %>' class="form-control foodWeight" placeholder="g / ml"/>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline-danger deleteFoodButton">
+                            <i class="fa-regular fa-trash-can"></i> Supprimer
+                        </button>
+                    </td>
+                </tr>
+            <% } %>
+        </tbody> 
     </table>
         
 
@@ -53,7 +68,7 @@
             <div class="row w-auto p-0 m-0"imageBAckgroundElement>
             <div class="col-auto">
             </div>
-            <button class="col-auto btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
+            <button class="col-auto btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
                 <i class="fa-solid fa-filter"></i> Filtrer
                 <% if (countFilter) { %> 
                     <span class="badge badge-light"><%=  countFilter %></span>
@@ -61,7 +76,6 @@
                 
             </button>
             </div>
-            
         </th>
         </tr>
     </thead>
@@ -77,116 +91,17 @@
             <button class="btn btn-outline-secondary get-detail" data-bs-toggle="modal" data-bs-target="#detailFoodModal">...</button> 
             </td>
             <td>
-            <form action="/api/food/ate" class="alimentForms" method="post">
                 <div class="row"  style="max-width: 200px;">
-                <input type="number" name="foodId" hidden value=<%= food[i].id %> >
-                <div class="col">
-                    <input type="number" name="weight" class="form-control" placeholder="g / ml">
-                </div>
-                <div class="col-3">
+                    <!-- <input type="number" name="foodId" hidden value=<%= food[i].id %> > -->
                     <button class="btn btn-outline-primary addFoodToDish" idFood="<%= food[i].id %>">
                         <i class="fa-solid fa-plus"></i>
                             Ajouter 
                     </button>
                 </div>
-                </div>
-            </form>
             </td>
         </tr>
         <% } %>
     </tbody>
 </table>
-<script>
-    const addFoodToDishs = document.querySelectorAll('.addFoodToDish')
-    const foodFishForm = document.querySelector('.foodFishForm');
-    const addedFood = document.querySelector('#addedFood');
-    const foodsDish = document.querySelector('#foodsDish')
-
-    foodFishForm.addEventListener('submit', function (event) {
-
-        event.preventDefault();
-
-        const foodWeightElements = document.querySelectorAll('.foodWeight');
-        var foodWeight = [];
-        
-        foodWeightElements.forEach(foodWeightElement => {
-            foodWeight.push('{foodId: '+foodWeightElement.getAttribute("foodId")+', weight: '+foodWeightElement.value+'}')
-        })
-
-        foodsDish.setAttribute('value', "["+foodWeight.toString()+"]");
-
-        data = new FormData(this)
-        if (isRightExt(data.get('image').name, ['.jpeg', '.jpg', '.png', '.gif']) && data.get('image').size <= 5*1024*1024) {
-            this.submit(data);
-        } else {
-            alert('Vous ne pouvez publier un fichier que de 5 Mo maximum et d\'extension : jpeg, jpg, png ou gif.')
-        }
-        
-    })
-
-    function initDelete() {
-        const deleteFoodButtons = document.querySelectorAll('.deleteFoodButton');
-
-        deleteFoodButtons.forEach(deleteFoodButton => {
-            // deleteFoodButton.removeEventListener('click')
-            deleteFoodButton.addEventListener('click', function (event) {
-
-                console.log("Init delete");
-                event.preventDefault();
-                this.parentElement.parentElement.remove();
-                
-            });
-
-        });
-
-    }
-    initDelete();
-    
-
-    addFoodToDishs.forEach(addFoodToDish => {
-
-        addFoodToDish.addEventListener("click", function (event) {
-
-            event.preventDefault();
-
-            const id = addFoodToDish.getAttribute('idFood')
-            const body = {
-                method: 'GET',
-                headers: {'Content-Type': 'application/json'}
-            }
-            
-            fetch('/api/food/'+id, body)
-            .then(response => response.json())
-            .then(data => {
-                if (data.data !== undefined) {
-                    const tr = document.createElement('tr')
-                    tr.innerHTML = '<th scope="row">'+data.data.name+'</th><td><input type="number" foodId='+data.data.id+' class="form-control foodWeight" placeholder="g / ml"/></td><td><button class="btn btn-outline-danger deleteFoodButton"><i class="fa-regular fa-trash-can"></i> Supprimer</button></td>';
-                    
-                    addedFood.appendChild(tr)
-                    initDelete()
-
-                }
-            });
-
-        });
-        
-    });
-
-    foodFishForm
-
-    function isRightExt(fileName, extArray) {
-
-        
-        let result = false;
-
-        for (let i=0; i < extArray.length; i++){
-            console.log(result)
-            if(fileName.endsWith(extArray[i])) result = true;
-        
-        }
-
-        console.log(result)
-        return result
-    }
-
-</script>
+<%- include('_modals/_filter.modals.ejs', { parsedUrlQuery : parsedUrlQuery} ); %>
+<script src="/js/dish.js" type="text/javascript"></script>
