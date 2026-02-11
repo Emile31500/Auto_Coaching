@@ -3,3 +3,5 @@ node_modules
 dockerfile
 dpcler-composer.yaml
 tests/.env.test
+public/media/audio*
+public/media/photo*

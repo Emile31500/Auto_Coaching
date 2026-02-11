@@ -5,7 +5,12 @@
     <a href="/nutrition" class="btn btn-primary"><i class="fa-solid fa-arrow-left-long"></i></a> 
     Détails de la diette de ce jour :
 </h2>
-<h3  id="date"><%= date %></h3>
+<h3  id="date"><%= new Date(date).toLocaleDateString('fr-FR', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}) %></h3>
 
 <table class="my-3 table">
     <thead>

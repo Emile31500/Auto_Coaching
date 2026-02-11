@@ -1,5 +1,6 @@
 const express = require('express');
 const { Food, NutritionRequirement, Dish, DishFood } = require('../models/');
+const { Op } = require('sequelize');
 const FoodService = require('../services/food');
 
 var parserJson = require('../middlewares/parserJson');
@@ -15,15 +16,19 @@ router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res)
     const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
 
     const dish = await Dish.findAll({
-        include : [{
-            model : DishFood,
-            include : [
-                Food
-            ]
-        }
-    ],
+        include : [
+            {
+                model : DishFood,
+                include : [
+                    Food
+                ]
+            }
+        ],
         where : {
-            userId : req.user.id
+            [Op.or] :[
+                {userId : req.user.id},
+                {userId : null}
+            ]
         }
     })
 

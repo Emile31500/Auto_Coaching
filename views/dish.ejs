@@ -8,14 +8,21 @@
 </h3>
 
 <div>
-    <form class="row my-2 foodDishForm" method="POST"  enctype="multipart/form-data">
+    <form class="row my-2 foodDishForm" method="POST" >
+
+    <!-- </form> enctype="multipart/form-data"> -->
+        <input type="hidden" class="hidden" name="foodsDish" id="foodsDishInput"/>
         <div class="row  my-2 ">
             <div class="col-auto">
-                <input type="file" name="image" class="form-control"/>
+                <% if (todoDelteThisOption) { %> 
+                    <input type="file" name="image" class="form-control"/> 
+                <% } %>
             </div>
         </div>
         <div class="row  my-2 ">
-            <div class="col-auto"> <input type="text" name="name" class="form-control " required /></div>
+            <div class="col-auto">
+                <input type="text" name="name" class="form-control"  value="<% if (dish != null ) { %><%= dish.name %><% } %>" required />
+            </div>
             <input class=" col-auto  btn btn-outline-primary" type="submit"/>
         </div>
     </form>
@@ -48,8 +55,6 @@
             <% } %>
         </tbody> 
     </table>
-        
-
 </div>
 
 
