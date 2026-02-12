@@ -34,7 +34,6 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
     })
 
     const ateFood = await AteFood.findAll({ group: 'date' });
-    console.log(ateFood);
 
 
     const countFilter = await FoodService.countFilters(parsedUrl.query)

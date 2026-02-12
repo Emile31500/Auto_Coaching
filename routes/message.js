@@ -111,7 +111,6 @@ router.post('/api/admin/message/:id_user', adminCheckerApi, async (req, res) => 
 router.get('/api/message/:since_date', authenticationCheckerApi, premiumChecker, parserJson, async (req, res) => {
 
     const since_date = req.params.since_date;
-    console.log(since_date)
 
     const admin = await User.findOne({
          where : literal(`JSON_CONTAINS(role, '["admin"]')`)
