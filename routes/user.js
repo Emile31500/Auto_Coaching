@@ -50,7 +50,6 @@ router.get('/login', async function(req, res, next) {
 router.get('/signup', function(req, res, next) {
 
     res.render('../views/signup',  { user : req.user, layout: '../views/main' });
-
 });
 
 router.post('/sign', parserJson, async (req, res) => {

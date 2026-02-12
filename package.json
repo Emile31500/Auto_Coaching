@@ -8,6 +8,7 @@
     "ejs": "^4.0.1",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
+    "express-flash": "github:RGBboy/express-flash",
     "express-session": "^1.19.0",
     "fs": "^0.0.1-security",
     "hash-password-pbkdf2": "^1.0.0",

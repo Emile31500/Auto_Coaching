@@ -7,6 +7,7 @@ const app = express();
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser');
 var router = express.Router();
+var flash = require('express-flash');
 
 const { sequelize } = require('./models');
 var layout = require('express-ejs-layouts');
@@ -57,6 +58,7 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.static('public'))
+app.use(flash());
 app.use(bodyParser.json());
 app.use(atedish);
 app.use(checkout);

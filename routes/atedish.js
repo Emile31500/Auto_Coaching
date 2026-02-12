@@ -79,7 +79,10 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
             }
 
         } catch (error){
-            console.log(error.message)
+
+            req.flash('danger', error)
+            res.locals.message = req.flash();
+            
         }
     }
 

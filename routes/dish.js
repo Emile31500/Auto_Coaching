@@ -76,10 +76,10 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
 router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) => {
     
 
-    if (req.body && req.session.token){
-
-        try {
+    try {
         
+        if (req.body && req.session.token){
+    
             const rawData = req.body;
             
             const jsonSafe = rawData.foodsDish.replace(/(\w+):/g, '"$1":');
@@ -94,22 +94,30 @@ router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) =
             finitFoodDish(foodsDish, dish, user)
 
             const date = new Date()
+            req.flash('success', 'Votre plat a bien été créé')
+            res.locals.message = req.flash();
             res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
-        
-        } catch (error) {
 
-            res.redirect('/dish')
-        }   
+        } else {
+            throw  'soumission du formulaire non valide';
+        }
 
-    }
+    
+    } catch (error) {
+
+        req.flash('danger', error)
+        res.locals.message = req.flash();
+        res.redirect('/dish')
+    }   
     
 })
 
 router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res, next) => {
     
-    if (req.body && req.session.token){
+    try {
 
-        try {
+        if (req.body && req.session.token){
+        
 
             const dish = await Dish.findOne({
                 include : [{
@@ -133,17 +141,26 @@ router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res,
 
             for (let index = 0; index < dish.DishFoods.length; index++) await dish.DishFoods[index].destroy();
             finitFoodDish(foodsDish, dish, user)
+            req.flash('success', 'Votre plat a bien été édité')
+            res.locals.message = req.flash();
+        
+        } else {
 
-        } catch (error) {
+            throw  'soumission du formulaire non valide';
 
-            res.redirect('/dish/edit/'+req.params.id)
         }
+        
+    } catch (error) {
 
-        const date = new Date()
-        res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
-
-
+        req.flash('danger', error)
+        res.locals.message = req.flash();
+        res.redirect('/dish/edit/'+req.params.id)
     }
+
+    const date = new Date()
+    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+
+
 })
 
 
@@ -195,13 +212,23 @@ router.get('/dish/edit/:id', authenticationChecker, parserJson, async(req, res, 
 
 router.delete('/dish/delete/:id', authenticationChecker, parserJson,  async(req, res, next) => {
 
-    const dish = await Dish.findOne({where : {
-        id : req.params.id,
-        userId : req.user.id
-    }})
+    try {
 
-    if (dish !== undefined) await dish.destroy();
+        const dish = await Dish.findOne({where : {
+            id : req.params.id,
+            userId : req.user.id
+        }})
 
+        if (dish !== undefined) await dish.destroy();
+        req.flash('success', 'Ce plat a bien été supprime : les anciennes diète de ce plat ont bien été conservé.')
+
+    } catch (error){
+
+        req.flash('danger', error)
+
+    }
+
+    res.locals.message = req.flash();
     const date = new Date()
     res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 

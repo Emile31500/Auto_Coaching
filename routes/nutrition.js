@@ -38,6 +38,7 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
 
     const countFilter = await FoodService.countFilters(parsedUrl.query)
 
+    res.locals.message = req.flash();
     res.render('../views/nutrition',  { 
         food: food,
         dish: dish,
@@ -52,13 +53,25 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
 
 router.post('/nutrition', parserJson, authenticationChecker, premiumChecker, async (req, res) => {
 
-    if (req.body && req.session.token){
+    try {
 
-        const rawData = req.body
-        const food = Food.create(rawData);
+        if (req.body && req.session.token){
 
+            const rawData = req.body
+            const food = Food.create(rawData);
+            req.flash('success', 'Cet aliment a bien été créé')
+
+        } else {
+
+            throw  'soumission du formulaire non valide';
+
+        }
+
+    } catch (error) {
+        req.flash('danger', error)
     }
-
+        
+    res.locals.message = req.flash();
     const date = new Date()
     res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 

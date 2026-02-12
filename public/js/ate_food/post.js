@@ -1,4 +1,4 @@
-function postAteFood() {
+/*function postAteFood() {
 
     let alimentForms = document.querySelectorAll('.alimentForms');
 
@@ -82,4 +82,4 @@ function postAteFood() {
     });
 }
 
-postAteFood()
+postAteFood()*/

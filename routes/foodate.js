@@ -129,6 +129,43 @@ router.post('/api/food/ate', authenticationCheckerApi, parserJson, async (req, r
 
 })
 
+router.post('/food/ate', authenticationChecker, parserJson, async (req, res, next) => {
+
+    try {
+
+        if (req.body && req.session.token){
+
+            req.body.userId = req.user.id;
+            const rawData = req.body
+            date = new Date(rawData.date)
+
+            ateFood = await AteFood.create(rawData);
+            
+            
+            req.flash('success', 'Cet aliment a bien été ajouté à la diet du'  + (date.toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })))
+
+        } else {
+
+            throw ('soumission du formulaire non valide')
+
+        }
+
+    } catch(error) {
+
+        date = new Date()
+        req.flash('danger', error)
+
+    }
+    
+    res.redirect('/nutrition/' + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()+1));
+
+})
+
 router.post('/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
 
     const id = req.params.id;

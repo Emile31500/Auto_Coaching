@@ -9,6 +9,28 @@
     <title><%= title %></title>
 </head>
 <body>
+  <% if(locals.message){ %>
+      <% if(locals.message.success){ %>
+        <div class="alert alert-success my-0" role="alert">
+          <strong><%= locals.message.success %></strong> 
+        </div>
+      <% } %>
+      <% if(locals.message.danger){ %>
+        <div class="alert alert-danger my-0" role="alert">
+          <strong><%= locals.message.danger %></strong>
+        </div>
+      <% } %>
+      <% if(locals.message.warning){ %>
+        <div class="alert alert-warning my-0" role="alert">
+          <strong><%= locals.message.warning %></strong>
+        </div>
+      <% } %>
+      <% if(locals.message.info){ %>
+        <div class="alert alert-info my-0" role="alert">
+          <strong><%= locals.message.info %></strong>
+        </div>
+      <% } %>
+    <% } %>
     <header class="bg-dark p-1">
         <div class="container">
             <h1 class="text-light">Auto Coaching</h1>
