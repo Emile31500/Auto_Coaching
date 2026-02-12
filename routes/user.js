@@ -162,8 +162,8 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
                     res.redirect('/admin/train')
 
                 } else {
-                    
-                    res.redirect('/nutrition');
+                    const date = new Date()
+                    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 
                 }
             

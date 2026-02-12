@@ -29,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   AteFood.init({
-    weight: DataTypes.INTEGER
+    weight: DataTypes.INTEGER,
+    date: DataTypes.DATEONLY
   }, {
     sequelize,
     modelName: 'AteFood',

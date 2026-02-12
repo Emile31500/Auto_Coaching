@@ -83,7 +83,8 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
         }
     }
 
-    res.redirect('/nutrition')
+    const date = new Date()
+    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 
 
 })

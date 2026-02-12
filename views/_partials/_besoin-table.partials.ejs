@@ -1,7 +1,17 @@
-<div class="my-5 my-md-5-down">
-  <h3 > Besoins <a class="btn btn-outline-primary" ="" id="detailsAteFoods">Details</a> </h3>  
-  <table class="table table-bordered mb-5">
+<div class="my-5 my-md-5-down mb-5">
+  <h3 >Besoins</h3>
+  <table class="table table-bordered">
     <thead>
+      <tr>
+        <th colspan="3">
+          Total calorique et nutritionel : <a href="/food/ate/<%= (date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear() %> 00:00:00"><%= date.toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })  %></a>
+        </th>
+      </tr>
       <tr>
         <th>Energie</th>
         <th>Protéine</th>
@@ -24,6 +34,27 @@
         <td> <span id="protAtePrct"></span> % </td>
         <td> <span id="fatAtePrct"></span> % </td>
       </tr>
+      <tr>
+        <td colspan="3" class="p-2" style="max-height: 130px;">
+          <div  class="row  w-100" style="white-space: nowrap; overflow-y: auto; max-height: 130px;">
+            <% for (aFIndx = 0; aFIndx < ateFoods.length; aFIndx++) { %>
+              <div class="shadow-sm border w-auto p-2 mx-2 rounded">
+                <%= ateFoods[aFIndx].date %><br>
+                <br>
+                <a href="/nutrition/<%= ateFoods[aFIndx].date %>">voir</a>
+              </div>
+            <% } %>
+            <div class="shadow-sm border  w-auto p-2 mx-2 rounded">
+                <%= new Intl.DateTimeFormat('en-CA').format(new Date()) %><br>
+                <span class="text-secondary fst-italic">(aujourd'hui)</span>
+                <br>
+                <a href="/nutrition/<%= new Intl.DateTimeFormat('en-CA').format(new Date()) %>">voir</a>
+              </div>
+          </div>
+        </td>
+      </tr>
     </tbody>
   </table>
+  <!-- <div class="navbar navbar-inverse navbar-fixed-top"> -->
+
 </div>

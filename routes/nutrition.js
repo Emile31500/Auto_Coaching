@@ -1,5 +1,5 @@
 const express = require('express');
-const { Food, NutritionRequirement, Dish, DishFood } = require('../models/');
+const { AteFood, Food, NutritionRequirement, Dish, DishFood } = require('../models/');
 const { Op } = require('sequelize');
 const FoodService = require('../services/food');
 
@@ -10,10 +10,11 @@ const adminChecker = require('../middlewares/adminChecker');
 const premiumChecker = require('../middlewares/premiumChecker');
 const url = require('url')
 
-router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req, res) => {
 
     const parsedUrl = url.parse(req.url, true);
     const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    const date = new Date(req.params.date);
 
     const dish = await Dish.findAll({
         include : [
@@ -32,11 +33,17 @@ router.get('/nutrition', authenticationChecker, premiumChecker, async (req, res)
         }
     })
 
+    const ateFood = await AteFood.findAll({ group: 'date' });
+    console.log(ateFood);
+
+
     const countFilter = await FoodService.countFilters(parsedUrl.query)
 
     res.render('../views/nutrition',  { 
         food: food,
         dish: dish,
+        date: date,
+        ateFoods : ateFood,
         parsedUrlQuery : parsedUrl.query,
         countFilter : countFilter,
         layout: '../views/main'
@@ -53,7 +60,8 @@ router.post('/nutrition', parserJson, authenticationChecker, premiumChecker, asy
 
     }
 
-    res.redirect('/nutrition');
+    const date = new Date()
+    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 
 })
 

@@ -59,7 +59,7 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
         myDishFoods : myDishFoods,
         countFilter : countFilter,
         parsedUrlQuery : parsedUrl.query,
-        todoDelteThisOption : true,
+        todoDelteThisOption : true === false,
         layout: '../views/main' 
 
     });
@@ -67,12 +67,13 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
 
 })
 
-router.post('/dish', authenticationChecker, parserJson, multer({
-                storage: storage, 
-                limits: {
-                    fileSize: 1024 * 5 * 1024
-                }
-            }).single('image'),  async(req, res, next) => {
+// router.post('/dish', authenticationChecker, parserJson, multer({
+//                 storage: storage, 
+//                 limits: {
+//                     fileSize: 1024 * 5 * 1024
+//                 }
+//             }).single('image'),  async(req, res, next) => {
+router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) => {
     
 
     if (req.body && req.session.token){
@@ -83,35 +84,17 @@ router.post('/dish', authenticationChecker, parserJson, multer({
             
             const jsonSafe = rawData.foodsDish.replace(/(\w+):/g, '"$1":');
             const foodsDish = JSON.parse(jsonSafe);
-            const upload = multer({ dest: 'uploads/' })
 
             const dish = await Dish.create({
                 name : rawData.name,
                 userId : req.user.id,
-                imageUrl : finalName,
-            })      
+                imageUrl : rawData.imageUrl,
+            })    
             
             finitFoodDish(foodsDish, dish, user)
-            // foodsDish.forEach(async(foodDish) => {
 
-            //     const food = await Food.findOne({where : {
-            //             id : foodDish.foodId,
-            //             [Op.or] : [
-            //                 { userId : req.user.id },
-            //                 { userId : null }
-            //             ]
-            //         }
-            //     });
-
-            //     const dishFood = DishFood.create({
-            //         foodId : food.id,
-            //         dishId : dish.id,
-            //         weight : foodDish.weight
-            //     });
-                
-            // });
-
-            res.redirect('/nutrition')
+            const date = new Date()
+            res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
         
         } catch (error) {
 
@@ -147,9 +130,6 @@ router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res,
             const rawData = req.body;
             const jsonSafe = rawData.foodsDish.replace(/(\w+):/g, '"$1":');
             const foodsDish = JSON.parse(jsonSafe);
-            console.log(foodsDish)
-            console.log(foodsDish[0])
-            console.log(foodsDish[0].foodId)
 
             for (let index = 0; index < dish.DishFoods.length; index++) await dish.DishFoods[index].destroy();
             finitFoodDish(foodsDish, dish, user)
@@ -159,7 +139,8 @@ router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res,
             res.redirect('/dish/edit/'+req.params.id)
         }
 
-        res.redirect('/nutrition')
+        const date = new Date()
+        res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 
 
     }
@@ -221,7 +202,8 @@ router.delete('/dish/delete/:id', authenticationChecker, parserJson,  async(req,
 
     if (dish !== undefined) await dish.destroy();
 
-    res.redirect('/nutrition')
+    const date = new Date()
+    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 
     
 })

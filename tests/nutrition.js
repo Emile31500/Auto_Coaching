@@ -9,8 +9,8 @@ const nutritionTest = describe('Nutritions tests', () => {
 
         const testSession = await authUser()
 
-        const res = await testSession
-            .get('/nutrition');
+        const date = new Date()
+        const res = await testSession.get('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
 
         const stringToParse = res.text;
         const parsedString =  new JSDOM(stringToParse);
@@ -23,8 +23,9 @@ const nutritionTest = describe('Nutritions tests', () => {
     });
 
     it('Should return a 401 page', async () => {
-
-        const res = await request(app).get('/nutrition');
+        
+        const date = new Date()
+        const res = await request(app).get('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
         const stringToParse = res.text;
     
         const parsedString =  new JSDOM(stringToParse);

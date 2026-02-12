@@ -1,4 +1,7 @@
-let ttlMacro, ttlMacroPromise;
+const ateFoodSearchDateEl = document.querySelector('#ateFoodSearchDate')
+let ttlMacro, ttlMacroPromise, ateFoodSearchDate = ateFoodSearchDateEl.innerHTML;
+ateFoodSearchDateEl.remove()
+
 
 function getTodayDate(date = undefined) {
 
@@ -22,27 +25,16 @@ function getTodayDate(date = undefined) {
 
 }
 
-const currentDate = getTodayDate();
+calculateAteFood(ateFoodSearchDate);
 
-ateAlimentsForm.addEventListener('submit', function (event) {
+async function getEatingAliment(ateFoodSearchDate){
 
-    event.preventDefault()
-
-    let currentDate = getTodayDate(dateAteAliments.value)
-
-    calculateAteFood(currentDate);
-
-
-});
-
-async function getEatingAliment(daySearched){
-
-    let currentDate = getTodayDate(daySearched);
+    let currentDate = getTodayDate(ateFoodSearchDate);
 
     let endDate = new Date(currentDate).getFullYear() + "-" + (new Date (currentDate).getMonth()+1) + "-" + (new Date (currentDate).getDate()+1) + ' 00:00:00';
 
 
-    let url = "/api/food/ate/" + daySearched +"/" + endDate;
+    let url = "/api/food/ate/" + ateFoodSearchDate +"/" + endDate;
 
     const res = await fetch(url, {
         method: 'GET',
@@ -72,13 +64,6 @@ async function getEatingAliment(daySearched){
 
 async function calculateAteFood(currentDate){
 
-    if (!currentDate){
-
-        currentDate = getTodayDate();
-
-    }
-
-    detailsAteFoods.setAttribute('href', '/food/ate/' +currentDate);
     const ateAliments = await getEatingAliment(currentDate);
 
     if (ateAliments) {
@@ -124,7 +109,7 @@ async function calculateAteFood(currentDate){
 
 }
 
-calculateAteFood(currentDate);
+calculateAteFood(ateFoodSearchDate);
 
 async function getThisFood(id) {
 

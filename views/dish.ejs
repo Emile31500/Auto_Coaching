@@ -10,20 +10,37 @@
 <div>
     <form class="row my-2 foodDishForm" method="POST" >
 
-    <!-- </form> enctype="multipart/form-data"> -->
-        <input type="hidden" class="hidden" name="foodsDish" id="foodsDishInput"/>
-        <div class="row  my-2 ">
-            <div class="col-auto">
-                <% if (todoDelteThisOption) { %> 
-                    <input type="file" name="image" class="form-control"/> 
-                <% } %>
+        <!-- </form> enctype="multipart/form-data"> -->
+        <div class="col-auto">
+            <input type="hidden" class="hidden" name="foodsDish" id="foodsDishInput"/>
+            <div class="row  my-2 ">
+                <div class="col-auto">
+                    <% if (todoDelteThisOption) { %> 
+                        <input type="file" name="image" class="form-control"/> 
+                    <% } %>
+                </div>
+            </div>
+            <div class="row  my-2 ">
+                <div class="col-auto">
+                    <input type="text" name="name" class="form-control"  value="<% if (dish != null ) { %><%= dish.name %><% } %>" required />
+                </div>
+                <input class=" col-auto  btn btn-outline-primary" type="submit"/>
             </div>
         </div>
-        <div class="row  my-2 ">
-            <div class="col-auto">
-                <input type="text" name="name" class="form-control"  value="<% if (dish != null ) { %><%= dish.name %><% } %>" required />
-            </div>
-            <input class=" col-auto  btn btn-outline-primary" type="submit"/>
+        <div class="col-auto">
+            <% [
+                'fish-dish',
+                'redmeat-dish',
+                '',
+                '',
+                '',
+                ''].forEach(image => { %>
+                <div class="w-auto mx-2 d-inline-block">
+                    <img src="/media/photo/<%= image %>-placeholder.png" class="rounded" style="max-width: 107px;"/>
+                    </br>
+                    <input type="radio" name="imageUrl" value="<%= image %>-placeholder.png"/>
+                </div>
+            <% }) %>
         </div>
     </form>
     <table class="table table-striped">
