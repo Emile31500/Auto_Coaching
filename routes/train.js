@@ -16,7 +16,10 @@ router.get('/train/request', authenticationChecker, premiumChecker, async (req, 
 
 router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
-    res.render('../views/train',  {layout: '../views/main' });
+    res.render('../views/train',  {
+        page : '/train',
+        layout: '../views/main' 
+    });
 
 })
 

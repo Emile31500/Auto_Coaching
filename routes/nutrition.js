@@ -40,6 +40,7 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
 
     res.locals.message = req.flash();
     res.render('../views/nutrition',  { 
+        page : '/nutrition',
         food: food,
         dish: dish,
         date: date,
@@ -73,7 +74,8 @@ router.post('/nutrition', parserJson, authenticationChecker, premiumChecker, asy
         
     res.locals.message = req.flash();
     const date = new Date()
-    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+    res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
+
 
 })
 

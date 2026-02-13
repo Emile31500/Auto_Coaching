@@ -35,7 +35,13 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
 
     }
     
-    res.render('../views/profile',  { user: user, layout: '../views/main', isPremium: req.isPremium, subscriptions: subscriptions });
+    res.render('../views/profile',  { 
+        page : '/profile',
+        user : user,
+        layout : '../views/main',
+        isPremium : req.isPremium,
+        subscriptions : subscriptions 
+    });
 
 })
 
@@ -43,13 +49,22 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
 router.get('/login', async function(req, res, next) {
 
     res.statusCode = 200
-    res.render('../views/login',  { user : req.user, error: false, layout: '../views/main' });
+    res.render('../views/login',  { 
+        page : '/login',
+        user : req.user, 
+        error: false, 
+        layout: '../views/main' 
+    });
 
 });
   
 router.get('/signup', function(req, res, next) {
 
-    res.render('../views/signup',  { user : req.user, layout: '../views/main' });
+    res.render('../views/signup',  { 
+        page : '/signup',
+        user : req.user,
+        layout: '../views/main' 
+    });
 });
 
 router.post('/sign', parserJson, async (req, res) => {
@@ -162,7 +177,7 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
 
                 } else {
                     const date = new Date()
-                    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+                    res.redirect('/nutrition/'+ date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
 
                 }
             
@@ -182,11 +197,7 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
   
 router.get('/logout', authenticationChecker, premiumChecker, async(req, res) => {
 
-    if (req.session.token) {
-
-        req.session.token = '';
-
-    }
+    if (req.session.token) req.session.token = '';
 
     res.redirect('/');
 

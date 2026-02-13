@@ -31,8 +31,6 @@
             </div>
         </div>
       </div>
-      
-
       <div class="modal fade" id="eatDishModal-<%= dish[i].id %>" tabindex="-1" aria-labelledby="eatDishModal-<%= dish[i].id %>Label" aria-hidden="true">
         <div class="modal-dialog modal-xl-down">
           <div class="modal-content">
@@ -43,15 +41,14 @@
             <div class="modal-body">
               <form action='/ate/dish/<%= dish[i].id %>' method="POST">
                 <div class="my-2">
-                  <label class="my-1">Dtae du repas</label>
-                  <input type="date" class="form-control"/>
+                  <label class="my-1">Date du repas</label>
+                  <input type="date" name="date" class="form-control" required />
                 </div>
                 <% for(var e=0; e < dish[i].DishFoods.length; e++) { %> 
                   <div class="my-2">
                     <label class="my-1"><%= dish[i].DishFoods[e].Food.name %></label>
                     <input type="hidden" name="dish_food_id_<%= e %>"  value="<%= dish[i].DishFoods[e].Food.id %>"/> 
                     <input type="number" name="dish_food_weight_<%= e %>" class="form-control" required value="<%= dish[i].DishFoods[e].weight %>"/> 
-
                   </div>
                 <% } %>  
                 <input type="submit" class="btn btn-primary"/>

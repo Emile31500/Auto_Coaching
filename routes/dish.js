@@ -54,6 +54,7 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
     }
 
     res.render('../views/dish',  {
+        page : '/nutrition',
         dish : null, 
         food : food,
         myDishFoods : myDishFoods,
@@ -67,12 +68,6 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
 
 })
 
-// router.post('/dish', authenticationChecker, parserJson, multer({
-//                 storage: storage, 
-//                 limits: {
-//                     fileSize: 1024 * 5 * 1024
-//                 }
-//             }).single('image'),  async(req, res, next) => {
 router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) => {
     
 
@@ -96,7 +91,8 @@ router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) =
             const date = new Date()
             req.flash('success', 'Votre plat a bien été créé')
             res.locals.message = req.flash();
-            res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+            res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
+
 
         } else {
             throw  'soumission du formulaire non valide';
@@ -158,7 +154,8 @@ router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res,
     }
 
     const date = new Date()
-    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+    res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
+
 
 
 })
@@ -199,6 +196,7 @@ router.get('/dish/edit/:id', authenticationChecker, parserJson, async(req, res, 
     }
 
     res.render('../views/dish',  {
+        page : '/nutrition',
         dish : dish,
         food : food,
         countFilter : countFilter,
@@ -230,7 +228,8 @@ router.delete('/dish/delete/:id', authenticationChecker, parserJson,  async(req,
 
     res.locals.message = req.flash();
     const date = new Date()
-    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+    res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
+
 
     
 })

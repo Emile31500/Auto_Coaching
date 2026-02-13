@@ -98,7 +98,10 @@ router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumCh
 
 router.get('/food/add', premiumChecker, async(req, res, next) => {
 
-    res.render('../views/food-add',  {layout: '../views/main' });
+    res.render('../views/food-add',  {
+        page : '/nutrition',
+        layout: '../views/main'
+    });
     
 });
 

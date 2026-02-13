@@ -8,28 +8,22 @@ const { AteFood, Dish, DishFood, Food } = require('../models');
 
 router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, next) => {
 
-    if (req.body && req.session.token){
+    try {
 
-        try {
+        if (req.body && req.session.token) {
 
             dish = await Dish.findOne({where : {
                 id : req.params.id,
                 userId : req.user.id
             }}) 
 
-            if (dish === undefined) {
-
-                throw 'Aucun plat trouvé'
-
-            } else {
+            if (dish  instanceof Dish) {
 
                 const rawData =req.body;
                 const arrayRawData = Object.entries(rawData);
                 arrayFormatedData = [];
                 
-                for (let index = 0; index < arrayRawData.length; index++) {
-                    arrayFormatedData[arrayRawData[index][0]] = arrayRawData[index][1]
-                }
+                for (let index = 0; index < arrayRawData.length; index++)  arrayFormatedData[arrayRawData[index][0]] = arrayRawData[index][1];
 
                 const lgt = arrayRawData.length/2;
 
@@ -45,12 +39,8 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
                         }
                     })
 
+                    if (food instanceof Food) {
 
-                    if (food === undefined) {
-                        throw 'Aucun plat trouvé'
-
-                    } else {
-                        
                         let dishFood = await DishFood.findOne({where : {
 
                             dishId : req.params.id,
@@ -61,33 +51,36 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
                             }*/
                         }}) 
 
-                        if (dishFood === undefined) {
 
-                            throw 'Aucun plat trouvé'
-
-                        } else {
+                        if (dishFood instanceof DishFood) {
 
                             ateFood = await AteFood.create({
                                 foodId : arrayFormatedData['dish_food_id_'+index],
                                 weight : arrayFormatedData['dish_food_weight_'+index],
-                                userId : req.user.id
+                                userId : req.user.id,
+                                date : rawData.date
                             })
 
-                        }
-                    }
+                        } else { console.log(111111); throw 'Aucun plat trouvé'}
+                        
+                    } else { console.log(222222); throw 'Aucun plat trouvé'}
                 }
+
+                req.flash('success', 'Le plat a bien été mis à jour.')
+
+            } else {
+                console.log(3333333); throw 'Aucun plat trouvé'
             }
-
-        } catch (error){
-
-            req.flash('danger', error)
-            res.locals.message = req.flash();
-            
         }
+
+    } catch (error){
+
+        req.flash('danger', error)
+        
     }
 
     const date = new Date()
-    res.redirect('/nutrition/'+ date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear());
+    res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
 
 
 })

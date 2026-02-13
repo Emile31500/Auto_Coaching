@@ -9,7 +9,7 @@
     <title><%= title %></title>
 </head>
 <body>
-  <% if(locals.message){ %>
+    <% if(locals.message){ %>
       <% if(locals.message.success){ %>
         <div class="alert alert-success my-0" role="alert">
           <strong><%= locals.message.success %></strong> 
@@ -36,7 +36,7 @@
             <h1 class="text-light">Auto Coaching</h1>
         </div>
     </header>
-    <nav class="navbar navbar-expand-lg bg-primary">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -44,18 +44,18 @@
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
               <% if (!user) { %>
-                <a class="nav-link active" aria-current="page" href="/">Home</a>
-                <div class="navbar-nav">
-                  <a class="nav-link" href="/login">Login</a>
-                  <a class="nav-link" href="/signup">Sign up</a>
-                </div>
+                <a class="nav-link <% if (page === '/train') { %> active <% }  %>" aria-current="page" href="/">ACCUEIL</a>
+                <!-- <div class="navbar-nav"> -->
+                <a class="nav-link <% if (page === '/login') { %> active <% }  %>" href="/login">CONNEXION</a>
+                <a class="nav-link <% if (page === '/signup') { %> active <% }  %>" href="/signup">M'INSCRIRE</a>
+                <!-- </div> -->
               <% } else { %>
-                <a class="nav-link" href="/train">Entrainement</a>
-                <a class="nav-link" href="/nutrition/<%= new Date() %>">Nutrition</a>
-                <a class="nav-link" href="/profile">Profile</a>
-                <div class="navbar-nav">
-                  <a class="nav-link" href="/logout">Log out</a>
-                </div>
+                <a class="nav-link <% if (page === '/train') { %> active <% }  %>" href="/train">ENTRAÎNEMENT</a>
+                <a class="nav-link  <% if (page === '/nutrition') { %> active <% }  %>" href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>">NUTRITION</a>
+                <a class="nav-link <% if (page === '/profile') { %> active <% }  %>" href="/profile">PROFILE</a>
+                <!-- <div class="navbar-nav"> -->
+                <a class="nav-link" href="/logout">LOG OUT</a>
+                <!-- </div> -->
               <% } %>
             </div>
           </div>

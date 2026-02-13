@@ -19,16 +19,20 @@ router.get('/food/ate/:date', authenticationChecker, parserJson, premiumChecker,
         include : [User, Food],
         where: {
             userId: req.user.id,
-            createdAt: {
-                [Op.between]: [dateStart, dateEnd],
-                }
+            date: date
         }
     });
 
 
     if(date) {
-    
-        res.render('../views/food-ate', {date: date, layout: '../views/main', ateFoods : ateFoods});
+
+        res.locals.message = req.flash();
+        res.render('../views/food-ate', {
+            page : '/nutrition',
+            date: date,
+            layout: '../views/main',
+            ateFoods : ateFoods
+        });
 
     } else {
 
@@ -57,7 +61,7 @@ router.delete('/api/food/ate/:id_foodate', authenticationCheckerApi, parserJson,
 
                 ateFood.destroy();
                 res.statusCode = 204;
-                res.send({code: res.statusCode, message: 'This ate food has been created' , data : ateFood});
+                res.send({code: res.statusCode, message: 'This ate food has been deleted' , data : ateFood});
 
             } else {
 
@@ -80,6 +84,37 @@ router.delete('/api/food/ate/:id_foodate', authenticationCheckerApi, parserJson,
         res.send({code: res.statusCode, message: "data required unprovided"});
 
     }
+
+})
+
+router.get('/delete/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
+
+    let date;
+    try {
+
+        const id = req.params.id
+
+        const ateFood = await AteFood.findOne({
+            include : [User, Food],
+            where: {id: id}
+        })
+        console.log(ateFood)
+        console.log(ateFood.date)
+        date = new Date(ateFood.date);
+        console.log(date)
+
+        const result = deleteAteFood(ateFood, req)
+        if (!result) throw "This ate food was not found";
+        req.flash('success', 'Cet aliment a bien été supprimé de votre diet')
+            
+
+    } catch (error) {
+        req.flash('danger', error)
+    }
+
+    console.log(date)
+    res.redirect('/food/ate/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+' 00:00:00');
+
 
 })
 
@@ -162,7 +197,7 @@ router.post('/food/ate', authenticationChecker, parserJson, async (req, res, nex
 
     }
     
-    res.redirect('/nutrition/' + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()+1));
+    res.redirect('/nutrition/' + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()));
 
 })
 
@@ -171,7 +206,12 @@ router.post('/food/ate/:id', authenticationCheckerApi, parserJson, async (req, r
     const id = req.params.id;
     const date = req.body.date;
 
-    if (req.body && req.session.token) await updateAteFood(id, req);
+    if (req.body && req.session.token) {
+
+        const ateFood = await updateAteFood(id, req);
+        req.flash('success', 'L\'aliment : '+ateFood.food.name+'.')
+        
+    }
 
     res.redirect('/food/ate/'+date);
 
@@ -198,11 +238,24 @@ router.patch('/api/food/ate/:id', authenticationCheckerApi, parserJson, async (r
 
 async function updateAteFood(id, req) {
 
-    let ateFood = await AteFood.findOne({where : { id : id, userId: req.user.id}})
+    let ateFood = await AteFood.findOne({include : Food, where : { id : id, userId: req.user.id}})
     await ateFood.update(req.body);
     await ateFood.save();
 
     return ateFood;
+
+}
+
+async function deleteAteFood(ateFood, req) {
+
+    if (ateFood.User.id === req.user.id ) {
+
+        ateFood.destroy();
+        return true
+
+    } else {
+        return false
+    }
 
 }
 

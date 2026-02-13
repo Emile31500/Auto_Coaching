@@ -44,7 +44,12 @@ router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
         limit: 3,
     });
 
-    res.render('../views/rates',  { layout: '../views/main', products: products.data, errorMessage: error_message});
+    res.render('../views/rates',  { 
+        page : '',
+        layout: '../views/main', 
+        products: products.data, 
+        errorMessage: error_message
+    });
 
 })
 
@@ -52,7 +57,11 @@ router.get('/checkout/:id_product', authenticationChecker, async (req, res) => {
 
     const idProduct = req.params.id_product;
 
-    res.render('../views/checkout',  { layout: '../views/main' , idProduct: idProduct});
+    res.render('../views/checkout',  { 
+        page : '',
+        layout: '../views/main' ,
+        idProduct: idProduct
+    });
 
 })
 

@@ -1,4 +1,4 @@
-deleteAteFoodBtns =  document.querySelectorAll('.delete-ate-food-btn');
+/*deleteAteFoodBtns =  document.querySelectorAll('.delete-ate-food-btn');
 responseFoodAteRequest = document.querySelector('#responseFoodAteRequest')
 deleteAteFoodBtns.forEach(deleteAteFoodBtn => {
 
@@ -43,4 +43,4 @@ deleteAteFoodBtns.forEach(deleteAteFoodBtn => {
         });
             
     })
-}); 
+}); */

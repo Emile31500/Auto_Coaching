@@ -6,6 +6,57 @@
     width: 100%;
     /* width: 100vw;
 }*/
+body {
+    font-family: 'Montserrat';
+    /* , 'Playfair Display' ;  */
+}
+
+.btn-outline-primary {
+    color: #003060;
+    border-color: #003060;
+}
+
+.btn-outline-primary:hover {
+    background-color: #003060;
+    border-color: #003060;
+
+}
+
+.btn-primary {
+    background-color: #003060;
+    border-color: #003060;
+}
+
+.btn-primary:hover {
+    background-color: #002040;
+    border-color: #002040;
+
+}
+
+.btn-outline-danger {
+    color: #801515;
+    border-color: #801515;
+}
+
+.btn-outline-danger:hover {
+    background-color: #801515;
+    border-color: #2d3b49;
+
+}
+
+.btn-danger {
+    background-color: #801515;
+    border-color: #801515;
+}
+
+.btn-danger:hover {
+    background-color: #002040;
+    border-color: #002040;
+
+}
+
+
+
 
 @media (max-width: 1000px) {
 
@@ -36,4 +87,29 @@
         padding-top: 1.618em; 
     }
 } 
+
+.navbar {
+    background-color: #003060;
+    color : white;
+}
+
+.navbar-nav > .nav-link {
+    color: white;
+    font-weight: 380;
+}
+
+.navbar-nav > .nav-link:hover {
+    transition: transform 0.4s ease;
+    transform: scale(1.08);
+}
+
+
+.navbar-nav > .nav-link:hover {
+    color: #d0d0d0;;
+}
+
+.navbar-nav > .nav-link.active {
+    color: white;
+    font-weight: 520;
+}
 

@@ -5,7 +5,11 @@ const isAuth = require('../middlewares/isAuth')
 
 router.get('/', isAuth, (req, res) => {
 
-    res.render('../views/home',  { user : req.user,  layout: '../views/main' });
+    res.render('../views/home',  { 
+        page : '/',
+        user : req.user, 
+        layout: '../views/main' 
+    });
 
 })
 
