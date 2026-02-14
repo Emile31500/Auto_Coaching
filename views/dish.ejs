@@ -1,12 +1,11 @@
 <% title = "Palt | création & édition " %>
 
 <%- contentFor('main') %>
-<h3 class="my-5 ">Aliments 
-    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addFoodModal">
-    <i class="fa-solid fa-plus"></i>
-    </button>
-</h3>
 
+<h3 class="my-5 ">
+    <a href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>" class="btn btn-primary"><i class="fa-solid fa-arrow-left-long"></i></a> 
+    Aliments
+</h3>
 <div>
     <form class="row my-2 foodDishForm" method="POST" >
 

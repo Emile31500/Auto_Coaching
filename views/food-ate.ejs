@@ -24,7 +24,7 @@
             <tr id="ate-food-<%= ateFoods[i].Food.id  %>">
                 <td> <%= ateFoods[i].Food.name   %></td>
                 <td> 
-                    <form action="/food/ate/<%= ateFoods[i].Food.id  %>" method="POST" class="row">
+                    <form action="/food/ate/<%= ateFoods[i].id  %>" method="POST" class="row">
                         <input type="hidden" name="date" class="weight form-control" id="weight" value="<%= date %>"/> 
                         <div class="col-auto">
                             <input type="number" name="weight" class="weight form-control" id="weight" value="<%= ateFoods[i].weight %>" placeholder=" g / ml"/> 

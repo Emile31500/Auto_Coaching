@@ -20,26 +20,26 @@
     </thead>
     <tbody>
       <tr>
-        <td> kcal </td>
-        <td> g </td>
-        <td> g </td>
+        <td> <%= nutritionRequirement.kcalorie %> Kcl </td>
+        <td> <%= nutritionRequirement.proteine %> G </td>
+        <td> <%= nutritionRequirement.fat %> G </td>
       </tr>
       <tr>
-        <td> <span id="kcalAteAbs"></span> kcal </td>
-        <td> <span id="protAteAbs"></span> g </td>
-        <td> <span id="fatAteAbs"></span> g </td>
+        <td> <span id="kcalAteAbs"></span> <%= Math.round(sumKcalorie) %> Kcl </td>
+        <td> <span id="protAteAbs"></span> <%= Math.round(sumProtein) %> G </td>
+        <td> <span id="fatAteAbs"></span> <%= Math.round(sumFat) %> G </td>
       </tr>
       <tr>
-        <td> <span id="kcalAtePrct"></span> % </td>
-        <td> <span id="protAtePrct"></span> % </td>
-        <td> <span id="fatAtePrct"></span> % </td>
+        <td> <span id="kcalAtePrct"></span> <%= Math.round(sumKcalorie / nutritionRequirement.kcalorie * 100) %> % </td>
+        <td> <span id="protAtePrct"></span> <%= Math.round(sumProtein / nutritionRequirement.proteine * 100) %> % </td>
+        <td> <span id="fatAtePrct"></span> <%= Math.round(sumFat / nutritionRequirement.fat * 100) %> % </td>
       </tr>
       <tr>
         <td colspan="3" class="p-2" style="max-height: 130px;">
           <div  class="row  w-100" style="white-space: nowrap; overflow-y: auto; max-height: 130px;">
-            <% for (aFIndx = 0; aFIndx < ateFoods.length; aFIndx++) { %>
+            <% for (aFIndx = 0; aFIndx < ateFood.length; aFIndx++) { %>
               <div class="shadow-sm border w-auto p-2 mx-2 rounded">
-                <%= new Date(ateFoods[aFIndx].date).toLocaleDateString('fr-FR', {
+                <%= new Date(ateFood[aFIndx].date).toLocaleDateString('fr-FR', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -47,7 +47,7 @@
                 })%>
                 <br>
                 <br>
-                <a href="/nutrition/<%= ateFoods[aFIndx].date %>">voir</a>
+                <a href="/nutrition/<%= ateFood[aFIndx].date %>">voir</a>
               </div>
             <% } %>
             <div class="shadow-sm border  w-auto p-2 mx-2 rounded">

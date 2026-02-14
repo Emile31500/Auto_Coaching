@@ -1,5 +1,5 @@
 const express = require('express');
-const { AteFood, Food, NutritionRequirement, Dish, DishFood } = require('../models/');
+const { AteFood, Dish, DishFood, Food, NutritionRequirement } = require('../models/');
 const { Op } = require('sequelize');
 const FoodService = require('../services/food');
 
@@ -33,18 +33,46 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
         }
     })
 
-    const ateFood = await AteFood.findAll({ group: 'date' });
+    const nutritionRequirement = await NutritionRequirement.findOne({
+        where : {
+            userId : req.user.id
+        }
+    });
 
+    const ateFood = await AteFood.findAll({ 
+        include: Food, 
+        group: 'date' 
+    });
+
+    const ateFoods = await AteFood.findAll({ 
+        include: Food, 
+        where : {
+            date : date
+        }
+    });
+
+    let sumProtein = 0, sumFat=0, sumKcalorie=0;
+
+    ateFoods.forEach(ateFood => {
+        console.log(ateFood)
+        sumProtein += (ateFood.weight/100)*ateFood.Food.proteine;
+        sumFat += (ateFood.weight/100)*ateFood.Food.fat;
+        sumKcalorie += (ateFood.weight/100)*ateFood.Food.kcalorie;
+    })
 
     const countFilter = await FoodService.countFilters(parsedUrl.query)
 
     res.locals.message = req.flash();
     res.render('../views/nutrition',  { 
         page : '/nutrition',
+        nutritionRequirement : nutritionRequirement,
+        sumKcalorie : sumKcalorie,
+        sumProtein : sumProtein,
+        sumFat : sumFat,
         food: food,
         dish: dish,
         date: date,
-        ateFoods : ateFood,
+        ateFood : ateFood,
         parsedUrlQuery : parsedUrl.query,
         countFilter : countFilter,
         layout: '../views/main'

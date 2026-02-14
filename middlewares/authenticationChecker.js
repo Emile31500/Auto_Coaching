@@ -10,7 +10,7 @@ const authenticationChecker =  async function (req, res, next) {
       
         if (!decodedToken) throw new Error
   
-        const user = await User.findOne({where: {'authToken': authToken}});
+        const user = await User.findOne({where: {authToken: authToken}});
       
         if(!user) {
         

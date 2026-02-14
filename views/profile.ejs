@@ -10,10 +10,10 @@
 </ul>
 <!-- THERE WAS A PERFORMANCE TAB. A RETURN ?-->
 <div class="border border rounded-bottom p-3 ongletsProfile " id="profileDescription">
-    <form action="/" method="POST">
+    <form action="/nutritionrequirement" method="POST">
         <div class="my-3">
             <label for="objectiv">Objectif : <span class="text-danger">*</span></label>
-            <select class="form-select">
+            <select class="form-select" name="objectiv">
                 <option value="1">Conserver mon poids et être en meilleur form</option>
                 <option value="2">Perdre du poids</option>
             </select>
@@ -26,31 +26,40 @@
                 <option value="0.8"> Lent</option>
                 <option value="1"> Normal</option>
                 <option value="1.2"> Rapide</option>
-                <option value="1.5"> Très rapide</option>
+                <option selected value="1.5"> Très rapide</option>
             </select>
         </div>
         <div class="my-3">
             <div class="my-2">
-                <span class="btn btn-outline-secondary rounded-circle p-0 px-2">?</span> <label for="step"> Combien de pas faîtes-vous en moyenne : <span class="text-danger">*</span></label>
+                <span class="btn btn-outline-secondary rounded-circle p-0 px-2">?</span> <label for="step"> Combien de pas faîtes-vous en moyenne chaque jour : <span class="text-danger">*</span></label>
             </div>
-            <input class="form-control" id="step" name="step" type="number" autocomplete="step" value="" required>
+            <input class="form-control" id="step" name="step" type="number" autocomplete="step" value="6000" required>
         </div>
         <div class="my-3">
             <div class="my-2">
-                <b>Or sport</b> Combien d'heure de travail physique faîtes-vous en moyenne par <b>semaine</b> : <span class="text-danger">*</span></label>
+                <b>Or sport</b> combien de <b>minutes</b> de travail physique faîtes-vous en moyenne par <b>semaine</b> : <span class="text-danger">*</span></label>
             </div>
-            <input class="form-control" id="step" name="step" type="number" autocomplete="step" value="" required>
+            <input class="form-control" id="crafts" name="crafts" type="number" autocomplete="crafts" value="480" required>
         </div>
-
+        <div class="my-3">
+            <div class="my-2">
+               Sexe : <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-radio" selected id="sexe" name="sexe" type="radio" autocomplete="sexe" value="1" required> : Homme
+            <input class="form-radio" id="sexe" name="sexe" type="radio" autocomplete="sexe" value="2" required> : Femme
+        </div>
         <div class="my-3">
             <div class="my-2">
                 Voullez-vous faire le programme sportif proposé par la plateforme ? <span class="text-danger">*</span></label>
             </div>
-            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="true" required> : oui
-            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="false" required> : non
+            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="true" required>  : oui
+            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="false" required selected> : non
             <div class="alert alert-warning">
                 Il sera plus compliqué pour vous d'atteindre vos objectifs en cochant non.
             </div>
+        </div>
+        <div class="my-5">
+           <input type="submit" class="btn btn-primary"/>
         </div>
     </form>
 </div>
@@ -148,10 +157,6 @@
 </div>
  <script src='/js/date.js'></script>
 <script src='/js/user/format.date.js'></script>
-<!-- <script src='/js/performance/add.js'></script> -->
-<!-- <script src='/js/performance/get.js'></script>  -->
 <script src='/js/user/update.js'></script>
 <script src="/js/onglet.js"></script>
-<!-- <script src='/js/measurment/get.js'></script> -->
-<!-- <script src='/js/measurment/add.js'></script> -->
 <script src='/js/user/subscription.delete.js'></script>

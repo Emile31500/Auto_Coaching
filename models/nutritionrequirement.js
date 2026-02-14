@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         })
       }
 
-      calculateAge(birth_day) {
+      /*calculateAge(birth_day) {
 
         const birthDate = new Date(birth_day);
 
@@ -23,11 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         let age = currentDate.getFullYear() - birthDate.getFullYear();
         const hasBirthdayOccurred = (
             currentDate.getMonth() > birthDate.getMonth() ||
-            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate()) ||
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate())
+            /* ||
             (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() >= birthDate.getHours()) ||
             (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() >= birthDate.getMinutes()) ||
-            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() === birthDate.getMinutes() && currentDate.getSeconds() >= birthDate.getSeconds())
-        );
+            (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() === birthDate.getDate() && currentDate.getHours() === birthDate.getHours() && currentDate.getMinutes() === birthDate.getMinutes() && currentDate.getSeconds() >= birthDate.getSeconds())*/
+        /*);
 
         if (hasBirthdayOccurred) {
 
@@ -37,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
 
         const intAge = age;
         return intAge;
-    }
+    }*/
     generateDefaultNutrient(rawDataTrainRequest, homme) {
 
       let wantToGainWeight = false

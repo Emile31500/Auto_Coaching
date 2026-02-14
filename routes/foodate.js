@@ -12,9 +12,6 @@ router.get('/food/ate/:date', authenticationChecker, parserJson, premiumChecker,
 
     const date = req.params.date;
 
-    const dateStart = date;
-    const dateEnd = date.replace('00:00:00', '23:59:59');
-
     let ateFoods = await AteFood.findAll({
         include : [User, Food],
         where: {
@@ -71,7 +68,6 @@ router.delete('/api/food/ate/:id_foodate', authenticationCheckerApi, parserJson,
 
         } catch (error) {
 
-            console.log(error)
 
             res.statusCode = 404;
             res.send({code: res.statusCode, message: error});
@@ -98,10 +94,7 @@ router.get('/delete/food/ate/:id', authenticationCheckerApi, parserJson, async (
             include : [User, Food],
             where: {id: id}
         })
-        console.log(ateFood)
-        console.log(ateFood.date)
         date = new Date(ateFood.date);
-        console.log(date)
 
         const result = deleteAteFood(ateFood, req)
         if (!result) throw "This ate food was not found";
@@ -112,7 +105,6 @@ router.get('/delete/food/ate/:id', authenticationCheckerApi, parserJson, async (
         req.flash('danger', error)
     }
 
-    console.log(date)
     res.redirect('/food/ate/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+' 00:00:00');
 
 
@@ -196,22 +188,27 @@ router.post('/food/ate', authenticationChecker, parserJson, async (req, res, nex
         req.flash('danger', error)
 
     }
-    
+
     res.redirect('/nutrition/' + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()));
 
 })
 
 router.post('/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
 
-    const id = req.params.id;
     const date = req.body.date;
 
-    if (req.body && req.session.token) {
+    try {
 
-        const ateFood = await updateAteFood(id, req);
-        req.flash('success', 'L\'aliment : '+ateFood.food.name+'.')
-        
-    }
+        if (req.body && req.session.token) {
+
+            const ateFood = await updateAteFood(req.params.id, req);
+            req.flash('success', 'L\'aliment : '+ateFood.Food.name+' a bien été mis à jour dans votre diet.')
+            
+        }
+
+    } catch(error){
+        req.flash('danger', error)
+    }      
 
     res.redirect('/food/ate/'+date);
 
@@ -238,8 +235,16 @@ router.patch('/api/food/ate/:id', authenticationCheckerApi, parserJson, async (r
 
 async function updateAteFood(id, req) {
 
-    let ateFood = await AteFood.findOne({include : Food, where : { id : id, userId: req.user.id}})
-    await ateFood.update(req.body);
+    let ateFood = await AteFood.findOne({
+        include : Food, 
+        where : { 
+            id : id,
+            userId: req.user.id
+        }
+    })
+
+
+    await ateFood.update({weight: req.body.weight});
     await ateFood.save();
 
     return ateFood;

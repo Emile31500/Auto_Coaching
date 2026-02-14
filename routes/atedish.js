@@ -14,7 +14,10 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
 
             dish = await Dish.findOne({where : {
                 id : req.params.id,
-                userId : req.user.id
+                [Op.or] : [
+                    {userId : req.user.id},
+                    {userId : null}
+                ]
             }}) 
 
             if (dish instanceof Dish) {
@@ -65,7 +68,7 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
                     }
                 }
 
-                req.flash('success', 'Le plat a bien été mis à jour.')
+                req.flash('success', 'Le plat a bien été ajouté à votre diet.')
 
             } else {
                 throw 'Aucun plat trouvé'

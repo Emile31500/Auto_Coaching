@@ -1,10 +1,12 @@
 const addFoodToDishs = document.querySelectorAll('.addFoodToDish')
-const foodFishForm = document.querySelector('.foodDishForm');
+const foodCreatDishForm = document.querySelector('.foodDishForm');
+const dishFilterFoodForm = document.querySelector('#dishFilterFoodForm')
 const addedFood = document.querySelector('#addedFood');
 const foodsDishInput = document.querySelector('#foodsDishInput')
+const dishFoodsFilter = document.querySelector('#dishFoodsFilter')
 
-console.log(foodFishForm)
-foodFishForm.addEventListener('submit', function (event) {
+console.log(foodCreatDishForm)
+foodCreatDishForm.addEventListener('submit', function (event) {
 
     event.preventDefault();
 
@@ -17,6 +19,24 @@ foodFishForm.addEventListener('submit', function (event) {
     })
 
     foodsDishInput.setAttribute('value', "["+foodWeight.toString()+"]");
+
+    data = new FormData(this)
+    this.submit(data);
+    
+})
+
+dishFilterFoodForm.addEventListener('submit', function (event) {
+
+    event.preventDefault();
+
+    const foodWeightElements = document.querySelectorAll('.foodWeight');
+    var foodWeight = [];
+    
+    foodWeightElements.forEach(foodWeightElement => {
+        foodWeight.push((foodWeightElement.getAttribute("foodId")+'spl1t3r'+foodWeightElement.value))
+    })
+
+    dishFoodsFilter.setAttribute('value', foodWeight.toString());
 
     data = new FormData(this)
     this.submit(data);

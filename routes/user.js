@@ -6,7 +6,7 @@ const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 
 var layout = require('express-ejs-layouts');
-const { User, Measurment } = require('../models');
+const { User, Measurment, NutritionRequirement } = require('../models');
 const pbkdf2 = require("hash-password-pbkdf2")
 const url = require('url');
 
@@ -103,12 +103,13 @@ router.post('/sign', parserJson, async (req, res) => {
     
                 });
 
-                const measurment = await Measurment.create({
-                    size : rawData.size,
-                    weight : rawData.weight,
+                const nutritionRequirement = await NutritionRequirement.create({
+                    personnalMultiplicator : 1.0,
+                    metabolismMultiplicator : 1.0,
+                    proteinMultiplicator : 1.0,
+                    fatMultiplicator : 1.0,
                     userId : user.id
                 })
-
                 const customer = await stripe.customers.create({
                     name:  rawData.name,
                     email: rawData.email,
@@ -216,9 +217,7 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
                     res.redirect('/admin/train')
 
                 } else {
-                    const date = new Date()
-                    res.redirect('/nutrition/'+ date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
-
+                    res.redirect('/profile');
                 }
             
             } else {

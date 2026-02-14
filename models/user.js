@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     authToken:  DataTypes.STRING,
     salt: DataTypes.STRING,
     role: DataTypes.JSON,
-    sex: DataTypes.BOOLEAN
+    sex: DataTypes.BOOLEAN,
+    birthDay: DataTypes.DATEONLY
 
   }, {
     sequelize,
