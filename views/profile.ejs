@@ -4,120 +4,60 @@
 <h2 class="my-5">Profile</h2>
 
 <ul class="list-group list-group-horizontal" id="menuOnglet d-inline">
-    <li class="list-group-item active boutonOnglet" onglet="ongletPerformance">Performance</li>
+    <li class="list-group-item active boutonOnglet" onglet="profileDescription">Aperçu</li>
     <li class="list-group-item boutonOnglet" onglet="ongletMensuraions">Mensurations</li>
     <li class="list-group-item boutonOnglet" onglet="ongletCompte">Compte</li>
 </ul>
-<div class="border border rounded-bottom p-3 ongletsProfile d-block" id="ongletPerformance">
-    <table>
-        <h3 class="my-3">Performance : </h3>
-        <tr>
-            <th> Squat : </th>
-            <td> <span id="perfZoneS"></span> kg </td>
-        </tr>
-        <tr>
-            <th> Développé couché : </th>
-            <td> <span id="perfZoneB"></span> kg </td>
-        </tr>
-        <tr>
-            <th> Soulevé de terre : </th>
-            <td> <span id="perfZoneD"></span> kg </td>
-        </tr>
-    </table>
-    <table class="my-3 table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>
-                    Soulevé de terre
-                </th>
-                <th>
-                    Développé couché
-                </th>
-                <th>
-                    Squat
-                </th>
-                <th>
-                    Jour
-                </th>   
-            </tr>
-        </thead>
-        <tbody id="performanceTableBody">
+<!-- THERE WAS A PERFORMANCE TAB. A RETURN ?-->
+<div class="border border rounded-bottom p-3 ongletsProfile " id="profileDescription">
+    <form action="/" method="POST">
+        <div class="my-3">
+            <label for="objectiv">Objectif : <span class="text-danger">*</span></label>
+            <select class="form-select">
+                <option value="1">Conserver mon poids et être en meilleur form</option>
+                <option value="2">Perdre du poids</option>
+            </select>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                <span class="btn btn-outline-secondary rounded-circle p-0 px-2">?</span> <label for="poids"> Métabolisme : <span class="text-danger">*</span></label>
+            </div>
+            <select name="metabolismMultiplicator" class="form-select">
+                <option value="0.8"> Lent</option>
+                <option value="1"> Normal</option>
+                <option value="1.2"> Rapide</option>
+                <option value="1.5"> Très rapide</option>
+            </select>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                <span class="btn btn-outline-secondary rounded-circle p-0 px-2">?</span> <label for="step"> Combien de pas faîtes-vous en moyenne : <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-control" id="step" name="step" type="number" autocomplete="step" value="" required>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                <b>Or sport</b> Combien d'heure de travail physique faîtes-vous en moyenne par <b>semaine</b> : <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-control" id="step" name="step" type="number" autocomplete="step" value="" required>
+        </div>
 
-        </tbody>
-    </table>
-    <form id="performanceForm" class="my-5">
-        <p>
-            <label for="benchPress">
-                Développé couché : 
-            </label>
-            <input type="number" class="form-control" name="benchPress" id="benchPress"/>
-        </p>
-        <p>
-            <label for="deadLift">
-                Soulevé de terre : 
-            </label>
-            <input type="number" class="form-control" name="deadLift" id="deadLift"/>
-        </p>
-        <p>
-            <label for="squat">
-                Squat : 
-             </label>
-             <input type="number" class="form-control" name="squat" id="squat"/>
-        </p>
-        <p>
-            <label for="date">
-                Date : 
-             </label>
-             <input type="date" class="form-control" name="date" id="date"/>
-        </p>
-        <input type="submit" class="btn btn-primary"/>
+        <div class="my-3">
+            <div class="my-2">
+                Voullez-vous faire le programme sportif proposé par la plateforme ? <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="true" required> : oui
+            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="false" required> : non
+            <div class="alert alert-warning">
+                Il sera plus compliqué pour vous d'atteindre vos objectifs en cochant non.
+            </div>
+        </div>
     </form>
-    <div class="alert d-none" id="ongletPerformanceAlert">
-
-    </div>
 </div>
-
-<div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletMensuraions">
-    <table class="table table-bordered">
-        <h3 class="my-3">Mensurations : </h3>
-        <tr>
-            <th> Poids : </th>
-            <td> <span id="weightZone"></span> kg </td>
-            <th> Tour d'épaule : </th>
-            <td> <span id="suroundShouldersZone"> </span> cm </td>
-        </tr>
-        <tr>
-            <th> Taille : </th>
-            <td> <span id="sizeZone"></span> cm </td>
-            <th> Tour de bras : </th>
-            <td> <span id="suroundArmsZone"> </span> cm </td>
-        </tr>
-        <tr>
-            <th> Tour de taille : </th>
-            <td> <span id="suroundWaistZone"> </span> cm </td>
-            <th> Tour de torse : </th>
-            <td> <span id="suroundChestZone"> </span> cm </td>
-        </tr>
-        <tr>
-            
-        </tr>
-        
-    </table>
-    <table class="table my-3" id="measurmentTable">
-        <thead>
-          <tr>
-            <th scope="col">Poids</th>
-            <th scope="col">Taille</th>
-            <th scope="col">Epaule</th>
-            <th scope="col">Torse</th>
-            <th scope="col">Bras</th>
-            <th scope="col">Taille (tours)</th>
-          </tr>
-        </thead>
-        <tbody id="measurmentTableBody">
-        </tbody>
-      </table>
+<div class="border border rounded-bottom p-3 ongletsProfile d-none w-auto" id="ongletMensuraions">
     <form class="my-5" id="measurmentForm">
+        <!-- todo : replace with a graph -->
+        <img style="max-width: 800px;" class="w-auto" src="https://i.ebayimg.com/images/g/6PAAAOSw93Bhplwj/s-l1200.jpg" />
         <div class="my-3 row my-1" >
             <div class="col-2">
                 <label for="weight">
@@ -135,42 +75,6 @@
             <div class="col-3">
                 <input class="form-control" value="173" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id="size"/>
             </div>
-        </div>
-        <div class="row my-1">
-            <div class="col-2">
-                <label for="suroundShoulders">
-                    Tour d'épaule
-                </label>
-            </div>
-            <div class="col-3">
-                <input class="form-control" value="120" type="number" step="0.1" id="suroundShoulders"/>
-            </div>
-            <div class="col-2">
-                <label for="size">
-                    Tour de taille 
-                </label>
-            </div>
-            <div class="col-3">
-                <input class="form-control" value="80" type="number" step="0.1" id="suroundWaist"/>
-            </div>  
-        </div>
-        <div class="row my-1">
-            <div class="col-2">
-                <label for="suroundShoulders">
-                    Tour de bras
-                </label>
-            </div>
-            <div class="col-3">
-                <input class="form-control" value="32" type="number" step="0.1" id="suroundArms"/>
-            </div>
-            <div class="col-2">
-                <label for="size">
-                    Tour de torse 
-                </label>
-            </div>
-            <div class="col-3">
-                <input class="form-control " type="number" step="0.1" value="120" id="suroundChest"/>
-            </div>  
         </div>
 
         <input type="submit" class="btn btn-primary"/>
@@ -244,10 +148,10 @@
 </div>
  <script src='/js/date.js'></script>
 <script src='/js/user/format.date.js'></script>
-<script src='/js/performance/add.js'></script>
-<script src='/js/performance/get.js'></script> 
+<!-- <script src='/js/performance/add.js'></script> -->
+<!-- <script src='/js/performance/get.js'></script>  -->
 <script src='/js/user/update.js'></script>
 <script src="/js/onglet.js"></script>
-<script src='/js/measurment/get.js'></script>
-<script src='/js/measurment/add.js'></script>
+<!-- <script src='/js/measurment/get.js'></script> -->
+<!-- <script src='/js/measurment/add.js'></script> -->
 <script src='/js/user/subscription.delete.js'></script>

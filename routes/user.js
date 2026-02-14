@@ -6,7 +6,7 @@ const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 
 var layout = require('express-ejs-layouts');
-const { User } = require('../models');
+const { User, Measurment } = require('../models');
 const pbkdf2 = require("hash-password-pbkdf2")
 const url = require('url');
 
@@ -18,7 +18,8 @@ const authenticationCheckerApi = require('../middlewares/authenticationCheckerAp
 const isAuth = require('../middlewares/isAuth')
 
 
-const adminChecker = require('../middlewares/adminChecker')
+const adminChecker = require('../middlewares/adminChecker');
+const { Op } = require('sequelize');
 
 router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker, async (req, res) => {
 
@@ -34,10 +35,20 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
         subscriptions = subscriptionsPromise.data;
 
     }
+
+    const measurments = await Measurment.findAll({
+        where : {
+            [Op.or] : [
+                {userId : req.user.id},
+                {userId : null}
+            ]
+        }
+    })
     
     res.render('../views/profile',  { 
         page : '/profile',
         user : user,
+        measurments : measurments,
         layout : '../views/main',
         isPremium : req.isPremium,
         subscriptions : subscriptions 
@@ -60,6 +71,7 @@ router.get('/login', async function(req, res, next) {
   
 router.get('/signup', function(req, res, next) {
 
+    res.locals.message = req.flash();
     res.render('../views/signup',  { 
         page : '/signup',
         user : req.user,
@@ -69,33 +81,61 @@ router.get('/signup', function(req, res, next) {
 
 router.post('/sign', parserJson, async (req, res) => {
 
-    let data;
+    try {
 
-    if (data = req.body){
 
-        const hashedPassword = pbkdf2.hashSync(data.password);
+        const rawData = req.body
+
+        console.log(rawData)
+        if (rawData.password === rawData.passwordConf) {
+
+            const user = await User.findOne({where : { email : rawData.email}})
+
+            if (!(user instanceof User)){
+                const hashedPassword = pbkdf2.hashSync(rawData.password);
         
-        const user = await User.create({
-            name: data.name,
-            email: data.email,
-            password: hashedPassword,
-            role: ["user"]
-        });
+                let user = await User.create({
+                    name: rawData.name,
+                    email: rawData.email,
+                    password: hashedPassword,
+                    role: ["user"]
 
-        const customer = await stripe.customers.create({
-            name:  data.name,
-            email: data.email,
-        });
+    
+                });
 
-        res.redirect('login');
+                const measurment = await Measurment.create({
+                    size : rawData.size,
+                    weight : rawData.weight,
+                    userId : user.id
+                })
 
-    } else {
+                const customer = await stripe.customers.create({
+                    name:  rawData.name,
+                    email: rawData.email,
+                });
 
-        res.statusCode = 400;
-        res.json({"status" : 400});
+                const authToken = await user.getAuthenticationToken();
+                req.session.token = authToken;
+                req.flash('success', 'Merci infiniment de nous avoir choisit ! Nous espérons que nous serons à la hauteur de vos attentes ! ')
 
+            } else {
+                console.log(1)
+                throw 'Un utilisateur avec cette adresse maile existe déjà'
+            }
+
+        } else {
+            console.log(2)
+            throw 'Les mots de passe ne sont pas identique'
+        }
+
+        res.redirect('/profile')
+
+    } catch (error){
+
+        req.flash('danger', error)
+        res.redirect('/signup')
+        
     }
-
 });
 
 router.get('/api/user', adminChecker, parserJson, async (req, res) => {
@@ -195,9 +235,9 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
     }
 });
   
-router.get('/logout', authenticationChecker, premiumChecker, async(req, res) => {
+router.get('/logout', async(req, res) => {
 
-    if (req.session.token) req.session.token = '';
+    req.session.token = '';
 
     res.redirect('/');
 

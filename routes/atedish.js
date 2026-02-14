@@ -9,7 +9,7 @@ const { AteFood, Dish, DishFood, Food } = require('../models');
 router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, next) => {
 
     try {
-
+        let foodId;
         if (req.body && req.session.token) {
 
             dish = await Dish.findOne({where : {
@@ -17,7 +17,7 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
                 userId : req.user.id
             }}) 
 
-            if (dish  instanceof Dish) {
+            if (dish instanceof Dish) {
 
                 const rawData =req.body;
                 const arrayRawData = Object.entries(rawData);
@@ -25,51 +25,50 @@ router.post('/ate/dish/:id', authenticationChecker, parserJson, async(req, res, 
                 
                 for (let index = 0; index < arrayRawData.length; index++)  arrayFormatedData[arrayRawData[index][0]] = arrayRawData[index][1];
 
-                const lgt = arrayRawData.length/2;
+                const lgt = arrayRawData.length/2-1;
 
                 for (let index = 0; index < lgt; index++) {
 
-                    let food = await Food.findOne({
+                    foodId = arrayFormatedData['dish_food_id_'+(index).toString()];
+                    food = await Food.findOne({
                         while : {
-                            id : arrayFormatedData['dish_food_id_'+index],
-                            [Op.or] : {
-                                userId : req.user.id,
-                                userId : null
-                            }
+                            id : foodId,
+                            [Op.or] : [
+                                {userId : req.user.id},
+                                {userId : null}
+                            ]
                         }
                     })
 
                     if (food instanceof Food) {
 
                         let dishFood = await DishFood.findOne({where : {
-
                             dishId : req.params.id,
-                            foodId : food.id,
-                            /*[Op.or] : {
-                                userId : req.user.id,
-                                userId : null
-                            }*/
+                            foodId : foodId
                         }}) 
-
 
                         if (dishFood instanceof DishFood) {
 
                             ateFood = await AteFood.create({
-                                foodId : arrayFormatedData['dish_food_id_'+index],
-                                weight : arrayFormatedData['dish_food_weight_'+index],
+                                foodId : foodId,
+                                weight : (arrayFormatedData['dish_food_weight_'+(index).toString()]),
                                 userId : req.user.id,
                                 date : rawData.date
                             })
 
-                        } else { console.log(111111); throw 'Aucun plat trouvé'}
+                        } else {
+                            throw 'Cet aliment ne fait pas partie du plat'
+                        }
                         
-                    } else { console.log(222222); throw 'Aucun plat trouvé'}
+                    } else { 
+                        throw 'Aliment non trouvé'
+                    }
                 }
 
                 req.flash('success', 'Le plat a bien été mis à jour.')
 
             } else {
-                console.log(3333333); throw 'Aucun plat trouvé'
+                throw 'Aucun plat trouvé'
             }
         }
 

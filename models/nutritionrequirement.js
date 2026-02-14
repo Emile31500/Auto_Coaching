@@ -74,6 +74,10 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   NutritionRequirement.init({
+    metabolismMultiplicator: DataTypes.FLOAT,
+    personnalMultiplicator: DataTypes.FLOAT,
+    proteinMultiplicator: DataTypes.FLOAT,
+    fatMultiplicator: DataTypes.FLOAT,
     kcalorie: DataTypes.INTEGER,
     proteine: DataTypes.INTEGER,
     fat: DataTypes.INTEGER
