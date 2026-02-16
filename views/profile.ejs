@@ -12,6 +12,14 @@
 <div class="border border rounded-bottom p-3 ongletsProfile " id="profileDescription">
     <form action="/nutritionrequirement" method="POST">
         <div class="my-3">
+            <label for="size">Taille : </label>
+            <input class="form-control" id="size" name="size" type="number" value="<% if(measurments.length>0) { %><%=measurments[0].size;%><% } %>" autocomplete="size" required>
+        </div>
+        <div class="my-3">
+            <label for="weight">Poids : </label>
+            <input class="form-control" id="weight" name="weight" type="number" value="<% if(measurments.length>0) { %><%=measurments[0].weight;%><% } %>" autocomplete="weight" required>
+        </div>
+        <div class="my-3">
             <label for="objectiv">Objectif : <span class="text-danger">*</span></label>
             <select class="form-select" name="objectiv">
                 <option value="1">Conserver mon poids et être en meilleur form</option>
@@ -64,52 +72,76 @@
     </form>
 </div>
 <div class="border border rounded-bottom p-3 ongletsProfile d-none w-auto" id="ongletMensuraions">
-    <form class="my-5" id="measurmentForm">
-        <!-- todo : replace with a graph -->
-        <img style="max-width: 800px;" class="w-auto" src="https://i.ebayimg.com/images/g/6PAAAOSw93Bhplwj/s-l1200.jpg" />
-        <div class="my-3 row my-1" >
-            <div class="col-2">
-                <label for="weight">
-                    Poids 
-                </label>
+        <canvas id="chartjs-line"></canvas>
+        <table class="table table-striped my-3">
+          <thead class="table-dark">
+            <tr>
+             <th scope="col">IMC </th>
+              <th scope="col">Poids</th>
+              <th scope="col">Taille</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let i = 0 ; i < measurments.length; i ++) { %>
+                <tr>
+                    <td><%= (measurments[i].weight/((measurments[i].size/100) * (measurments[i].size/100))).toFixed(1) %></td>
+                    <td><%= measurments[i].weight %> Kg</td>
+                    <td><%= measurments[i].size %> cm</td>
+                    <td><%= new Date(measurments[i].createdAt).toLocaleDateString('fr-FR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) %></td>
+                    <!-- <th scope="col">IMC (tours)</th> -->
+                </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <form action="/measurment" method="POST" class="my-5">
+            <div class="my-3 row my-1" >
+                <div class="col-2">
+                    <label for="weight">
+                        Poids 
+                    </label>
+                </div>
+                <div class="col-3">
+                    <input class="form-control" value="64" type="number" step="0.1" name="weight" id="weight"/>
+                </div>
+                <div class="col-2">
+                    <label for="size">
+                        Taille
+                    </label>
+                </div>
+                <div class="col-3">
+                    <input class="form-control" value="173" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" name="size" id="size"/>
+                </div>
             </div>
-            <div class="col-3">
-                <input class="form-control" value="64" type="number" step="0.1" id="weight"/>
-            </div>
-            <div class="col-2">
-                <label for="size">
-                    Taille
-                </label>
-            </div>
-            <div class="col-3">
-                <input class="form-control" value="173" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id="size"/>
-            </div>
-        </div>
-
-        <input type="submit" class="btn btn-primary"/>
-    </form>
+            <input type="submit" class="btn btn-primary"/>
+        </form>
 
     <div id="ongletMeasurmentAlert" class="alert d-none"></div>
 
 </div>
 <div class="border border rounded-bottom p-3 ongletsProfile d-none" id="ongletCompte">
     <h3 class="my-3">Compte : </h3>
-    <form id="userForm"  lass="my-3">
+    <form action="/user/<%= user.id %>" method="POST" class="my-3">
         <p>
             <label for="email"> Email : </label>
-            <input class="form-control" type="email" value='<%= user.email %>' id="email" required>
+            <input class="form-control" type="email" value='<%= user.email %>' name="email"  id="email" required>
         </p>
         <p>
-            <label for="username"> Nom : </label>
-            <input class="form-control" type="text" value='<%= user.name %>' id="username" required>
+            <label for="name"> Nom : </label>
+            <input class="form-control" type="text" value='<%= user.name %>' name="name" id="name" required>
         </p>
         <p>
             <label for="password"> Mot de passe : </label>
-            <input class="form-control" value="P4$$w0rd" type="password" id="password" required>
+            <input class="form-control" value="P4$$w0rd" type="password" name="password" id="password" required>
         </p>
         <p>
-            <label for="confirmpassword"> Confirmer le mot de passe : </label>
-            <input class="form-control" value="P4$$w0rd" type="password" id="confirmpassword" required>
+            <label for="passwordConf"> Confirmer le mot de passe : </label>
+            <input class="form-control" value="P4$$w0rd" type="password" name="passwordConf" id="passwordConf" required>
         </p> 
         <div class="my-3">
             <h4> Premium : </h4>
@@ -155,8 +187,8 @@
     </form>  
     <div id="ongletCompteAlert" class="alert d-none my-3"></div>
 </div>
- <script src='/js/date.js'></script>
-<script src='/js/user/format.date.js'></script>
-<script src='/js/user/update.js'></script>
+<!-- <link rel="stylesheet" href="https://unpkg.com/@adminkit/core@latest/dist/css/app.css"> -->
+<script src="https://unpkg.com/@adminkit/core@latest/dist/js/app.js"></script>
+<script src="/js/user/measurments.js"></script>
 <script src="/js/onglet.js"></script>
 <script src='/js/user/subscription.delete.js'></script>

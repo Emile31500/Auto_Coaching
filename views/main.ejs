@@ -14,18 +14,15 @@
         <div class="alert alert-success my-0" role="alert">
           <strong><%= locals.message.success %></strong> 
         </div>
-      <% } %>
-      <% if(locals.message.danger){ %>
+      <% } if(locals.message.danger){ %>
         <div class="alert alert-danger my-0" role="alert">
           <strong><%= locals.message.danger %></strong>
         </div>
-      <% } %>
-      <% if(locals.message.warning){ %>
+      <% } if(locals.message.warning){ %>
         <div class="alert alert-warning my-0" role="alert">
           <strong><%= locals.message.warning %></strong>
         </div>
-      <% } %>
-      <% if(locals.message.info){ %>
+      <% } if(locals.message.info){ %>
         <div class="alert alert-info my-0" role="alert">
           <strong><%= locals.message.info %></strong>
         </div>
@@ -52,7 +49,11 @@
               <% } else { %>
                 <a class="nav-link <% if (page === '/train') { %> active <% }  %>" href="/train">ENTRAÎNEMENT</a>
                 <a class="nav-link  <% if (page === '/nutrition') { %> active <% }  %>" href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>">NUTRITION</a>
-                <a class="nav-link <% if (page === '/profile') { %> active <% }  %>" href="/profile">PROFILE</a>
+                <a class="nav-link <% if (page === '/profile') { %> active <% }  %>" href="/profile">PROFILE<%
+                    if (locals.profileNotification){
+                      %> <span class="badge badge-light">!</span><%
+                    }
+                ;%> </a>
                 <!-- <div class="navbar-nav"> -->
                 <a class="nav-link" href="/logout">LOG OUT</a>
                 <!-- </div> -->

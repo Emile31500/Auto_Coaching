@@ -16,6 +16,8 @@ const parserJson = require('../middlewares/parserJson');
 const authenticationChecker = require('../middlewares/authenticationChecker');
 const authenticationCheckerApi = require('../middlewares/authenticationCheckerApi');
 const isAuth = require('../middlewares/isAuth')
+const MeasurmentService = require('../services/measurment');
+const FoodService = require('../services/food');
 
 
 const adminChecker = require('../middlewares/adminChecker');
@@ -37,6 +39,9 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
     }
 
     const measurments = await Measurment.findAll({
+         order: [
+            ['createdAt', 'DESC']
+        ],
         where : {
             [Op.or] : [
                 {userId : req.user.id},
@@ -44,7 +49,13 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
             ]
         }
     })
-    
+
+    const isMoreThenAWeekDifference = await MeasurmentService.isMoreThenAWeekDifference(user);
+    if (isMoreThenAWeekDifference){ 
+        req.flash('warning', 'Attention : Il y a plus d\'une semiane que vous pas mis à jour votre progression.')
+    }
+
+    res.locals.message = req.flash();
     res.render('../views/profile',  { 
         page : '/profile',
         user : user,
@@ -56,10 +67,56 @@ router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker,
 
 })
 
+router.post('/user/:id', parserJson, authenticationChecker, premiumChecker, async (req, res) => {
+
+    try {
+
+        if (parseInt(req.params.id) !== parseInt(req.user.id)) throw 'Invalide';
+
+        const rawData = req.body;
+        const user = await User.findOne({where : { email : rawData.email}})
+
+        if ((user instanceof User) == false || req.user.id == user.id){
+
+            if (rawData.password === rawData.passwordConf) {
+       
+                const hashedPassword = pbkdf2.hashSync(rawData.password);
+
+                const customerPromise = await stripe.customers.list({
+                    email: rawData.email,
+                    limit: 1.
+                });
+
+                const customer = customerPromise.data[0]
+
+                await stripe.customers.update(customer.id, {
+                    name : rawData.name,
+                    email : rawData.email
+                })
+
+                await user.update({
+                    name: rawData.name,
+                    email: rawData.email,
+                    password: hashedPassword,
+                });
+
+                req.flash('success', 'Votre profil a bien été mis à jour !')
+
+            }  else throw 'Les mots de passe ne sont pas identique'; 
+
+        } else throw 'Un utilisateur avec cette adresse maile existe déjà';
+
+    } catch (error) {
+        req.flash('danger', error)
+    }
+
+    res.redirect('/profile')
+})
+
 
 router.get('/login', async function(req, res, next) {
 
-    res.statusCode = 200
+    res.locals.message = req.flash();
     res.render('../views/login',  { 
         page : '/login',
         user : req.user, 
@@ -83,10 +140,8 @@ router.post('/sign', parserJson, async (req, res) => {
 
     try {
 
-
         const rawData = req.body
 
-        console.log(rawData)
         if (rawData.password === rawData.passwordConf) {
 
             const user = await User.findOne({where : { email : rawData.email}})
@@ -119,15 +174,9 @@ router.post('/sign', parserJson, async (req, res) => {
                 req.session.token = authToken;
                 req.flash('success', 'Merci infiniment de nous avoir choisit ! Nous espérons que nous serons à la hauteur de vos attentes ! ')
 
-            } else {
-                console.log(1)
-                throw 'Un utilisateur avec cette adresse maile existe déjà'
-            }
+            } else throw 'Un utilisateur avec cette adresse maile existe déjà';
 
-        } else {
-            console.log(2)
-            throw 'Les mots de passe ne sont pas identique'
-        }
+        } else throw 'Les mots de passe ne sont pas identique';
 
         res.redirect('/profile')
 
@@ -200,37 +249,35 @@ router.patch('/api/users', authenticationCheckerApi, premiumChecker, async (req,
 });
 
 router.post('/login', isAuth, parserJson, async (req, res, next) => {
+    try {
 
-    if (req.body){
+        if (req.body){
 
-        user = await User.findOne({where:  {email: req.body.email}});
+            user = await User.findOne({where:  {email: req.body.email}});
 
-        if (user) {
+            if (user) {
 
-            if (pbkdf2.validateSync(req.body.password, user.password)) {
+                if (pbkdf2.validateSync(req.body.password, user.password)) {
 
-                const authToken = await user.getAuthenticationToken();
-                req.session.token = authToken;
+                    const authToken = await user.getAuthenticationToken();
 
-                if (user.role.includes('admin')){
+                    req.session.token = authToken;
 
-                    res.redirect('/admin/train')
+                     if (user.role.includes('admin')){
 
-                } else {
-                    res.redirect('/profile');
-                }
-            
-            } else {
-            
-                res.render('../views/login',  { user : req.user, error: true, message: "Incorrect password or login", layout: '../views/main' });
-            
-            }
+                        res.redirect('/admin/train')
 
-        } else {
+                    } else res.redirect('/profile');
+                    
+                } else throw 'Adresse mail ou mot de passe incorrect';
 
-            res.render('../views/login',  { user : req.user, error: true, message: "Incorrect password or login", layout: '../views/main' });
+            } else throw 'Adresse mail ou mot de passe incorrect';
 
-        }
+        } else throw 'soumission du formulaire invalide';
+
+    } catch (error) {
+        req.flash('danger', error)
+        res.redirect('/login')
     }
 });
   

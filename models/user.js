@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     salt: DataTypes.STRING,
     role: DataTypes.JSON,
     sex: DataTypes.BOOLEAN,
-    birthDay: DataTypes.DATEONLY
+    birthDay: DataTypes.DATEONLY,
+    objectiv: DataTypes.INTEGER
 
   }, {
     sequelize,

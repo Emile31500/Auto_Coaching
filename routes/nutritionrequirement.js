@@ -12,6 +12,10 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
 
         const rawData = req.body;
 
+        await req.user.update({
+            objectiv : rawData.objectiv
+        });
+
         const measurment = await Measurment.findOne({
             where : {
                 userId : id,
@@ -23,6 +27,36 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
                 ['createdAt', 'DESC']
             ]
         })
+        weight;
+        size;
+
+        if (rawData.size && rawData.weight) {
+
+            weight = rawData.weight;
+            size = rawData.size;
+
+            if (measurment instanceof Measurment) {
+
+                const createMeasurment = await Measurment.create({
+                    size : size,
+                    weight : weight,
+                    userId : req.user.id
+                })
+            } else {
+                throw 'Vous n\'avez pas renseigner votre poids et/ou votre taille et aucune données n\'a pu être trouvé dans l\'onglet "mensurations"';
+            }
+
+        }  else if (measurment instanceof Measurment) {
+
+            weight = measurment.weight;
+            size = measurment.size;
+        
+        } else {
+
+            throw 'Vous n\'avez pas renseigner votre poids et/ou votre taille et aucune données n\'a pu être trouvé dans l\'onglet "mensurations"';
+        
+        }
+        
 
         fat = measurment.weight;
         protein = measurment.weight;

@@ -41,20 +41,23 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
 
     const ateFood = await AteFood.findAll({ 
         include: Food, 
-        group: 'date' 
+        group: 'date',
+        where : {
+            userId : req.user.id
+        } 
     });
 
     const ateFoods = await AteFood.findAll({ 
         include: Food, 
         where : {
-            date : date
+            date : date,
+            userId : user.id
         }
     });
 
     let sumProtein = 0, sumFat=0, sumKcalorie=0;
 
     ateFoods.forEach(ateFood => {
-        console.log(ateFood)
         sumProtein += (ateFood.weight/100)*ateFood.Food.proteine;
         sumFat += (ateFood.weight/100)*ateFood.Food.fat;
         sumKcalorie += (ateFood.weight/100)*ateFood.Food.kcalorie;

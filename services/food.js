@@ -72,6 +72,76 @@ const getForMainPage = async (parsedUrlQuery, user) => {
     return food;
 };
 
+
+const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
+
+    const origininalDate = new Date(measurment.createdAt);
+    const startDay = origininalDate;
+    startDay.setDate(inputDate.getDate() - 6);
+
+    const endDay = origininalDate;
+    endDay.setDate(inputDate.getDate() - 6);
+
+    const lastButOneMeasurment = await Measurment.findOne({
+        createdAt :{
+            [Op.between] : [startDay, endDay]},
+        userId : measurment.userId
+    })
+
+    const nutritionrequirement = await NutritionRequirements.findOne({
+        userId : measurment.userId
+    })
+
+    const delta = measurment.weight - lastButOneMeasurment.weight
+
+    if (user.objectiv == 2 ) {
+
+        if (lastButOneMeasurment instanceof Measurment) {
+
+            if (delta < -0.6) {
+
+                await nutritionrequirement.update({
+                    personnalMultiplicator : nutritionrequirement.personnalMultiplicator+0.03,
+                    proteinMultiplicator : nutritionrequirement.proteinMultiplicator+0.03,
+                    fatMultiplicator : nutritionrequirement.fatMultiplicator+0.01,
+                })
+
+            } else if (delta > 0) {
+
+                await nutritionrequirement.update({
+                    personnalMultiplicator : nutritionrequirement.personnalMultiplicator-0.05,
+                })
+
+            }
+        }
+
+    } else {
+
+        if (lastButOneMeasurment instanceof Measurment) {
+
+            if (delta < 0) {
+
+                await nutritionrequirement.update({
+                    personnalMultiplicator : nutritionrequirement.personnalMultiplicator+0.03,
+                    proteinMultiplicator : nutritionrequirement.proteinMultiplicator+0.03,
+                    fatMultiplicator : nutritionrequirement.fatMultiplicator+0.01,
+                })
+
+            } else if (delta > 0) {
+
+                await nutritionrequirement.update({
+                    personnalMultiplicator : nutritionrequirement.personnalMultiplicator-0.05,
+                    proteinMultiplicator : nutritionrequirement.proteinMultiplicator-0.03,
+                    fatMultiplicator : nutritionrequirement.fatMultiplicator-0.01,
+                })
+
+            }
+        }
+
+    }
+        
+}
+
 const countFilters = async (parsedUrlQuery) => {
     count = 0;
     Object.values(parsedUrlQuery).forEach(element => {if (element !== undefined && element !== '') count++;});
@@ -79,6 +149,7 @@ const countFilters = async (parsedUrlQuery) => {
 }
 
 module.exports = {
-  getForMainPage,
-  countFilters,
+    recalculateMacroBelongWithLastMeasurment,
+    getForMainPage,
+    countFilters,
 };

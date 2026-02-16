@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/');
+const { User, Measurment } = require('../models/');
+const MeasurmentService = require('../services/measurment');
 const session = require('express-session');
 
 const authenticationChecker =  async function (req, res, next) {
@@ -19,6 +20,12 @@ const authenticationChecker =  async function (req, res, next) {
         } else {
 
             req.user = user;
+            try {
+                res.locals.profileNotification = await MeasurmentService.isMoreThenAWeekDifference(user);
+            } catch(error) {
+                console.log(error);
+            }
+
             next();
 
         }
