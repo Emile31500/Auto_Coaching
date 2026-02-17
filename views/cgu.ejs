@@ -1,0 +1,22 @@
+<% title = "Entraînement | aperçu" %>
+
+<%- contentFor('main') %>
+<h2 class="my-5">Train</h2>
+<div class="d-flex justify-content-center">
+    <a class="h3 p-3 mb-2 border border-warning rounded link-underline-light bg-warning link-white" href="/train/request">
+        Let's start a new program !
+    </a>
+</div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" colspan="2">
+                    Train name
+                </th>
+            </tr>
+        </thead>
+        <tbody id="trainList">
+        </tbody>
+    </table>
+<script src='/js/train/get.js'></script>

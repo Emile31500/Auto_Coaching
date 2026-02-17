@@ -1,0 +1,22 @@
+ #card-element {
+    font-family: 'Montserrat';
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+button {
+    font-family: 'Montserrat';
+    background: #635bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#error-message {
+    font-family: 'Montserrat';
+    color: red;
+    margin-top: 10px;
+}

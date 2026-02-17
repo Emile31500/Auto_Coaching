@@ -5,6 +5,7 @@ var authenticationChecker = require('../middlewares/authenticationChecker')
 var parserJson = require('../middlewares/parserJson');
 const { Measurment } = require('../models');
 const premiumChecker = require('../middlewares/premiumChecker');
+const FoodService = require('../services/food');
 
 router.post('/measurment', parserJson, authenticationChecker, premiumChecker, async (req, res) => {
 
@@ -20,7 +21,7 @@ router.post('/measurment', parserJson, authenticationChecker, premiumChecker, as
                 userId : req.user.id
             });
             
-            recalculateMacroBelongWithLastMeasurment(measurment);
+            FoodService.recalculateMacroBelongWithLastMeasurment(measurment);
             measurment.userId = req.user.id;
 
             req.flash('success', 'Votre nouvelle progression a bien été créé');

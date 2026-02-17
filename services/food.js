@@ -1,4 +1,4 @@
-const { Food } = require('../models');
+const { Food, Measurment, NutritionRequirement } = require('../models');
 const { Op } = require('sequelize');
 
 
@@ -77,10 +77,10 @@ const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
 
     const origininalDate = new Date(measurment.createdAt);
     const startDay = origininalDate;
-    startDay.setDate(inputDate.getDate() - 6);
+    startDay.setDate(startDay.getDate() - 6);
 
     const endDay = origininalDate;
-    endDay.setDate(inputDate.getDate() - 6);
+    endDay.setDate(endDay.getDate() - 15);
 
     const lastButOneMeasurment = await Measurment.findOne({
         createdAt :{
@@ -88,7 +88,7 @@ const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
         userId : measurment.userId
     })
 
-    const nutritionrequirement = await NutritionRequirements.findOne({
+    const nutritionrequirement = await NutritionRequirement.findOne({
         userId : measurment.userId
     })
 

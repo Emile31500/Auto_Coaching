@@ -23,7 +23,7 @@ const FoodService = require('../services/food');
 const adminChecker = require('../middlewares/adminChecker');
 const { Op } = require('sequelize');
 
-router.get('/profile', authenticationChecker, getStripeCustomer, premiumChecker, async (req, res) => {
+router.get('/profile', authenticationChecker, getStripeCustomer,  async (req, res) => {
 
     const user = req.user;
 

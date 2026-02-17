@@ -66,7 +66,7 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
         const age = calculateAge(req.user.birthDay)
 
 
-        if (rawData.sexe) {
+        if (rawData.sexe == "1") {
             kcalorie = 88.4 + (14 * measurment.weight) + (4.8 * measurment.size) - (5.7 * age);
         } else {
             kcalorie = 447.6 + (9.3 * measurment.weight) + (3.1 * measurment.size) - (4.4 * age);

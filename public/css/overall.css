@@ -22,6 +22,10 @@ body {
 
 }
 
+.bg-primary {
+    background-color: #003060;
+}
+
 .btn-primary {
     background-color: #003060;
     border-color: #003060;

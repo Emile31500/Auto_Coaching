@@ -1,6 +1,134 @@
 <% title = "Bienvenu !" %>
 
 <%- contentFor('main') %>
+<link rel="stylesheet" href="/css/stripe.css" />
 
-<h2 class="my-5">Un programmeur minceur remise en forme enfin fait pour vous !</h2>
-<p class="my-3">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+<h2 class="my-2 mt-5">Un programme minceur remise en forme enfin fait pour vous !</h2>
+<video controls class="my-5">
+  <source src="/media/video/placeholder.mp4" type="video/mp4" />
+</video>
+<div class="w-auto" style="margin: 25% 0 25% 0; height: 70%;">
+    <div class="row">
+        <div class="col">
+            <img class="w-75" src="/media/photo/palceholder-home-page-photo.jpg">
+        </div>
+        <div class="col">
+            <h3 class="my-3">Qui suis-je ?</h3>
+            <p>Je suis Emile, j'ai 23 ans et je vis à Toulouse depuis ma naissance. Je me suis passioné pour le sport lorque j'étais qu lycée, shétif et ne pesant que 50 kg, je me suis passiament entrainé et j'ai atein les 68 kg aujourd'hui. <b>+18 kg de muscle</b>.
+            </p>
+            <p>Durant ce voyage j'ai fait beaucoup d'erreur, j'ai donc compilé toute la connaissance que j'ai pu accumuler dans un programme pour permettre à aux qui ont laisser leurs corps de côtés de pouvoir se reprendre en main. Et comme je suis très confiant sur ma capacité à vous aider, je m'engage à <b>vous rembourser à 100% </b>si cette méthode ne vous a pas permit de perdre du poids.
+            </p>
+        </div>
+    </div>
+</div>
+<% if (disposablePlace > 0) {%>
+    <div class="w-auto" style="margin: 12% 0% 15% 0%;">
+        <form action="/create-payment-intent" method="POST">
+            <div style="margin: 7% 0% 7% 0%;">
+                <h3 class="my-3"> M'inscrire ! <span class="badge 
+                    <% if (disposablePlace < 100) {%>
+                        text-bg-danger 
+                    <%  } else { %>
+                        text-bg-warning 
+                    <% } %> text-white shadow-sm">Moins de <%= disposablePlace %> places disponible</span></h3>
+                <div class="row my-3">
+                    <div class="col"> 
+                        <label class="my-2" for="name">Prénom : <span class="text-danger">*</span> </label>
+                        <input class="form-control" type="text" name="name" id="name" value="Emile" required/>
+                    </div>
+                    <div class="col"> 
+                        <label class="my-2" for="birthDay">Date d'anniversaire : <span class="text-danger">*</span> </label>
+                        <input class="form-control" type="date" name="birthDay" id="birthDay" value="2002-07-17" required/>
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <div class="col my-1"> 
+                        <label for="sex">Sex : <span class="text-danger">*</span> </label>
+                        <span class="ms-3">
+                            <input class="form-radio mx-1" type="radio" name="sex" value="1" required/>Homme
+                        </span>
+                        <span class="ms-3">
+                            <input class="form-radio mx-1" type="radio" name="sex" value="2" required/> Femme
+                        </span>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col">
+                        <label class="my-2" for="email">Adresse mail : <span class="text-danger">*</span> </label>
+                        <input class="form-control" type="email" id="email" name="email" value="emile00013@gmail.com" required/>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col">
+                        <label class="my-2" for="password">Mot de passe : <span class="text-danger">*</span> </label>
+                        <input class="form-control" type="password" id="password" name="password" value="1234" required/>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col">
+                        <label class="my-2" for="passwordConf">Confirmer le mot de passe : <span class="text-danger">*</span> </label>
+                        <input class="form-control" type="password" id="passwordConf" name="passwordConf" value="1234" required/>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col">
+                        <input type="checkbox" checked required/> <span class="text-danger">*</span> :  en procépdant au paiement, j'accepte les <a href="">CGV</a>.<br>
+                        <input type="checkbox" checked required/> <span class="text-danger">*</span> : Je demande expressément l’accès immédiat au contenu numérique (programmes, vidéos et outils de diète) et reconnais que l’exécution du service commence dès la validation de mon paiement. Je renonce expressément à mon droit légal de rétractation conformément à l’article L221-28 du Code de la consommation.
+                    </div>
+                </div>
+            </div>
+            <div style="margin: 7% 0% 7% 0%;">
+                <h3 class="my-3"> Choix de ma formule : </h3>
+                <div class="row my-3">
+                    <div class="col">
+                        <p>
+                            Accès au programme pendant 4 mois.
+                        </p>
+                        <input checked class="form-radio" type="radio" name="priceId" value="price_1T1p49J7uGufFKhI7OV0XGgv" required/> <b>19.75 € / mois</b>
+
+                    </div>
+                    <div class="col">
+                        <p>
+                            Accès au programme pendant 12 mois.
+                        </p>
+                        <input class="form-radio" type="radio" name="priceId" value="price_1T1p3CJ7uGufFKhIgYniEDVz" required/> <b>9.75 € / mois</b>
+
+                    </div><div class="col">
+                        <p>
+                            Accès au programme <b>À VIE</b>.
+                        </p>
+                        <input class="form-radio" type="radio" name="priceId" value="price_1T1p2WJ7uGufFKhI58gwnOec" required/> <b>15 € / mois pendant 12 mois</b>
+
+                    </div>
+                </div>
+            </div>
+            <div style="margin: 7% 0% 7% 0%;">
+
+             
+<!--                     
+                <div id="card-element"></div>
+                <div id="error-message"></div> -->
+
+                <div>
+                    <button class="btn btn-primary">Payer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<% } else { %>
+    <div class="w-auto my-5">
+        <form class="">
+            <p>
+                Il n'y a plus de place disponible ? Saisissez-ici votre adresse mail pour être averti des prochaines place disponible.
+            </p>
+            <for label="email">
+                Adresse email :
+            </for>
+            <input class="form-control my-1" id="email" name="email"/>
+            <button class="btn btn-primary"> M'avertir </button>
+        </form>
+    </div>
+<% } %>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="/js/stripe.js"></script>

@@ -20,9 +20,9 @@
     </thead>
     <tbody>
       <tr>
-        <td> <%= nutritionRequirement.kcalorie %> Kcl </td>
-        <td> <%= nutritionRequirement.proteine %> G </td>
-        <td> <%= nutritionRequirement.fat %> G </td>
+        <td> <%= nutritionRequirement.kcalorie * nutritionRequirement.personnalMultiplicator | 1 %> Kcl </td>
+        <td> <%= nutritionRequirement.proteine * nutritionRequirement.proteinMultiplicator | 1 %> G </td>
+        <td> <%= nutritionRequirement.fat * nutritionRequirement.fatMultiplicator | 1 %> G </td>
       </tr>
       <tr>
         <td> <span id="kcalAteAbs"></span> <%= Math.round(sumKcalorie) %> Kcl </td>
