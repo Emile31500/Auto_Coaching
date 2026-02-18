@@ -23,7 +23,7 @@
 </div>
 <% if (disposablePlace > 0) {%>
     <div class="w-auto" style="margin: 12% 0% 15% 0%;">
-        <form action="/create-payment-intent" method="POST">
+        <form action="/create-payment-intent" id="payment-form" class="formDataUser" method="POST">
             <div style="margin: 7% 0% 7% 0%;">
                 <h3 class="my-3"> M'inscrire ! <span class="badge 
                     <% if (disposablePlace < 100) {%>
@@ -104,12 +104,8 @@
                 </div>
             </div>
             <div style="margin: 7% 0% 7% 0%;">
-
-             
-<!--                     
                 <div id="card-element"></div>
-                <div id="error-message"></div> -->
-
+                <div id="error-message"></div>
                 <div>
                     <button class="btn btn-primary">Payer</button>
                 </div>
