@@ -1,0 +1,40 @@
+<% title = "Contact" %>
+
+<%- contentFor('mainWithoutMarge') %>
+
+<%- contentFor('main') %>
+
+<h1 class="my-5"><%= title%></h1>
+
+<form method="post" class="w-75 my-5">
+    <div class="row my-3 py-1">
+        <input placeholder="Prénom" class="col form-control me-3" name="firstname" name="text" required> 
+        <input placeholder="Nom" class="col form-control ms-3" name="lastname" name="text" required> 
+    </div>
+    <div class="row my-3 py-1">
+        <input placeholder="Adresse mail" class="form-control" name="email" name="email" required> 
+    </div>
+     <div class="row my-3 py-1">
+        <select class="form-select" name="subject" required>
+            <option></option>
+            <option value="Incident sur le site"> Incident sur le site</option>
+            <option value="Carrière chez Régime sénior"> Carrière chez Régime sénior</option>
+            <option value="Question sur nos produits"> Question sur nos produits</option>
+            <option value="Offre commercial"> Offre commercial</option>
+            <option value="Autre"> Autre</option>
+        </select>
+    </div>
+    <div class="row my-3 py-1">
+        <textarea class="form-control"  placeholder="Votre message" name="content" required></textarea>
+    </div>
+    <p>
+        <input class="check-forrm" type="checkbox" required/> : J'accepte de recevoir des messages de la part de regimesenior
+    </p>
+    <input type="reset" class="btn btn-secondary">
+    <input type="submit" class="btn btn-primary">
+</form>
+<div class="my-5">
+    <p>
+        Ou contactez nous direment à <a href="mailto:contact@regimesenior.fr">contact@regimesenior.fr</a>
+    </p>
+</div>
