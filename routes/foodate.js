@@ -169,7 +169,7 @@ router.post('/food/ate', authenticationChecker, parserJson, async (req, res, nex
             ateFood = await AteFood.create(rawData);
             
             
-            req.flash('success', 'Cet aliment a bien été ajouté à la diet du'  + (date.toLocaleDateString('fr-FR', {
+            req.flash('success', 'Cet aliment a bien été ajouté à la diet du '  + (date.toLocaleDateString('fr-FR', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',

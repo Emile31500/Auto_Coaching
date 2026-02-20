@@ -1,130 +1,184 @@
 <% title = "Bienvenu !" %>
 
-<%- contentFor('main') %>
-<link rel="stylesheet" href="/css/stripe.css" />
 
-<h2 class="my-2 mt-5">Un programme minceur remise en forme enfin fait pour vous !</h2>
-<video controls class="my-5">
-  <source src="/media/video/placeholder.mp4" type="video/mp4" />
-</video>
-<div class="w-auto" style="margin: 25% 0 25% 0; height: 70%;">
-    <div class="row">
-        <div class="col">
-            <img class="w-75" src="/media/photo/palceholder-home-page-photo.jpg">
-        </div>
-        <div class="col">
-            <h3 class="my-3">Qui suis-je ?</h3>
-            <p>Je suis Emile, j'ai 23 ans et je vis à Toulouse depuis ma naissance. Je me suis passioné pour le sport lorque j'étais qu lycée, shétif et ne pesant que 50 kg, je me suis passiament entrainé et j'ai atein les 68 kg aujourd'hui. <b>+18 kg de muscle</b>.
-            </p>
-            <p>Durant ce voyage j'ai fait beaucoup d'erreur, j'ai donc compilé toute la connaissance que j'ai pu accumuler dans un programme pour permettre à aux qui ont laisser leurs corps de côtés de pouvoir se reprendre en main. Et comme je suis très confiant sur ma capacité à vous aider, je m'engage à <b>vous rembourser à 100% </b>si cette méthode ne vous a pas permit de perdre du poids.
-            </p>
-        </div>
-    </div>
-</div>
-<% if (disposablePlace > 0) {%>
-    <div class="w-auto" style="margin: 12% 0% 15% 0%;">
-        <form action="/create-payment-intent" id="payment-form" class="formDataUser" method="POST">
-            <div style="margin: 7% 0% 7% 0%;">
-                <h3 class="my-3"> M'inscrire ! <span class="badge 
+
+<%- contentFor('mainWithoutMarge') %>
+<div class="hero ">
+    <h2 class="text-white my-2 mt-5">Un programme remise en forme  enfin fait pour vous ! <br><span class="badge 
                     <% if (disposablePlace < 100) {%>
                         text-bg-danger 
                     <%  } else { %>
-                        text-bg-warning 
-                    <% } %> text-white shadow-sm">Moins de <%= disposablePlace %> places disponible</span></h3>
-                <div class="row my-3">
-                    <div class="col"> 
-                        <label class="my-2" for="name">Prénom : <span class="text-danger">*</span> </label>
-                        <input class="form-control" type="text" name="name" id="name" value="Emile" required/>
-                    </div>
-                    <div class="col"> 
-                        <label class="my-2" for="birthDay">Date d'anniversaire : <span class="text-danger">*</span> </label>
-                        <input class="form-control" type="date" name="birthDay" id="birthDay" value="2002-07-17" required/>
-                    </div>
-                </div>
-
-                <div class="row my-3">
-                    <div class="col my-1"> 
-                        <label for="sex">Sex : <span class="text-danger">*</span> </label>
-                        <span class="ms-3">
-                            <input class="form-radio mx-1" type="radio" name="sex" value="1" required/>Homme
-                        </span>
-                        <span class="ms-3">
-                            <input class="form-radio mx-1" type="radio" name="sex" value="2" required/> Femme
-                        </span>
-                    </div>
-                </div>
-                <div class="row my-3">
-                    <div class="col">
-                        <label class="my-2" for="email">Adresse mail : <span class="text-danger">*</span> </label>
-                        <input class="form-control" type="email" id="email" name="email" value="emile00013@gmail.com" required/>
-                    </div>
-                </div>
-                <div class="row my-3">
-                    <div class="col">
-                        <label class="my-2" for="password">Mot de passe : <span class="text-danger">*</span> </label>
-                        <input class="form-control" type="password" id="password" name="password" value="1234" required/>
-                    </div>
-                </div>
-                <div class="row my-3">
-                    <div class="col">
-                        <label class="my-2" for="passwordConf">Confirmer le mot de passe : <span class="text-danger">*</span> </label>
-                        <input class="form-control" type="password" id="passwordConf" name="passwordConf" value="1234" required/>
-                    </div>
-                </div>
-                <div class="row my-3">
-                    <div class="col">
-                        <input type="checkbox" checked required/> <span class="text-danger">*</span> :  en procépdant au paiement, j'accepte les <a href="">CGV</a>.<br>
-                        <input type="checkbox" checked required/> <span class="text-danger">*</span> : Je demande expressément l’accès immédiat au contenu numérique (programmes, vidéos et outils de diète) et reconnais que l’exécution du service commence dès la validation de mon paiement. Je renonce expressément à mon droit légal de rétractation conformément à l’article L221-28 du Code de la consommation.
-                    </div>
-                </div>
+                        text-bg-primary 
+                    <% } %> text-white shadow-sm">Moins de <%= disposablePlace %> places disponible</span></h2>
+    </div>
+<%- contentFor('main') %>
+    <div class="container d-flex justify-content-center border-bottom" style="padding: 12% 0 12% 0; height: 70%;" >
+        <video controls autoplay class="w-75">
+            <source src="/media/video/placeholder.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="w-auto border-bottom" style="padding: 12% 0 12% 0; height: 70%;" >
+        <div class="row ">
+            <div class="col">
+                <img class="w-75" src="/media/photo/palceholder-home-page-photo.jpg">
             </div>
-            <div style="margin: 7% 0% 7% 0%;">
-                <h3 class="my-3"> Choix de ma formule : </h3>
-                <div class="row my-3">
-                    <div class="col">
-                        <p>
-                            Accès au programme pendant 4 mois.
-                        </p>
-                        <input checked class="form-radio" type="radio" name="priceId" value="price_1T1p49J7uGufFKhI7OV0XGgv" required/> <b>19.75 € / mois</b>
-
+            <div class="col">
+                <h3 class="my-3">Qui suis-je ?</h3>
+                <p>Je suis Émile, j'ai 23 ans et je vis à Toulouse depuis ma naissance. Je me suis passioné pour le sport lorque j'étais qu lycée, shétif et ne pesant que 50 kg, je me suis passiament entrainé et j'ai ateind les 68 kg aujourd'hui. <b>+18 kg de muscle</b>.
+                </p>
+                <p>Durant ce voyage j'ai fait beaucoup d'erreur, j'ai donc compilé toute la connaissance que j'ai pu accumuler dans un programme pour permettre à aux qui ont laisser leurs corps de côtés de pouvoir se reprendre en main. Et comme je suis très confiant sur ma capacité à vous aider, je m'engage à <b>vous rembourser à 100% </b>si cette méthode ne vous a pas permit de perdre du poids.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class=" d-flex justify-content-center my-4 border-bottom" style="padding: 11% 0% 11% 0%; height: 70%;" >
+        <h3 class="h3" style="display: flex; align-items: center;">Ce que je vous propose</h3>
+        <ul class="w-50">
+            <li class="my-3">
+                <h5>Plan alimentaire personnalisé</h5> 
+                <p>a</p>
+            </li>
+            <li class="my-3">
+                <h5>Programme sportifs adapté aux débutants</h5>
+                <p>
+                    Je vous emène avec moi pour s'entraîner dans la sécurité et pour épanouissement personnel afin d'atteindre vos objectifs.
+                </p>
+            </li>
+            <li class="my-3">
+                <h5>Cours pour maitriser sa perte de poids en gardant de l'énergie</h5>
+                 <p>
+                    Accéder à regimesenior.fr, c'est accéder à une académie pour comprendre simplement le corps humain, la nutrition et les clés de l'entrainement pour conserver ses gains et maximiser son énergie. 
+                </p>
+            </li>
+            <li class="my-3">
+                <h5>Controle de diète</h5>
+                <p>
+                    Une lise de recette et d'aliments et de plat avec leurs valeurs nutritionnelles détaillés afin de garder le contrôle sur sa diète.
+                </p>
+            </li>
+        </ul>
+    </div>
+    <div class="w-auto" style="padding: 12% 0 12% 0; height: 70%;" >
+        <% if (disposablePlace > 0) {%>
+            <form action="/create-payment-intent" id="payment-form" class="formDataUser" method="POST">
+                <h3 class="mb-5"> M'inscrire ! </h3>
+                <input placeholder="Prénom" class="bg-light my-4 form-control" type="text" name="name" id="name" vvalue="Emile" required/>
+                <input placeholder="Email" class="bg-light my-4 form-control" type="email" id="email" name="email" vvalue="emile00013@gmail.com" required/>
+                <input placeholder="Mot de passe" class="bg-light my-4 form-control" type="password" id="password" name="password" vvalue="1234" required/>
+                <input placeholder="Confimer le mot de passe" class="bg-light my-4 form-control" type="password" id="passwordConf" name="passwordConf" vvalue="1234" required/>
+            <!-- </div> -->
+                <div class="row my-5 justify-content-center g-4">
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <div class="card bg-light" style="width: 16rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">Pass saisonié <input class="form-check-input productId" type="radio" name="productId" value="prod_TzohlOUTRe1vsb" required/> </h5>
+                                <h6 class="card-subtitle d-none mb-2 text-muted">Card subtitle</h6>
+                                <p class="card-text">
+                                    <p>
+                                        Accès au programme pendant 4 mois.
+                                    </p>
+                                    22.95 € / mois<br>
+                                    pendant 4 mois
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <p>
-                            Accès au programme pendant 12 mois.
-                        </p>
-                        <input class="form-radio" type="radio" name="priceId" value="price_1T1p3CJ7uGufFKhIgYniEDVz" required/> <b>9.75 € / mois</b>
-
-                    </div><div class="col">
-                        <p>
-                            Accès au programme <b>À VIE</b>.
-                        </p>
-                        <input class="form-radio" type="radio" name="priceId" value="price_1T1p2WJ7uGufFKhI58gwnOec" required/> <b>15 € / mois pendant 12 mois</b>
-
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <div class="card bg-light" style="width: 16rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">Pass annuel <input class="form-check-input productId" type="radio" name="productId" value="prod_TzogannVPLuYTw" required/></h5>
+                                <h6 class="card-subtitle d-none mb-2 text-muted">Card subtitle</h6>
+                                <p class="card-text">
+                                    <p>
+                                        Accès au programme pendant 12 mois.
+                                    </p>
+                                    11.95 € / mois<br>
+                                    pendant 12 mois
+                                </p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <div class="card bg-light" style="width: 16rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">Pass premium <input class="form-check-input productId" type="radio" name="productId" value="prod_TzofT7YP9GVDLx" required/> </h5>
+                                <h6 class="card-subtitle d-none mb-2 text-muted">Card subtitle</h6>
+                                <p class="card-text">
+                                    <p>
+                                        Accès au programme <b>à vie</b>.
+                                    </p><br>
+                                    15 € / mois <br>pendant 12 mois.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style="margin: 7% 0% 7% 0%;">
-                <div id="card-element"></div>
-                <div id="error-message"></div>
                 <div>
-                    <button class="btn btn-primary">Payer</button>
+                    <div id="card-element"></div>
+                    <div id="message" class="alert d-none"></div>
+                    <div  style="height: 35px;" class="progress my-3 d-none" id="payment-progress-bar" role="progressbar" aria-label="Animated striped example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="height: 35px; width: 100%; font-size: 18px;">L'application est entrain de procédé au paiement stripe</div>
+                    </div>
+                    <div class="row my-4">
+                        <div class="col">
+                            <input class="form-check-input" type="checkbox" checked required/> En procépdant au paiement, j'accepte les <a href="">CGV</a>.<br>
+
+                            <input class="form-check-input" type="checkbox" checked required/> Je demande expressément l’accès immédiat au contenu numérique (programmes, vidéos et outils de diète) et reconnais que l’exécution du service commence dès la validation de mon paiement. Je renonce expressément à mon droit légal de rétractation conformément à l’article L221-28 du Code de la consommation.
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" id="confirmPay">Payer</button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+        <% } else { %>
+            <form class="">
+                <p>
+                    Il n'y a plus de place disponible ? Saisissez-ici votre adresse mail pour être averti des prochaines place disponible.
+                </p>
+                <for label="email">
+                    Adresse email :
+                </for>
+                <input class="form-control my-1" id="email" name="email"/>
+                <button class="btn btn-primary"> M'avertir </button>
+            </form>
+        <% } %>
     </div>
-<% } else { %>
-    <div class="w-auto my-5">
-        <form class="">
-            <p>
-                Il n'y a plus de place disponible ? Saisissez-ici votre adresse mail pour être averti des prochaines place disponible.
-            </p>
-            <for label="email">
-                Adresse email :
-            </for>
-            <input class="form-control my-1" id="email" name="email"/>
-            <button class="btn btn-primary"> M'avertir </button>
-        </form>
-    </div>
-<% } %>
+<style>
+  .hero {
+    position: relative;
+    width: 100%;
+    max-height: 212px;
+    height: 100vh; /* Optional: fills viewport height until 500px max */
+    overflow: hidden;
+    background-image: url('https://www.offsoho.com/images/NYC_000021208828-2100-980.jpg'); /* Replace with your image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Semi-transparent black overlay */
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 50% transparent black */
+    z-index: 1;
+  }
+
+  .hero h2 {
+    position: relative;
+    z-index: 2; /* Above overlay */
+    text-align: center;
+  }
+</style>
 <script src="https://js.stripe.com/v3/"></script>
-<script src="/js/stripe.js"></script>
+<script src="/js/stripe.js"></script> 

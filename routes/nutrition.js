@@ -90,7 +90,7 @@ router.post('/nutrition', parserJson, authenticationChecker, premiumChecker, asy
         if (req.body && req.session.token){
 
             const rawData = req.body
-            const food = Food.create(rawData);
+            const food = await Food.create(rawData);
             req.flash('success', 'Cet aliment a bien été créé')
 
         } else {

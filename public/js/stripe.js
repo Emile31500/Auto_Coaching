@@ -1,63 +1,87 @@
-const stripe = Stripe("pk_test_51SxQASJ7uGufFKhIp92vPaUU3Fx4wN2RsuSYr639oSIcw8PXbsFfhAssEAnegVDBYmommSyQk8RKTv0KGzGoegcW00BuzIUHwH"); // clé publique
-const elements = stripe.elements();
+const style = {
+  base: {
+    height : "30 px",
+    color: "#32325d",
+    fontFamily: "Arial, sans-serif",
+    fontSmoothing: "antialiased",
+    fontSize: "18px",
+    "::placeholder": {
+      color: "#a0aec0"
+    }
+  },
+  invalid: {
+    color: "#e53e3e",
+    iconColor: "#e53e3e"
+  }
+};
 
-const emailInput = document.querySelector('#email')
-const card = elements.create("card");
+const stripe = Stripe("pk_test_51SxQASJ7uGufFKhIp92vPaUU3Fx4wN2RsuSYr639oSIcw8PXbsFfhAssEAnegVDBYmommSyQk8RKTv0KGzGoegcW00BuzIUHwH"); // clé publique
+const formDataUser = document.querySelector('.formDataUser');
+const elements = stripe.elements();
+const card = elements.create("card", { style: style });
+const paymentProgressBar = document.querySelector('#payment-progress-bar')
+const messageElement = document.getElementById("message")
 card.mount("#card-element");
 
 
-const form = document.getElementById("payment-form");
-const formDataUser = document.querySelector('.formDataUser');
+const button = document.getElementById("confirmPay");
 
-form.addEventListener("submit", async (event) => {
+button.addEventListener("click", async (event) => {
     event.preventDefault();
-    const formData = new FormData(formDataUser);
-    const email = emailInput.value;
+    paymentProgressBar.classList.remove('d-none')
+    const email = document.getElementById("email").value;
     
-    const { paymentMethod, errorPaymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card: card,
-      billing_details: {
-        email: email,
-      },
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: card,
+        billing_details: {
+            email: email,
+        },
     });
 
+    if (error) {
+        document.getElementById("message").innerText = error.message;
+        return;
+    }
     
-    
+    const formData = new FormData(formDataUser);
     formData.append("paymentMethodId", paymentMethod.id);    
     const formDataObject = Object.fromEntries(formData.entries());
-    const formDataString = JSON.stringify(formDataObject);
-
-
-    // Appel backend pour créer le PaymentIntent
-    const response = await fetch("/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body : formDataString
+    
+    const response = await fetch("/create-subscription", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataObject),
     });
 
     const data = await response.json();
-    const clientSecret = data.clientSecret;
 
-    await stripe.confirmCardSetup(clientSecret, {
-      payment_method: {
-        card: card,
-        billing_details: { email : email }
-      }
-    });
+    if (data.error) {
 
-    /*const { error, paymentIntent } = await stripe.confirmCardPayment(
-      clientSecret,
-      {
-        payment_method: {
-          card: card
-        }
-      }
-    );/**/
+      paymentProgressBar.classList.add('d-none')
+      messageElement.classList.add('alert-danger')
+      messageElement.classList.remove('d-none')
+      messageElement.innerText = data.error;
+      return;
 
-    if (error) {
-      document.getElementById("error-message").textContent = error.message;
-    } else if (paymentIntent.status === "succeeded") {
-      alert("Paiement réussi 🎉");
+    } else  {
+
+      paymentProgressBar.querySelector('.progress-bar').classList.add('bg-success')
+      paymentProgressBar.querySelector('.progress-bar').innerHTML = "Paiement effectué avec succès 🎉 ! Vous allez être regiriger à la page de connexion dans quelque instant.";
+      setTimeout(() => {
+          window.location.href = "/login";
+      }, 3000);
+
     }
+
+    /*const confirmResult = await stripe.confirmCardPayment(data.clientSecret);*/
+
+  /*  if (confirmResult.error) {
+        messageElement.innerText = confirmResult.error.message;
+    } else {
+        messageElement.innerText =
+        "Abonnement réussi 🎉";
+    }*/
 });

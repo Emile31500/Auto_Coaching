@@ -1,10 +1,5 @@
 <div class="alert d-none" id="nutrition_alert" role="alert">
 </div>
-<h3 class="my-3 my-md-5-down">Aliments 
-  <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addFoodModal">
-    <i class="fa-solid fa-plus"></i>
-  </button>
-</h3>
 <table class="table table-striped">
   <thead class="table-dark">
     <tr>
@@ -26,8 +21,10 @@
             <% if (countFilter) { %> 
                 <span class="badge badge-light"><%=  countFilter %></span>
             <% }%> 
-              
           </button>
+          <button class="col-auto m-auto btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFoodModal">
+              <i class="fa-solid fa-plus"></i>
+            </button>
         </div>
         
       </th>
