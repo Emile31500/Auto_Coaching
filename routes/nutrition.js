@@ -40,7 +40,7 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
     });
 
     const ateFood = await AteFood.findAll({ 
-        include: Food, 
+        include : Food, 
         group: 'date',
         where : {
             userId : req.user.id
@@ -48,7 +48,7 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
     });
 
     const ateFoods = await AteFood.findAll({ 
-        include: Food, 
+        include : Food, 
         where : {
             date : date,
             userId : user.id

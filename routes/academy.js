@@ -1,5 +1,5 @@
 const express = require('express');
-const { User, Curse, CurseDrawft, SessionDraft } = require('../models')
+const { User, Curse, CurseDraft, SessionBibliographyDraft, SessionDraft } = require('../models')
 const router = express.Router()
 const nodemailer = require("nodemailer");
 const adminChecker = require('../middlewares/adminChecker');
@@ -8,7 +8,7 @@ const { Op, where } = require('sequelize');
 
 
 const multer  = require('multer');
-const cursedrawft = require('../models/cursedrawft');
+const cursedraft = require('../models/cursedraft');
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
 const finalName = 'curse-image-' + uniqueSuffix;
 
@@ -21,7 +21,8 @@ const storage = multer.diskStorage({
     }
 })
 
-const biblioGraphyTemp = ['msdmanuals.com/fr/accueil/troubles-hormonaux-et-métaboliques/biologie-du-système-hormonal/fonction-endocrinienne',
+const biblioGraphyTemp = [
+'msdmanuals.com/fr/accueil/troubles-hormonaux-et-métaboliques/biologie-du-système-hormonal/fonction-endocrinienne',
 'msdmanuals.com/fr/accueil/troubles-hormonaux-et-m%C3%A9taboliques/biologie-du-syst%C3%A8me-hormonal/fonction-endocrinienne',
 'eurofins-biomnis.com/referentiel/liendoc/precis/TESTOSTERONE.pdf',
 'rmlg.uliege.be/article/1742',
@@ -90,7 +91,15 @@ router.get('/curse/session', async (req, res) => {
 router.get('/admin/curse', async (req, res) => {
     //adminChecker, async (req, res) => {
 
-    const cursesDrawfts = await CurseDrawft.findAll({
+    const cursesDraft = await CurseDraft.findAll({
+        include : [{
+            model : SessionDraft,
+            where : {
+                isDeleted : {
+                    [Op.not] : true
+                }
+            }
+        }],
         isDeleted : {
             [Op.not] : true
         }
@@ -101,7 +110,7 @@ router.get('/admin/curse', async (req, res) => {
     res.render('../views/academy/index',  { 
         user : req.user, 
         isAdmin : true,
-        curses : cursesDrawfts,
+        curses : cursesDraft,
         page : '/academy',
         layout: '../views/main-admin' 
     });
@@ -128,19 +137,19 @@ router.post('/admin/curse/create', parserJson, async (req, res) => {
         console.log(Curse);
 
         const rawData = req.body;
-        const curseDrawft = await CurseDrawft.create({
+        const curseDraft = await CurseDraft.create({
             libele : rawData.libele,
             imageUrl : finalName,
             description : rawData.description
         })
 
         const sessionDraft = await SessionDraft.create({
-            curseDraftId : curseDrawft.id,
+            curseDraftId : curseDraft.id,
             libele : 'First session sample'
         })
 
 
-        req.flash('success', `Le cours ${curseDrawft.libele} a bien été créé`)
+        req.flash('success', `Le cours ${curseDraft.libele} a bien été créé`)
         res.redirect('/admin/curse');
 
 
@@ -152,17 +161,199 @@ router.post('/admin/curse/create', parserJson, async (req, res) => {
 
 })
 
+router.get('/admin/curse/:idC/handle/:idS', async (req, res) => {
 
-router.get('/admin/curse/idC/handle/idS', async (req, res) => {
-    //adminChecker, async (req, res) => {
+    try {
 
-    res.locals.message = req.flash();
-    res.render('../views/academy/detail-curse',  { 
-        user : req.user, 
-        isAdmin : true,
-        biblioGraphyTemp : biblioGraphyTemp,
-        layout: '../views/main-admin' 
-    });
+        const idC = req.params.idC;
+        const idS = req.params.idS;
+
+        
+        const curseDraft = await CurseDraft.findOne({
+             include : [{
+                model : SessionDraft,
+                where : {
+                    isDeleted : {
+                        [Op.not] : true
+                    }
+                }
+            }],
+            where :  {
+                isDeleted : {
+                    [Op.not] : true
+                },
+                id : idC
+            }
+        })
+
+        const sessionDraft = await SessionDraft.findOne({
+            include : [SessionBibliographyDraft],
+            where :  {
+                isDeleted : {
+                    [Op.not] : true
+                },
+                curseDraftId : idC,
+                id : idS
+            }
+        })
+
+        const previousSessionDraftOrNull = await SessionDraft.findOne({
+            where :  {
+                isDeleted : {
+                    [Op.not] : true
+                },
+                curseDraftId : idC,
+                id : {
+                    [Op.lt] : idS
+                }
+            }
+        })
+
+        const isTherePrevious = previousSessionDraftOrNull instanceof SessionDraft;
+
+        if (sessionDraft.id != idS) throw 'Session invalide';
+        if (sessionDraft.curseDraftId != idC) throw 'Session invalide';
+
+
+        res.locals.message = req.flash();
+        res.render('../views/academy/detail-curse',  { 
+            user : req.user, 
+            isAdmin : true,
+            curse : curseDraft,
+            session : sessionDraft,
+            isTherePrevious : isTherePrevious,
+            layout: '../views/main-admin' 
+        });
+
+    } catch(error) {
+
+        req.flash('danger', error.message)
+        res.redirect('/admin/curse')
+    }
+
+   
+})
+
+router.post('/admin/curse/:idC/handle/:idS', parserJson, async (req, res) => {
+
+    try {
+
+        const rawData = req.body
+
+        const idC = parseInt(req.params.idC)
+        const idS = parseInt(req.params.idS)
+
+        console.log(idS)
+
+        const sessionDraft = await SessionDraft.findOne({
+            where : {
+                id : idS,
+                isDeleted : null
+            }
+        })
+
+        const curseDraft = await CurseDraft.findOne({
+            where : {
+                id : idC,
+                isDeleted : null
+            }
+        })
+
+        console.log(sessionDraft.id)
+
+        await sessionDraft.update({
+            libele : rawData.libele,
+            videoUrl : rawData.videoUrl
+        })
+
+        rawData.bibliographies.forEach(async(bibliographyUrl) =>  {
+
+            sessionBibliographyDraftOrNull = await SessionBibliographyDraft.findOne({
+                where : {
+                    sessionDraftId : sessionDraft.id,
+                    url : bibliographyUrl,
+                }
+            })
+
+            if (sessionBibliographyDraftOrNull instanceof SessionBibliographyDraft){
+
+                if (sessionBibliographyDraftOrNull.isDeleted) {
+                    await sessionBibliographyDraftOrNull.update({
+                        isDeleted : null
+                    });
+                }
+
+            } else {
+                await SessionBibliographyDraft.create({
+                    sessionDraftId : sessionDraft.id,
+                    url : bibliographyUrl,
+                });
+            }
+
+        });
+
+        if (rawData.buttonSelected == 'Sauvegarder & Suivant') {
+
+            const nextDraftOrNull = await SessionDraft.findOne({
+                    where : {
+                        id : { 
+                        [Op.gt] : sessionDraft.id 
+                    },
+                    curseDraftId : sessionDraft.curseDraftId,
+                    isDeleted : null
+                }
+            })
+
+            if (nextDraftOrNull instanceof SessionDraft) {
+
+                nextDraft = nextDraftOrNull
+
+            } else {
+                nextDraft = await SessionDraft.create({
+                    libele : 'Nouvelle session',
+                    curseDraftId : sessionDraft.curseDraftId
+                });
+            }
+
+            redirectUrl = `/admin/curse/${idC}/handle/${nextDraft.id}`
+
+
+        } else if (rawData.buttonSelected == 'Sauvegarder & Précédent') {
+
+            const previousDraftOrNull = await SessionDraft.findOne({where : {
+                    id : {
+                        [Op.lt] : idS
+                    },
+                    curseDraftId : sessionDraft.curseDraftId,
+                    isDeleted :  null
+                }
+            })
+
+            if (previousDraftOrNull instanceof SessionDraft) {
+
+                previousDraft = previousDraftOrNull
+
+            } else {
+                previousDraft = await SessionDraft.create();
+            }
+
+            redirectUrl = `/admin/curse/${idC}/handle/${previousDraft.id}`
+
+        } else if (rawData.buttonSelected == 'Sauvegarder') {
+            
+            redirectUrl = `/admin/curse`
+
+        } else throw 'Nous ne savons pas comment traiter cette soumission';
+
+        req.flash('success', `La session n°${sessionDraft.libele} a bien été enregistré`)
+        res.redirect(redirectUrl)
+
+    } catch(error) {
+
+        req.flash('danger', error.message)
+        res.redirect(`/admin/curse`)
+        
+    }
 })
 
 router.get('/admin/curse/id/publish', async (req, res) => {

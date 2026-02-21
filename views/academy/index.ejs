@@ -19,11 +19,10 @@
                         <p class="my-2 card-text">
                             <%= curse.description %>
                         </p>
-                        <a href="/admin/curse/<%= curse.id %>/handle/idS" class="btn btn-outline-primary">Éditer</a>
+                        <a href="/admin/curse/<%= curse.id %>/handle/<%= curse.SessionDrafts[0].id %>" class="btn btn-outline-primary">Éditer</a>
                         <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#publishCuseModal<%= curse.id %>">Publier</button>
                         <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCurseModal<%= curse.id %>">Supprimer</button>
                     </div>
-                    
                 </div>
             </div>
         <% } else {%> 

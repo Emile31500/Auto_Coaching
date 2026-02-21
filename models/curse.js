@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Curse.belongsTo(models.CurseDrawft, 
+      Curse.belongsTo(models.CurseDraft, 
         {
           foreignKey: {
             allowNull: false,

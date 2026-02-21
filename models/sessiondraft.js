@@ -10,12 +10,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      SessionDraft.belongsTo(models.CurseDrawft, 
+      SessionDraft.belongsTo(models.CurseDraft, 
         {
           foreignKey: {
             allowNull: false,
             name : 'curseDraftId'
-          },
+          }
+        }
+      )
+      SessionDraft.hasMany(models.SessionBibliographyDraft, 
+        {
+          name : 'sessionDraftId'
         }
       )
       

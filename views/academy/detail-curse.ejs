@@ -5,8 +5,7 @@
     
     <div class="d-flex justify-content-center">
         <div class="border-bottom w-100">
-            
-
+            <% if (isAdmin === true) %><form action="/admin/curse/<%= curse.id %>/handle/<%= session.id %>" method="POST"><%;%>
             <div class="row" >
                 <div class="mt-5 opacity-50">
                     <% if (isAdmin !=true) { %>
@@ -16,68 +15,80 @@
                 <h2>
                     <% if (isAdmin === true) { %>
                         <a href="/admin/curse" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>
-                        <input class="form-control w-auto" type="text" placeholder="nom de la session">
-                        <input class="btn btn-primary" type="submit">
+                        <input class="form-control w-auto" type="text" name="libele" value="<%= session.libele %>" placeholder="nom de la session">
+                        <input class="btn btn-primary" type="submit" name="buttonSelected"  value="Sauvegarder">
                     <% } else { %>
                         <a href="/academy" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a> Pourquoi s'entrainer ?
                     <% }%>
                 </h2>
             </div>
-           
             <div class="row my-5">
-                <div class="p-0 py-1 h-50 col d-flex justify-content-center bg-primary border-bottom border-primary"><a class="mx-0 text-white" href=""><div>Text</div></a></div>
-                <div class="p-0 py-1 h-100 col d-flex justify-content-center border-bottom border-primary"><a class="mx-0" href=""><div>Text</div></a></div>
-                <div class="p-0 py-1 col d-flex justify-content-center "><a class="mx-0" href=""><div>Text</div></a></div>
-            </div>
-                <!-- <div style="height: 20px;" class="progress p-0 w-25 border-top border-bottom border-primary rounded-0 rounded-start">
-                    <div class="progress-bar w-100" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                        <a style="font-size: 16px;" class="text-white">Text</a>
-                    </div>
-                </div>
-                <div style="height: 20px;" class="progress p-0 w-25 border-top border-bottom border-primary rounded-0">
-                    
-                        <div class="progress-bar opacity-50 w-100" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+
+                <% if (isAdmin) { %>
+                    <% curse.SessionDrafts.forEach(sessionIndex => { %>
+                        
+                        <div class="p-0 py-1 col d-flex justify-content-center 
+                                <% if (sessionIndex.id < session.id ) {%>
+                                    bg-primary
+                                <%} else { %>
+                                    bg-light
+                                <% } %> 
+                                <% if(sessionIndex.id <=  session.id )  {%>
+                                     border border-primary 
+                                <% } %>  
+                            ">
+                            <a class="mx-0
+                                <% if (sessionIndex.id < session.id ) {%>
+                                    text-white
+                                <%} else { %>
+                                     text-primary
+                                <% } %> " href="/admin/curse/<%= curse.id %>/handle/<%= sessionIndex.id %>">
+                                <% if (sessionIndex.id == session.id  ) { %>
+                                    <strong> >> <%= sessionIndex.libele %> << </strong>
+                                <% } else { %>
+                                    <%= sessionIndex.libele %>
+                                <% } %>
+                            </a>
                         </div>
-                    
-                </div>
-                <div style="height: 20px;" class="progress p-0 w-25 border-top border-bottom border-primary rounded-0 bg-white">
-                    <div class="progress-bar w-100" style="background-color: #00000000;" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                        <a style="font-size: 16px;" class="text-primary">Text</a>
-                    </div>
-                </div>
-                <div style="height: 20px;" class="progress p-0 w-25 border-top border-bottom border-primary rounded-0 rounded-end bg-white border">
-                    <div class="progress-bar w-100" style="background-color: #00000000;" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                         <a style="font-size: 16px;" class="text-primary"> <strong>> Text <</strong> </a>
-                    </div>
-                </div> -->
+                    <% }) %>
+                 <% } else { %>
+                    <% curse.sessions.forEach(session => { %>
+                        <div class="p-0 py-1 col d-flex justify-content-center bg-primary border-bottom border-primary">
+                            <a class="mx-0 text-white" href="">
+                                <div>Text</div>
+                            </a>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div> 
             <div class="video-container row">
                 <video controls>
                     <source src="/media/video/placeholder.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
                 <% if (isAdmin === true) { %>
-                    <input type="text" class="my-3 form-control" name="video-name" value="videoname.mp4"/>
+                    <input type="text" class="my-3 form-control" name="videoUrl" value="videoname.mp4"/>
                 <% }  %>
 
                         
             </div>
             <div class="row my-5">
                 <div class="col d-flex justify-content-start">
-                    <button class="btn btn-outline-primary" >
-                        <% if (isAdmin === true) { %>
-                            Sauvergarde &
-                        <% }  %>
-                        Précédent
-                    </button>
+                    <% if (isAdmin === true) { %>
+                        <% if (isTherePrevious) {%> 
+                            <input type="submit" class="btn btn-outline-primary" name="buttonSelected" value="Sauvegarder & Précédent"/>
+                        <% } %>
+                    <% } else {%>
+                        <a href="" class="btn btn-outline-primary">Précédent</button>    
+                    <%} %>
                 </div>
 
                 <div class="col d-flex justify-content-end">
-                    <button class="btn btn-primary">
-                         <% if (isAdmin === true) { %>
-                            Sauvergarde &
-                        <% }  %>
-                        Suivant
-                    </button>
+                    <% if (isAdmin === true) { %>
+                        <input type="submit" class="btn btn-primary" name="buttonSelected" value="Sauvegarder & Suivant"/>
+                    <% } else {%>
+                        <a href="" class="btn btn-primary"> Suivant</button>    
+                    <%} %>
                 </div>
             </div>
             <div class="row my-5 w-auto">
@@ -89,23 +100,19 @@
                     
                 <% if (isAdmin !== true) { %> <ol> <% } %>
 
-                    <% biblioGraphyTemp.forEach(biblioGraphy => {%> 
+                    <% session.SessionBibliographyDrafts.forEach(biblioGraphy => {%> 
                         <% if (isAdmin === true) { %>
-                            <input type="text" class="form-control" value="<%= biblioGraphy %>">
+                            <input type="text" name="bibliographies" class="form-control" value="<%= biblioGraphy.url %>">
                             
                         <% } else { %>
                             <li>
-                                <a href="https://<%= biblioGraphy %>" class="my-2 link-secondary"> <%= biblioGraphy %></a>
+                                <a href="https://<%= biblioGraphy.url %>" class="my-2 link-secondary"> <%= biblioGraphy.url %></a>
                             </li>
                         <% } %>
 
                     <%}) %>
                 <% if (isAdmin !== true) { %> </ol> <% } %>
-                
-
-                
-                
-                
             </div>
+            <% if (isAdmin === true) %></form><%;%>
         </div>
     </div>
