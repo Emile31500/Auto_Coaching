@@ -1,0 +1,18 @@
+<% title = 'Child Template' %>
+<%- contentFor('main') %>
+
+<form method="POST">
+    <div class="my-3">
+        <label class="my-2"> Libele </label>
+        <input type="text" name="libele" class="form-control my-2"/>
+    </div>
+    <div class="my-3">
+        <label class="my-2"> Image d'arrière plan </label>
+        <input type="file" name="imageUrl" class="form-control my-2"/>
+    </div>
+    <div class="my-3">
+        <label class="my-2"> Description </label>
+        <textarea type="text" class="form-control my-2" name="description"></textarea>
+    </div>
+    <input type="submit" class="btn btn-primary" />
+</form>

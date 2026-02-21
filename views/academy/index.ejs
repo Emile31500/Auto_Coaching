@@ -1,0 +1,79 @@
+<% title = "Bienvenu !" %>
+
+<%- contentFor('mainWithoutMarge') %>
+<%- contentFor('main') %>
+<% if (isAdmin === true) { %>
+    <div class="my-5">
+        <a href="/admin/curse/create" class="btn btn-outline-primary">Créer </a>
+    </div>
+<%}%>
+<div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4 mb-5 my-5">
+    <% curses.forEach(curse => { %>
+        <% haveToBeHidden = (false === false/*si les cours dépendant n'est pas lu*/)  %>
+        <% if (isAdmin === true) { %>
+            <div class="col">
+                <div class="card  <% if (curse.isPublished) %> border border-warning<%;%>" style="width: 18rem;">
+                    <img class="card-img-top>" placeholder-this-image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK9Op2RfRPM_W9Zbth8aGQQh3ArWbe7cJV4w&s" alt="Card image cap">
+                    <div class="card-body p-2">
+                        <h5 class="my-2 card-title"><%= curse.libele %></h5>
+                        <p class="my-2 card-text">
+                            <%= curse.description %>
+                        </p>
+                        <a href="/admin/curse/<%= curse.id %>/handle/idS" class="btn btn-outline-primary">Éditer</a>
+                        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#publishCuseModal<%= curse.id %>">Publier</button>
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCurseModal<%= curse.id %>">Supprimer</button>
+                    </div>
+                    
+                </div>
+            </div>
+        <% } else {%> 
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top <% if (haveToBeHidden) { %>opacity-25 <% } %>" placeholder-this-image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK9Op2RfRPM_W9Zbth8aGQQh3ArWbe7cJV4w&s" alt="Card image cap">
+                    <div class="card-body p-2">
+                        <h5 class="my-2 card-title <% if (haveToBeHidden) { %> opacity-25  <% } %>"><%= curse.libele %></h5>
+                        <p class="my-2 card-text">
+                            <% if (haveToBeHidden) { %>
+                                Requier d'avoir vu le cours : <a href=""> Apprendre à gérer sa diète</a>
+                            <% } else { %>
+                                <%= curse.description %>
+                            <% } %>
+                        </p>
+                        <a href="<% if (!haveToBeHidden) { %>/curse/session<% } %>" class="my-2 btn btn-primary  <% if (haveToBeHidden) { %> disabled <% } %>"">Accéder au cours</a>
+                    </div>
+                    
+                </div>
+            </div> 
+        <% } %>
+
+
+        <div class="modal border-danger" id="publishCuseModal<%= curse.id %>" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-body border-danger">
+                    <H5 class="h5">Attention</H5>
+                    <p>Le corus sera visible de tous</p>
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
+                    <a href="/admin/curse/<%= curse.id %>/publish" class="btn btn-primary">Pulier</a>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal border-danger" id="deleteCurseModal<%= curse.id %>" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-body border-danger">
+                    <H5 class="h5"><strong>ATTENTION</strong></H5>
+                    <p>Tu es sur le point de supprimer un cours !</p>
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <a href="/admin/curse/<%= curse.id %>/delete" class="btn btn-danger">Supprimer</a>
+                </div>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>

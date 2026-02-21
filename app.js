@@ -29,6 +29,7 @@ app.use(session({
   }),
 }));
 
+const academy = require('./routes/academy');
 const atedish = require('./routes/atedish');
 const checkout = require('./routes/checkout');
 const dish = require('./routes/dish');
@@ -61,6 +62,7 @@ io.on('connection', (socket) => {
 app.use(express.static('public'))
 app.use(flash());
 app.use(bodyParser.json());
+app.use(academy);
 app.use(atedish);
 app.use(checkout);
 app.use(dish);
