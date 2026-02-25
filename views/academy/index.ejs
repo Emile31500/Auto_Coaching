@@ -19,26 +19,42 @@
                         <p class="my-2 card-text">
                             <%= curse.description %>
                         </p>
-                        <a href="/admin/curse/<%= curse.id %>/handle/<%= curse.SessionDrafts[0].id %>" class="btn btn-outline-primary">Éditer</a>
+                        <a href="/admin/curse/<%= curse.id %>/session/<%= curse.SessionDrafts[0].id %>" class="btn btn-outline-primary">Éditer</a>
                         <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#publishCuseModal<%= curse.id %>">Publier</button>
                         <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCurseModal<%= curse.id %>">Supprimer</button>
                     </div>
                 </div>
             </div>
-        <% } else {%> 
+        <% } else {
+                                
+                if (curse.dependantCurseId == null) { 
+                    haveToBeHidden = false 
+
+                } else {
+
+                    if (curse.DependantCurse.includes(viewedCursesMapped)) {
+                        haveToBeHidden = false 
+                    } else {
+                        haveToBeHidden = true 
+                    }
+                }
+                
+            %> 
             <div class="col">
                 <div class="card" style="width: 18rem;">
                     <img class="card-img-top <% if (haveToBeHidden) { %>opacity-25 <% } %>" placeholder-this-image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK9Op2RfRPM_W9Zbth8aGQQh3ArWbe7cJV4w&s" alt="Card image cap">
                     <div class="card-body p-2">
                         <h5 class="my-2 card-title <% if (haveToBeHidden) { %> opacity-25  <% } %>"><%= curse.libele %></h5>
                         <p class="my-2 card-text">
+                            
+
                             <% if (haveToBeHidden) { %>
                                 Requier d'avoir vu le cours : <a href=""> Apprendre à gérer sa diète</a>
                             <% } else { %>
                                 <%= curse.description %>
                             <% } %>
                         </p>
-                        <a href="<% if (!haveToBeHidden) { %>/curse/session<% } %>" class="my-2 btn btn-primary  <% if (haveToBeHidden) { %> disabled <% } %>"">Accéder au cours</a>
+                        <a href="<% if(!haveToBeHidden) { %>/curse/<%= curse.id %>/session/<%= curse.Sessions[0].id %><% } %>" class="my-2 btn btn-primary  <% if (haveToBeHidden) { %> disabled <% } %>"">Accéder au cours</a>
                     </div>
                     
                 </div>
@@ -54,7 +70,7 @@
                     <p>Le corus sera visible de tous</p>
                 </div>
                 <div class="modal-footer ">
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Fermer</button>
                     <a href="/admin/curse/<%= curse.id %>/publish" class="btn btn-primary">Pulier</a>
                 </div>
                 </div>
@@ -68,7 +84,7 @@
                     <p>Tu es sur le point de supprimer un cours !</p>
                 </div>
                 <div class="modal-footer ">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fermer</button>
                     <a href="/admin/curse/<%= curse.id %>/delete" class="btn btn-danger">Supprimer</a>
                 </div>
                 </div>

@@ -25,10 +25,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   SessionBibliography.init({
-    libele: DataTypes.STRING,
     sessionBibliographyDraftId: DataTypes.INTEGER,
-    sessionId: DataTypes.INTEGER,
-    videoUrl: DataTypes.STRING,
+    // sessionId: DataTypes.INTEGER,
+    url: DataTypes.STRING,
     isDeleted: DataTypes.BOOLEAN
   }, {
     sequelize,

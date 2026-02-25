@@ -22,6 +22,18 @@ module.exports = (sequelize, DataTypes) => {
           name : 'curseId',
           allowNull : false
         }
+      })/**/
+      Session.hasMany(models.SessionBibliography, {
+        foreignKey : {
+          name : 'sessionId',
+          allowNull : false
+        }
+      })
+      Session.hasMany(models.ViewedSession, {
+        foreignKey : {
+          name : 'sessionId',
+          allowNull : false
+        }
       })
     }
   }
@@ -29,8 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     sessionDraftId: DataTypes.INTEGER,
     libele: DataTypes.STRING,
     videoUrl: DataTypes.STRING,
-    isDeleted: DataTypes.BOOLEAN,
-    cuserId : DataTypes.INTEGER
+    isDeleted: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Session',
