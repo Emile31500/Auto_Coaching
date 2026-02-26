@@ -53,22 +53,27 @@
 
                     }
                     
-                    sessions.forEach(sessionIndex => { %>
+                    sessions.forEach(sessionIndex => {
+                        color = 'primary';
+                        if (!isAdmin) {
+                            if (sessionIndex.ViewedSessions.length > 0) color = 'success';
+                        }
+                        %>
                     <div class="p-0 py-1 col d-flex justify-content-center 
                             <% if (sessionIndex.id < session.id ) {%>
-                                bg-primary
+                                bg-<%= color %>
                             <%} else { %>
                                 bg-light
                             <% } %> 
                             <% if(sessionIndex.id <=  session.id )  {%>
-                                    border border-primary 
+                                    border border-<%= color %>
                             <% } %>  
                         ">
                         <a class="mx-0 
                             <% if (sessionIndex.id < session.id ) {%>
                                 text-white
                             <%} else { %>
-                                    text-primary
+                                    text-<%= color %>
                             <% } %> link-underline link-underline-opacity-0" href="<%= adminPrefixOrNull %>/curse/<%= curse.id %>/session/<%= sessionIndex.id %>">
                             <% if (sessionIndex.id == session.id  ) { %>
                                 
@@ -129,28 +134,76 @@
             <div class="row my-5 w-auto">
                 <h3 class="my-3">Bibliographie 
                     <% if (isAdmin === true) { %>
-                        <button class="btn btn-primary">+</button>
+                        <button class="btn btn-primary" id="addBliblioGraphie">+</button>
                     <% } %>
                 </h3> 
-                    
-                <% if (isAdmin !== true) { %> <ol> <% } %>
+                <div id="biblioList">
+                    <% if (isAdmin !== true) { %> <ol> <% } %>
 
-                    <% if (isAdmin === true) { %>
+                        <% if (isAdmin === true) { %>
 
-                        <% session.SessionBibliographyDrafts.forEach(biblioGraphy => {%> 
-                            <input type="text" name="bibliographies" class="form-control" value="<%= biblioGraphy.url %>">
-                        <%}) %>
+                            <% session.SessionBibliographyDrafts.forEach(biblioGraphy => {%> 
+                                <div class="row my-1">
+                                    <div class="col">
+                                        <input type="text" name="libele" class="form-control col-auto" placeholder="titre" value="<%= biblioGraphy.libele %>">
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" name="bibliographies" class="form-control col-auto" placeholder="url" value="<%= biblioGraphy.url %>">
+                                    </div>
+                                </div>
+                            <%}) %>
+                            
+                        <% } else { %>
+                            <% session.SessionBibliographies.forEach(biblioGraphy => {%> 
+                            
+                                <li>
+                                    <a href="https://<%= biblioGraphy.url %>" class="my-2 link-secondary">
+                                        <%= biblioGraphy.libele %>
+                                    </a>
+                                 </li>
+
+                            <%}) %>
+                        <% } %>
                         
-                    <% } else { %>
-                        <% session.SessionBibliographies.forEach(biblioGraphy => {%> 
-                        
-                            <li><a href="https://<%= biblioGraphy.url %>" class="my-2 link-secondary"> <%= biblioGraphy.url %></a> </li>
-
-                        <%}) %>
-                    <% } %>
-                    
-                <% if (isAdmin !== true) { %> </ol> <% } %>
+                    <% if (isAdmin !== true) { %> </ol> <% } %>
+                </div>
             </div>
             <% if (isAdmin === true) %></form><%;%>
         </div>
     </div>
+<script>
+    const addBliblioGraphie = document.querySelector('#addBliblioGraphie');
+    const biblioList = document.querySelector('#biblioList');
+
+    addBliblioGraphie.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const newBiblioLibeleElement = document.createElement("input")
+        newBiblioLibeleElement.setAttribute('type', "text")
+        newBiblioLibeleElement.setAttribute('name', "libele")
+        newBiblioLibeleElement.setAttribute('class', "form-control col-auto")
+        newBiblioLibeleElement.setAttribute('placeholder', "titre")
+
+        const newBiblioUrlElement = document.createElement("input")
+        newBiblioUrlElement.setAttribute('type', "text")
+        newBiblioUrlElement.setAttribute('name', "bibliographies")
+        newBiblioUrlElement.setAttribute('class', "form-control col-auto")
+        newBiblioUrlElement.setAttribute('placeholder', "url")
+
+        const divContainer = document.createElement('div')
+        divContainer.setAttribute('class', "row my-1")
+
+        const colContainerUrl = document.createElement('div')
+        colContainerUrl.setAttribute('class', "col")
+        colContainerUrl.appendChild(newBiblioUrlElement)
+
+        const colContainerLibele = document.createElement('div')
+        colContainerLibele.setAttribute('class', "col")
+        colContainerLibele.appendChild(newBiblioLibeleElement)
+
+        divContainer.appendChild(colContainerLibele)
+        divContainer.appendChild(colContainerUrl)
+
+        biblioList.appendChild(divContainer)        
+    })
+</script>

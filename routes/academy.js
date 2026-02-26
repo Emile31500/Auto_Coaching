@@ -4,7 +4,7 @@ const router = express.Router()
 const nodemailer = require("nodemailer");
 const adminChecker = require('../middlewares/adminChecker');
 var parserJson = require('../middlewares/parserJson');
-const { Op, where } = require('sequelize');
+const { Op, where, literal } = require('sequelize');
 
 
 const multer  = require('multer');
@@ -27,6 +27,12 @@ router.get('/academy', async (req, res) => {
     curses = await Curse.findAll({
         include : [{
             model : Session
+        }, {
+            model : ViewedCurse,
+            where : {
+                userId : req.user?.id || 1
+            },
+            required : false,
         }],
         where : {
             isDeleted : {
@@ -61,16 +67,26 @@ router.get('/curse/:idC/session/:idS', async (req, res) => {
 
     const curseOrNull = await Curse.findOne({
         include : [{
-            model : Session
+            model : Session,
+            include : {
+                model : ViewedSession,
+                where : {
+                    userId : req.user?.id || 1
+                },
+                required : false
+            },
         }],
         where :  {
             isDeleted : null,
             id : idC
-        }
+        },
+        order: [[Session, 'id', 'ASC']]
     })
 
     const sessionOrNull  = await Session.findOne({
-        include : [SessionBibliography],
+        include : [
+            SessionBibliography,
+        ],
         where :  {
             isDeleted : null,
             curseId : idC,
@@ -388,12 +404,13 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, async (req, res) => {
             videoUrl : rawData.videoUrl
         })
 
-        rawData.bibliographies.forEach(async(bibliographyUrl) =>  {
+        // rawData.bibliographies.forEach(async(bibliographyUrl) =>  {
+        for (let index = 0; index < rawData.bibliographies.length; index++) {
 
             sessionBibliographyDraftOrNull = await SessionBibliographyDraft.findOne({
                 where : {
                     sessionDraftId : sessionDraft.id,
-                    url : bibliographyUrl,
+                    url : rawData.bibliographies[index],
                 }
             })
 
@@ -401,6 +418,7 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, async (req, res) => {
 
                 if (sessionBibliographyDraftOrNull.isDeleted) {
                     await sessionBibliographyDraftOrNull.update({
+                        libele :  rawData.libele[index],
                         isDeleted : null
                     });
                 }
@@ -408,11 +426,12 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, async (req, res) => {
             } else {
                 await SessionBibliographyDraft.create({
                     sessionDraftId : sessionDraft.id,
-                    url : bibliographyUrl,
+                    libele :  rawData.libele[index],
+                    url : rawData.bibliographies[index],
                 });
             }
 
-        });
+        }//);
 
         if (rawData.buttonSelected == 'Sauvegarder & Suivant') {
 
@@ -563,7 +582,8 @@ router.get('/admin/curse/:id/publish', async (req, res) => {
                         sessionBibliographyDraftId : sessionBibliographyDraft.id,
                     })
                 }
-                sessionBibliography.url = sessionBibliographyDraft.url,
+                sessionBibliographyDraft.libele = sessionBibliographyDraft.libele
+                sessionBibliography.url = sessionBibliographyDraft.url
                 sessionBibliography.isDeleted = null
                 await sessionBibliography.save()
             })/**/
