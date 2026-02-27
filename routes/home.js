@@ -1,48 +1,34 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { User, NutritionRequirement } = require('../models')
+const { User, NutritionRequirement, SessionBibliography, SessionBibliographyDraft} = require('../models')
 const { Op } = require('sequelize')
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 const router = express.Router()
 const isAuth = require('../middlewares/isAuth');
 const parserJson = require('../middlewares/parserJson');
 const pbkdf2 = require("hash-password-pbkdf2")
-
 const nodemailer = require("nodemailer");
-
-// Create a transporter using Ethereal test credentials.
-// For production, replace with your actual SMTP server details.
-/*const transporter = nodemailer.createTransport({
-  service: "gmail", // Shortcut for Gmail's SMTP settings - see Well-Known Services
-  auth: {
-    type: "OAuth2",
-    user: "emile00013@gmail.com",
-    // clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret:  "edsryxgncragwpfc",
-    // refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-  },
-})*/
-
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: 587,
-  secure: false, // Use true for port 465, false for port 587
+  secure: false,
   auth: {
     user: process.env.SMTP_FROM,
     pass: process.env.SMTP_PASS, 
   },
 });
 
-// gmail+smtp://:edsryxgncragwpfc@default*/
-
-
-  
-
 
 router.get('/bibliography', async (req, res) => {
+
+    const sessionBibliographies = await Draft.findAll({ where : {
+        isDeleted : null
+    }}); 
+
     res.render('../views/home/bibliography',  { 
         user : req.user, 
+        bibliographies : sessionBibliographies,
         page : '/bibliography',
         layout: '../views/main' 
     });
