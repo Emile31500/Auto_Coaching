@@ -54,7 +54,7 @@ router.delete('/api/food/:id_food', authenticationCheckerApi, parserJson, async(
 router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
-    let food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    let food = await FoodService.getFoodsForMainPage(parsedUrl.query, req.user)
 
     if (food) {
 

@@ -15,9 +15,16 @@
 
 <table class="my-3 table">
     <thead>
-        <th scope="col">Nom </th>
-        <th scope="col">Poids / volume </th>
-        <th scope="col"></th>
+        <form method="GET">
+            <th scope="col" class="row">
+                <div class="w-auto">Nom</div>
+                <input type="text" name="name" class="form-control w-auto"/>
+            </th>
+            <th scope="col">Poids / volume </th>
+            <th scope="col">
+                <button class="btn btn-primary">Rechercher</button>
+            </th>
+        </form>
     </thead>
     <tbody id="listAteFoodHTML">
         <% for (var i = 0; i < ateFoods.length ;  i++ ) { %>

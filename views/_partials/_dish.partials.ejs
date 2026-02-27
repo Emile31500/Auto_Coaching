@@ -2,66 +2,94 @@
     Plats 
    
 </h3> -->
- <a href="/dish" class="btn btn-outline-primary">
-        <i class="fa-solid fa-plus"></i>
-    </a>
 <style>
-  .card > img {
+  .card > .card-img-top {
 
     height: 286px; 
     object-fit: cover;
   }
 </style>
-<div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4 mb-5">
-    <% for(var i=0; i < dish.length; i++) {%>
-      <div class="col">
-        <div class="card" style="width: 18rem;">
-          <img src="/media/photo/<%= dish[i].imageUrl %>" class="card-img-top" alt="...">
+<div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4 my-5 bg-light pb-5 pt-0">
+  <table class="table table-striped mt-0">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col" class="row d-flex justify-content-center">
 
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"><%= dish[i].name %></a>
-                </h5>
-                <p class="card-text">
-                    <% if (dish[i].userId != null) { %> 
-                      <a href="/dish/delete/<%= dish[i].id %>" class="btn btn-outline-danger" <%= dish[i].id %>"><i class="fa-solid fa-trash"></i></a>
-                      <a href="/dish/edit/<%= dish[i].id %>" class="btn btn-outline-primary" <%= dish[i].id %>"><i class="fa-solid fa-pen"></i></a>
-                    <% } %> 
-                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#eatDishModal-<%= dish[i].id %>"><i class="fa-solid fa-utensils"></i> <span class="d-none d-xl-inline">Mangé</span></button>
-                </p>
-            </div>
-        </div>
-      </div>
-      <div class="modal fade" id="eatDishModal-<%= dish[i].id %>" tabindex="-1" aria-labelledby="eatDishModal-<%= dish[i].id %>Label" aria-hidden="true">
-        <div class="modal-dialog modal-xl-down">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="eatDishModal-<%= dish[i].id %>Label">Plat mangé : <%= dish[i].name %> </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form action='/ate/dish/<%= dish[i].id %>' method="POST">
-                <div class="my-2">
-                  <label class="my-1">Date du repas</label>
-                  <input type="date" name="date" class="form-control" required />
+            <button class="col-auto m-auto btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
+              <i class="fa-solid fa-filter"></i> Filtrer
+              <% if (countFilter) { %> 
+                  <span class="badge badge-light"><%=  countFilter %></span>
+              <% }%> 
+            </button>
+            <a href="/dish" class="col-auto m-auto btn btn-primary">
+              <i class="fa-solid fa-plus"></i>
+            </a>
+      </th>
+    </th>
+    </tr>
+    </thead>
+  </table> 
+    <% for(var i=0; i < dish.length; i++) {
+      dish[i].calculateSumMacro()
+      
+      %>
+            <div class="col">
+             <div class="card" style="width: 18rem;">
+               
+
+                <div style="background-image: url(/media/photo/<%= dish[i].imageUrl %>); background-size: cover;" class="card-img-top">
+                    <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                        <%= Math.round(dish[i].sumKcalorie) %> Kcal<br>
+                        <%= Math.round(dish[i].sumProtein) %> G protéine <br>
+                        <%= Math.round(dish[i].sumFat) %> G lipide<br>
+                        <%= Math.round(dish[i].sumCarbohydrate) %> G glucide
+                    </div>
                 </div>
-                <% for(var e=0; e < dish[i].DishFoods.length; e++) { %> 
-                  <div class="my-2">
-                    <label class="my-1"><%= dish[i].DishFoods[e].Food.name %></label>
-                    <input type="hidden" name="dish_food_id_<%= e %>"  value="<%= dish[i].DishFoods[e].Food.id %>"/> 
-                    <input type="number" name="dish_food_weight_<%= e %>" class="form-control" required value="<%= dish[i].DishFoods[e].weight %>"/> 
+
+                  <div class="card-body">
+                      <h5 class="card-title">
+                          <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"><%= dish[i].name %></a>
+                      </h5>
+                      <p class="card-text">
+                          <% if (dish[i].userId != null) { %> 
+                            <a href="/dish/delete/<%= dish[i].id %>" class="btn btn-outline-danger" <%= dish[i].id %>"><i class="fa-solid fa-trash"></i></a>
+                            <a href="/dish/edit/<%= dish[i].id %>" class="btn btn-outline-primary" <%= dish[i].id %>"><i class="fa-solid fa-pen"></i></a>
+                          <% } %> 
+                          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#eatDishModal-<%= dish[i].id %>"><i class="fa-solid fa-utensils"></i> <span class="d-none d-xl-inline">Mangé</span></button>
+                      </p>
                   </div>
-                <% } %>  
-                <input type="submit" class="btn btn-primary"/>
-              </form>
+              </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <div class="modal fade" id="eatDishModal-<%= dish[i].id %>" tabindex="-1" aria-labelledby="eatDishModal-<%= dish[i].id %>Label" aria-hidden="true">
+              <div class="modal-dialog modal-xl-down">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="eatDishModal-<%= dish[i].id %>Label">Plat mangé : <%= dish[i].name %> </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action='/ate/dish/<%= dish[i].id %>' method="POST">
+                      <div class="my-2">
+                        <label class="my-1">Date du repas</label>
+                        <input type="date" name="date" class="form-control" required />
+                      </div>
+                      <% for(var e=0; e < dish[i].DishFoods.length; e++) { %> 
+                        <div class="my-2">
+                          <label class="my-1"><%= dish[i].DishFoods[e].Food.name %></label>
+                          <input type="hidden" name="dish_food_id_<%= e %>"  value="<%= dish[i].DishFoods[e].Food.id %>"/> 
+                          <input type="number" name="dish_food_weight_<%= e %>" class="form-control" required value="<%= dish[i].DishFoods[e].weight %>"/> 
+                        </div>
+                      <% } %>  
+                      <input type="submit" class="btn btn-primary"/>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    <% } %>
+          <% } %> 
 </div>
 
 

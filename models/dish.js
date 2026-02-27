@@ -17,13 +17,46 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'dishId',
       })
     }
+
+    async calculateSumMacro() {
+
+        let calcSumKcalorie = 0
+        let calcSumProtein = 0
+        let calcSumFat = 0
+        let calcSumCarbohydrate = 0
+        let weightFactor = 0
+
+        this.DishFoods.forEach(DishFood => {
+
+          weightFactor = (DishFood.weight/100)
+          calcSumCarbohydrate += weightFactor * DishFood.Food.carbohydrate; 
+          calcSumFat += weightFactor * DishFood.Food.fat; 
+          calcSumProtein += weightFactor * DishFood.Food.proteine; 
+          calcSumKcalorie += weightFactor * DishFood.Food.kcalorie; 
+          
+
+        });
+
+        this.sumKcalorie = parseInt(calcSumKcalorie);
+        this.sumProtein = parseInt(calcSumProtein);
+        this.sumFat = parseInt(calcSumFat);
+        this.sumCarbohydrate = parseInt(calcSumCarbohydrate);
+        await this.save()
+        return this;
+    }
   }
   Dish.init({
     name: DataTypes.STRING,
-    imageUrl: DataTypes.STRING
+    imageUrl: DataTypes.STRING,
+    sumKcalorie : DataTypes.INTEGER,
+    sumProtein : DataTypes.INTEGER,
+    sumFat : DataTypes.INTEGER,
+    sumCarbohydrate : DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Dish',
+    tableName: 'Dishes',
+
   });
   return Dish;
 };

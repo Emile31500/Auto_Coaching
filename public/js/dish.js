@@ -5,7 +5,6 @@ const addedFood = document.querySelector('#addedFood');
 const foodsDishInput = document.querySelector('#foodsDishInput')
 const dishFoodsFilter = document.querySelector('#dishFoodsFilter')
 
-console.log(foodCreatDishForm)
 foodCreatDishForm.addEventListener('submit', function (event) {
 
     event.preventDefault();
