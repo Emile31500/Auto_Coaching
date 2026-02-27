@@ -1,5 +1,5 @@
 const express = require('express');
-const { AteFood, Dish, DishFood, Food, NutritionRequirement } = require('../models/');
+const { AteFood, Dish, DishFood, Food, NutritionRequirement, User } = require('../models/');
 const { Op } = require('sequelize');
 const FoodService = require('../services/food');
 
@@ -10,28 +10,18 @@ const adminChecker = require('../middlewares/adminChecker');
 const premiumChecker = require('../middlewares/premiumChecker');
 const url = require('url')
 
+/*router.get('/temp/dish', async (req, res) => {
+    const user = await User.findOne({where : {id : 1}}) 
+    const parsedUrl = url.parse(req.url, true);
+    await FoodService.getDishesForMainPage(parsedUrl.query, user)
+})*/
+
 router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req, res) => {
 
     const parsedUrl = url.parse(req.url, true);
-    const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    const food = await FoodService.getFoodsForMainPage(parsedUrl.query, req.user)
+    const dish = await FoodService.getDishesForMainPage(parsedUrl.query, req.user)
     const date = new Date(req.params.date);
-
-    const dish = await Dish.findAll({
-        include : [
-            {
-                model : DishFood,
-                include : [
-                    Food
-                ]
-            }
-        ],
-        where : {
-            [Op.or] :[
-                {userId : req.user.id},
-                {userId : null}
-            ]
-        }
-    })
 
     const nutritionRequirement = await NutritionRequirement.findOne({
         where : {

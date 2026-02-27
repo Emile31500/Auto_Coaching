@@ -1,8 +1,7 @@
-const { Food, Measurment, NutritionRequirement } = require('../models');
-const { Op } = require('sequelize');
+const { Dish, DishFood, Food, Measurment, NutritionRequirement } = require('../models');
+const { fn, Op, col } = require('sequelize');
 
-
-const getForMainPage = async (parsedUrlQuery, user) => {
+async function getAllFitlerParameters (parsedUrlQuery) {
 
     const orderParameter = parsedUrlQuery.orderParameter ?? 'name';
     const orderBy = parsedUrlQuery.orderBy ?? "ASC";
@@ -13,63 +12,121 @@ const getForMainPage = async (parsedUrlQuery, user) => {
     const words = parsedUrlQuery.words ?? '';
     const arrayWords = words.split(" ");
     let nameSelector = []
+    let kcalFilterMax, proteinFilterMax, fatFilterMax, carboFilterMax;
 
     arrayWords.forEach(word => {
         nameSelector.push({[Op.like] : '%'+word+'%'});
     });
 
-    let fatFilterMax;
-    let proteinFilterMax;
-    let carboFilterMax;
-    let kcalFilterMax;
-
-    if (parsedUrlQuery.kcalFilterMax > 0) {
+   if (parsedUrlQuery.kcalFilterMax > 0) {
         kcalFilterMax = parsedUrlQuery.kcalFilterMax 
     } else {
-        maxKcalFood = await Food.findOne({order: [['kcalorie', 'DESC']]})
-        kcalFilterMax = maxKcalFood.kcalorie;
+        kcalFilterMax = await Dish.max('sumKcalorie')
+        const maxKcalFood = await Food.max('kcalorie')
+        if (maxKcalFood > kcalFilterMax) kcalFilterMax = maxKcalFood;
+    }
+
+   if (parsedUrlQuery.fatFilterMax > 0) {
+        fatFilterMax = parsedUrlQuery.fatFilterMax 
+    } else {
+        fatFilterMax = await Dish.max('sumFat')
+        const maxFatFood = await Food.max('fat')
+        if (maxFatFood > fatFilterMax) fatFilterMax = maxFatFood;
     }
 
     if (parsedUrlQuery.proteinFilterMax > 0) {
         proteinFilterMax = parsedUrlQuery.proteinFilterMax 
     } else {
-        maxProteinFood = await Food.findOne({order: [['proteine', 'DESC']]})
-        proteinFilterMax = maxProteinFood.proteine;
-    }
-
-    if (parsedUrlQuery.fatFilterMax > 0) {
-        fatFilterMax = parsedUrlQuery.fatFilterMax 
-    } else {
-        maxFatFood = await Food.findOne({order: [['fat', 'DESC']]})
-        fatFilterMax = maxFatFood.kcalorie;
+        proteinFilterMax = await Dish.max('sumProtein')
+        const maxProteinFood = await Food.max('proteine')
+        if (maxProteinFood > proteinFilterMax) proteinFilterMax = maxProteinFood;
     }
 
     if (parsedUrlQuery.carboFilterMax > 0) {
         carboFilterMax = parsedUrlQuery.carboFilterMax 
     } else {
-        maxCarboFood = await Food.findOne({order: [['carbohydrate', 'DESC']]})
-        carboFilterMax = maxCarboFood.carbohydrate;
+        carboFilterMax = await Dish.max('sumCarbohydrate')
+        const maxCarboFood = await Food.max('carbohydrate')
+        if (maxCarboFood > carboFilterMax) carboFilterMax = maxCarboFood;
     }
 
-    let where = ({
-        kcalorie : {[Op.between] : [kcalFilterMin, kcalFilterMax]},
-        proteine : {[Op.between] : [proteinFilterMin, proteinFilterMax]},
-        fat : {[Op.between] : [fatFilterMin, fatFilterMax]},
-        carbohydrate : {[Op.between] : [carboFilterMin, carboFilterMax]},
+    const result = {
+        orderParameter : orderParameter,
+        orderBy : orderBy,
+        kcalFilterMin : parseInt(kcalFilterMin) || 0,
+        proteinFilterMin : parseInt(proteinFilterMin) || 0,
+        fatFilterMin : parseInt(fatFilterMin) || 0,
+        carboFilterMin : parseInt(carboFilterMin) || 0,
+        nameSelector : nameSelector,
+        kcalFilterMax : parseInt(kcalFilterMax),
+        proteinFilterMax : parseInt(proteinFilterMax),
+        fatFilterMax : parseInt(fatFilterMax),
+        carboFilterMax : parseInt(carboFilterMax)
+    };
+
+    return result;
+
+}
+
+
+const getFoodsForMainPage = async (parsedUrlQuery, user) => {
+
+    const Filters = await getAllFitlerParameters(parsedUrlQuery);
+
+    const where = ({
+        kcalorie : {[Op.between] : [Filters.kcalFilterMin, Filters.kcalFilterMax]},
+        proteine : {[Op.between] : [Filters.proteinFilterMin, Filters.proteinFilterMax]},
+        fat : {[Op.between] : [Filters.fatFilterMin, Filters.fatFilterMax]},
+        carbohydrate : {[Op.between] : [Filters.carboFilterMin, Filters.carboFilterMax]},
         name : { 
-            [Op.or] : nameSelector
+            [Op.or] : Filters.nameSelector
         },
         userId : {[Op.or] : [ user.id, null]}
     });
 
+    console.log(where);
     if(user.role.includes('admin') == true) delete where.userId;
+    console.log(where);
 
     let food = await Food.findAll({
-        order: [[orderParameter, orderBy]],
+        order: [[Filters.orderParameter, Filters.orderBy]],
         where : where
     }); 
 
     return food;
+};
+
+const getDishesForMainPage = async (parsedUrlQuery, user) => {
+
+    const Filters = await getAllFitlerParameters(parsedUrlQuery)
+
+    const where = ({
+        sumKcalorie : {[Op.between] : [Filters.kcalFilterMin, Filters.kcalFilterMax]},
+        sumProtein : {[Op.between] : [Filters.proteinFilterMin, Filters.proteinFilterMax]},
+        sumFat : {[Op.between] : [Filters.fatFilterMin, Filters.fatFilterMax]},
+        sumCarbohydrate : {[Op.between] : [Filters.carboFilterMin, Filters.carboFilterMax]},
+        /*name : { 
+            [Op.or] : Filters.nameSelector
+        },*/
+        userId : {[Op.or] : [ user.id, null]}
+    });
+
+    console.log(where);
+    if(user.role.includes('admin') == true) delete where.userId;
+    console.log(where);
+
+    let dish = await Dish.findAll({ 
+        include : [{
+            model : DishFood,
+            include : [
+                Food
+            ]
+        }],
+        order: [[Filters.orderParameter, Filters.orderBy]],
+        where : where
+    }); 
+
+    return dish;
 };
 
 
@@ -150,6 +207,7 @@ const countFilters = async (parsedUrlQuery) => {
 
 module.exports = {
     recalculateMacroBelongWithLastMeasurment,
-    getForMainPage,
+    getFoodsForMainPage,
+    getDishesForMainPage,
     countFilters,
 };

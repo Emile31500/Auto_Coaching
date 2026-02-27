@@ -7,16 +7,28 @@ const { Op } = require('sequelize');
 const session = require('express-session');
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
+const url = require('url')
+
 
 router.get('/food/ate/:date', authenticationChecker, parserJson, premiumChecker, async(req, res, next) => {
 
+    const parsedUrl = url.parse(req.url, true);
+    const name = parsedUrl.query.name ?? '';
+    
     const date = req.params.date;
 
     let ateFoods = await AteFood.findAll({
-        include : [User, Food],
+        include : [User, {
+            model : Food,
+            where : {
+                name : {
+                    [Op.like] : '%'+name+'%'
+                }
+            }
+        }],
         where: {
             userId: req.user.id,
-            date: date
+            date: date,
         }
     });
 

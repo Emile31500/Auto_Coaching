@@ -21,11 +21,26 @@ const storage = multer.diskStorage({
     }
 })
 
+/*router.get('/temp/dish', async(req, res, next) => {
+
+    const dishes = await Dish.findAll({ include : [{
+        model : DishFood,
+        include : [{
+            model : Food
+        }]
+    }]});
+
+    dishes.forEach(async (dish) => {
+       await dish.calculateSumMacro();
+    });
+
+})*/
+
 router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
 
-    const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    const food = await FoodService.getFoodsForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
     const rawDishFoods = String(parsedUrl.query.dishFoodsFilter);
     let myDishFoods = [];
@@ -164,7 +179,7 @@ router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res,
 router.get('/dish/edit/:id', authenticationChecker, parserJson, async(req, res, next) => {
 
     const parsedUrl = url.parse(req.url, true);
-    const food = await FoodService.getForMainPage(parsedUrl.query, req.user)
+    const food = await FoodService.getFoodsForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
 
     let myDishFoods = []
