@@ -15,7 +15,7 @@
                     <% if (isAdmin === true) { %>
                         <a href="/admin/curse" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>
                         <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteSessionDraftModal">
-                            <i class="fa-regular fa-trash-can"></i> Supprimer
+                            <i class="fa-solid fa-trash"></i> Supprimer
                         </button>
                         <form action="/admin/curse/<%= curse.id %>/session/<%= session.id %>" method="POST">
                         <input class="form-control w-auto" type="text" name="libele" value="<%= session.libele %>" placeholder="nom de la session">

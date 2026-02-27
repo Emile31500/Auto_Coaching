@@ -1,16 +1,100 @@
 const express = require('express');
-const { Exercise, ExerciseTrain, TrainRequest, PassedSport, Train, PassedInjury, NutritionRequirement} = require('../models/');
+const { Exercise, ExerciseTrain, Program, Train, NutritionRequirement} = require('../models/');
 const router = express.Router();
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
 var adminChecker = require('../middlewares/adminChecker');
 var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
+const parserJson = require('../middlewares/parserJson');
 
 
-router.get('/train/request', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/admin/program/id/delete', async(req, res) => {
 
-    res.render('../views/train-request',  {layout: '../views/main' });
+    try {
+
+        req.flash('success', 'Le programme ${program.libele} a bien été supprimé');
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+    }
+
+    res.redirect('/admin/train')
+
+})
+
+router.get('/program/id/publish', async(req, res) => {
+
+    try {
+
+        req.flash('success', 'Le programme ${program.libele} a bien été publié');
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+    }
+
+    res.redirect('/admin/train')
+
+})
+
+router.get('/program/create', async(req, res) => {
+
+    try {
+
+        req.flash('success', 'Le programme ${program.libele} a bien été publié');
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+    }
+
+    res.locals.message = req.flash();
+    res.render('../views/admin/program',  {
+        page : '/train',
+        layout: '../views/main-admin' 
+    });
+
+})
+
+router.get('/program/id/train/id/edit', async(req, res) => {
+
+    res.locals.message = req.flash();
+    res.render('../views/admin/program',  {
+        page : '/train',
+        layout: '../views/main-admin' 
+    });
+
+})
+
+router.post('/program/id/train/id/edit', parserJson, async(req, res) => {
+
+    try {
+
+        const rawData = req.body;
+
+        req.flash('success', 'Votre programme ${program.name} a bien été sauvegarder')
+
+
+        if (rawData.save === 'Sauvegarder') {
+
+            res.redirect('/admin/train')
+        
+        } else {
+
+            console.log("Créer un nouveau Train")
+            res.redirect('/program/id/train/id/edit')
+
+        }
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+
+    }
+
+    res.redirect('/program/id/train/id/edit')
 
 })
 
@@ -23,38 +107,23 @@ router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
 
 })
 
-router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/program/:id', authenticationChecker, premiumChecker, async (req, res) => {
 
-    const userId = req.user.id;
-    const trainId = req.params.id_train
+    const id = req.params.id
 
-    const train = await Train.findOne({where : {
-            id : trainId,
-            isFinished : true,
-            userId : userId
+    const programOrNull = await Program.findOne({
+        include : {
+            model : Train,
+            include : {
+                model : ExerciseTrain
+            }
         },
-        orderBy : [['day', 'ASC']]
+        where : {id : id}
     });
 
+    if (programOrNull instanceof Program) {
 
-    const exerciseTrain = await ExerciseTrain.findAll({where : {
-            trainId : trainId
-        }
-    });
-
-    if (train && exerciseTrain) {
-
-        let jsonRes = train;
-
-        jsonRes.exerciseTrain = exerciseTrain;
-
-        for (let i = 0; i <jsonRes.exerciseTrain.length; i++) {
-
-            jsonRes.exerciseTrain[i].exercise = await Exercise.findOne({where : {id : jsonRes.exerciseTrain[i].exerciseId}});
-
-        }
-
-        res.render('../views/train-detail',  {layout: '../views/main', train : jsonRes });
+        res.render('../views/train-detail',  {layout: '../views/main', train : program });
 
     } else {
 
@@ -64,17 +133,32 @@ router.get('/train/:id_train', authenticationChecker, premiumChecker, async (req
     }
 })
 
-router.get('/train/:id_train/play/:day', authenticationChecker, premiumChecker, async (req, res) => {
+router.get('/program/:idP/train/:idT/play', authenticationChecker, premiumChecker, async (req, res) => {
 
     const userId = req.user.id;
-    const trainId = req.params.id_train
+    const trainId = req.params.idT
+    const programId = req.params.idP
+
     const day = req.params.day;
 
-    const train = await Train.findOne({where : {id : trainId, userId : userId}});
+    const program = await Program.findOne({ 
+        include : {
+            model : Trains, 
+            include : ExerciseTrain,
+            where : {
+                id : trainId
+            },
+            require : true
+        },
+        where : {
+            id : programId, 
+            userId : userId
+        }
+    });
 
     if (train) {
 
-        res.render('../views/train-detail-play',  {layout: '../views/main', day : day, train : train });
+        res.render('../views/train-detail-play',  {layout: '../views/main', train : program.Trains[0] });
 
     } else {
 
@@ -157,35 +241,10 @@ router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, r
 
 })
 
-router.get('/api/admin/train/request/:id_train_request/train', adminCheckerApi, async (req, res) => {
+router.get('/admin/train', (req, res) => {
 
-    const idTrainRequest = req.params.id_train_request;
-    const train = await Train.findOne({where : {trainRequestId: idTrainRequest}})
-
-    if (train) {
-
-        res.statusCode = 200
-        res.send({code: res.statusCode, message: 'The train associated to this train request has been found', data : train});
-
-    } else {
-
-        res.statusCode = 404
-        res.send({code: res.statusCode, message: 'The train associated to this train request hasn\'t been found'});
-
-    }
-})
-
-router.get('/admin/train', adminChecker, (req, res) => {
-
+    res.locals.message = req.flash();
     res.render('../views/admin/train',  {layout: '../views/main-admin' });
-
-})
-
-router.get('/admin/train/request/:id_request', adminChecker, (req, res) => {
-
-    const idRequest = req.params.id_request;
-
-    res.render('../views/admin/train-request-detail',  {layout: '../views/main-admin', id_request: idRequest});
 
 })
 
@@ -250,120 +309,6 @@ router.patch('/api/admin/train', adminCheckerApi, async (req, res) => {
 
     }
 
-});
-
-router.get('/api/admin/train/request/:id_request', adminCheckerApi, async (req, res) => {
-
-    const id = req.params.id_request
-
-    trainRequest = await TrainRequest.findOne({where: {id: id}})
-
-    if (trainRequest){
-
-        const passedSports = await PassedSport.findAll({where: {trainRequestId: trainRequest.id}});
-        const passedInjuries = await PassedInjury.findAll({where: {trainRequestId: trainRequest.id}});
-
-        const data = JSON.stringify({trainRequest, 'passedSports' : passedSports, 'passedInjuries' : passedInjuries});
-
-        res.statusCode = 200;
-        res.send({'code': res.statusCode, 'message': 'Train request has been found', 'data': data});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({'code': res.statusCode, 'message': 'The train request model can\'t be reached '});
-
-    }
-})
-
-router.get('/api/admin/train/request', adminCheckerApi, async (req, res) => {
-
-    trainRequests = await TrainRequest.findAll()
-
-    if (trainRequests) {
-
-        res.statusCode = 200;
-        res.send({'code': res.statusCode, 'message': 'Train requests has been found', 'data': trainRequests});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({'code': res.statusCode, 'message': 'The train request models can\'t be reached '});
-
-    }
-
-})
-
-router.get('/api/train/request', authenticationCheckerApi, premiumChecker, async (req, res) => {
-
-    const userId = req.user.id;
-
-    var trainRequest = await TrainRequest.findAll({where : {userId : userId}});
-
-    if (trainRequest) {
-
-        res.statusCode = 200,
-        res.send({code: res.statusCode, message: 'Train request has been found', data: trainRequest});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({code: res.statusCode, message : 'This food was not found of id ' + id});
-
-    }
-
-})
-
-router.post('/api/train/request', authenticationCheckerApi, async (req, res) => {
-
-    const userId = req.user.id;
-
-    const rawDataTrainRequest = req.body.trainRequest;
-    const rawDataPassedSport = req.body.passedSport;
-    const rawDataPassedInjs = req.body.passedInj;
-
-    var trainRequest = await TrainRequest.create(rawDataTrainRequest);
-
-
-    createAssociation(rawDataPassedSport, PassedSport)
-    createAssociation(rawDataPassedInjs, PassedInjury)
-
-    async function createAssociation(array, model){
-
-        if (array.length > 0){
-
-            var index = 0;
-            var jsonArray = []
-
-            await Promise.all(array.map(async (row) => {
-
-                jsonArray[index] = await model.create(row);
-                jsonArray[index].userId = userId;
-
-                await jsonArray[index].setTrainRequest(trainRequest);
-                await jsonArray[index].save();
-                index++;
-
-            }));
-
-            return jsonArray;
-        }
-    }
-
-    if (trainRequest) {
-
-        let nutritionRequirement = await NutritionRequirement.create()
-        nutritionRequirement.generateDefaultNutrient(rawDataTrainRequest, req.user.sex);
-
-        res.statusCode = 200
-        res.send({code: res.statusCode, message: 'Train request has been created', data: trainRequest});
-
-    } else {
-
-        res.statusCode = 500;
-        res.send({code:res.statusCode, message : 'Can\'t create this train request'});
-
-    }
 });
 
  module.exports = router;

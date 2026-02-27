@@ -1,0 +1,177 @@
+<% title = "Child Template" %>exerciseAlerte
+<%- contentFor('mainNotMarged') %>  
+<%- contentFor('main') %>
+<form action="/program/id/train/id/edit" method="POST">
+    <h2 class="my-5">
+        <a href="/admin/train" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>  
+        <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deletePromalModalprogramid"><i class="fa-solid fa-trash"></i></button>   
+        <input type="text" name="program.name" class="form-control w-auto h1" placeholder="nom du programme" value="Entraînement"/>
+        <input type="submit" name="save" class="btn btn-primary" value="Sauvegarder"/>
+    </h2>
+    <div class="bg-light py-3 pt-0">
+        <table class="table table-striped my-5">
+            <thead class="table-dark">
+                <tr>
+                    <th colspan="3 ">
+                    <h3>
+                        Séances d'entraînement <input type="submit" name="save" class="btn btn-primary" value="+"/>
+                    </h3> 
+                    </th>
+                </tr>
+            </thead>
+        </table>
+        <div >
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div style="background-image: url(/media/photo/program.imageUrl); background-size: cover;" class="card-img-top">
+                        <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"> dish[i].name </a>
+                        </h5>
+                        <p class="card-text">
+                            <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteTrainModaltrainid"><i class="fa-solid fa-trash"></i></button>   
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <table class="table table-striped my-5">
+        <thead class="table-dark">
+            <tr>
+                <th colspan="6">
+                <h3>
+                        <input type="text" value="Séance n° 1" class="form-control w-auto bg-dark bg-opacity-0 text-white" name="train.name"/>  
+                        <button class="btn btn-primary w-auto" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> 
+                    </h3> 
+                </th>
+            </tr>
+            <tr>
+                <th scope="col">
+                    Image
+                </th>  
+                <th scope="col">
+                    Nom
+                </th>
+                <th scope="col">
+                    Répétitions
+                </th>
+                <th scope="col">
+                    Type de répétition
+                </th>
+                <th scope="col">
+                    Séries
+                </th>
+                <th scope="col">
+                    Action
+                </th>  
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <img src=""/>
+                </td>  
+                <td>
+                    Pompe
+                </td>
+                <td>
+                    45
+                </td>
+                <td>
+                    seconde
+                </td>
+                <td>
+                    4
+                </td>
+                <td>
+                    <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexerciseid"> <i class="fa-solid fa-trash"></i> </button>
+                </td>  
+            </tr>
+            </form>
+
+            <div class="modal" id="deleteExerciseModalexerciseid" tabindex="-1">   
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Attention ! </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                Vous êtes sur le point de supprimer l'exercice : exercise.name
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/program/id/train/exercise/id/delete" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </tbody>
+
+        <div class="modal" id="addExerciseModal" tabindex="-1">
+            <form action="/program/id/train/id/exercise" method="POST">    
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ajouter un exercice</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <select class="form-control my-3" name="session.exercice" placeholder="exercice" >
+                                <option>Pompes</option>
+                            </select>
+
+                            <input type="number" name="session.reps" class="form-control my-3" placeholder="Répétitions"/>
+
+                            <select class="form-control my-3" name="session.repsMode" placeholder="mode de répétition" >
+                                <option></option>
+                            </select>
+
+                            <input type="number" name="session.sets" class="form-control my-3" placeholder="Séries"/>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <input type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                            <input type="submit" class="btn btn-primary">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+         <div class="modal" id="deleteTrainModaltrainid" tabindex="-1">  
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Attention ! </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Vous êtes sur le point de supprimer l'entrainement : train.name
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/program/id/train/id/delete" class="btn btn-danger">Confirmer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </table>
+<%- include('../_modals/_program-delete.modal.ejs'); %>
+
+<script>
+    btns = document.querySelectorAll('.block-btn')
+    btns.forEach(btn => btn.addEventListener('click', function(e){e.preventDefault();}));
+</script>

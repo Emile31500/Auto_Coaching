@@ -19,4 +19,56 @@
         <tbody id="trainList">
         </tbody>
     </table>
+<script>
+    const exercises = [
+  {
+    nameExercise: 'Push-ups',
+    time: 60 // in seconds
+  },
+  {
+    nameExercise: 'Squats',
+    time: 45
+  },
+  {
+    nameExercise: 'Plank',
+    time: 30
+  }
+];
+
+let currentExerciseIndex = 0;
+let timeLeft = 0;
+let timerInterval = null;
+
+function startWorkout(exercisesArray) {
+  currentExerciseIndex = 0;
+  startExercise(exercisesArray);
+}
+
+function startExercise(exercisesArray) {
+  if (currentExerciseIndex >= exercisesArray.length) {
+    console.log("Workout finished 💪");
+    return;
+  }
+
+  const currentExercise = exercisesArray[currentExerciseIndex];
+  timeLeft = currentExercise.time;
+
+  console.log(`Start: ${currentExercise.nameExercise} (${timeLeft}s)`);
+
+  timerInterval = setInterval(() => {
+    console.log(`${currentExercise.nameExercise}: ${timeLeft}s remaining`);
+    timeLeft--;
+
+    if (timeLeft < 0) {
+      clearInterval(timerInterval);
+      console.log(`${currentExercise.nameExercise} done ✅\n`);
+      currentExerciseIndex++;
+      startExercise(exercisesArray);
+    }
+  }, 1000);
+}
+
+// Start the workout
+startWorkout(exercises);
+</script>
 <script src='/js/train/get.js'></script>

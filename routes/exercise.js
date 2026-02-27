@@ -6,97 +6,67 @@ var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
 
+router.get('/program/id/train/exercise/id/delete', async (req, res) => {
 
-router.get('/api/exercise/:id_exercise', authenticationCheckerApi, premiumChecker, parserJson, async(req, res, next) => {
+    try {
 
-    const idEx = req.params.id_exercise;
-    const exercise = await Exercise.findOne({ where : {id : idEx}});
+        req.flash('success', 'L exercice ${exercice.name} du programme ${program.name} a bien été supprimé');
 
-    if (exercise) {
+    } catch (error) {
 
-        res.statusCode = 200;
-        res.send({code : res.statusCode, message: 'Exercise  successfully requested', data: exercise});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({code : res.statusCode, message : 'Exercises was not found'});
-
+        req.flash('danger', error.message)
     }
+
+    res.redirect('/program/id/train/id/edit')
     
+})
 
-});
+router.get('/admin/exercise/id/delete', async(req, res) => {
 
-router.get('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, next) => {
+    try {
 
-    var exercise = await Exercise.findAll();
+        req.flash('success', 'L exercice ${exercice.libele} a bien été supprimé');
 
-    if (exercise) {
+    } catch (error) {
 
-        res.statusCode = 200;
-        res.send({code : res.statusCode, message: 'Exercises model successfully requested', data: exercise});
-
-    } else {
-
-        res.statusCode = 404;
-        res.send({code : res.statusCode, message : 'Exercises was not found'});
-
+        req.flash('danger', error.message)
     }
-    
 
-});
+    res.redirect('/admin/train')
 
-router.post('/api/admin/exercise', adminCheckerApi, parserJson, async(req, res, next) => {
+})
 
-    const rawData = req.body
+router.post('/admin/exercise', parserJson, async(req, res) => {
 
-    var exercise = await Exercise.create(rawData);
+    try {
 
-    if (exercise) {
+        const rawData = req.body;
+        req.flash('success', 'Le exercice ${exercice.name} a bien été créé');
 
-        res.statusCode = 201;
-        res.send({code : res.statusCode, message: 'Exercise instance successfully created', data: exercise});
+    } catch (error) {
 
-    } else {
-
-        res.statusCode = 401;
-        res.send({code : res.statusCode, message : 'Exercises was not found'});
-
+        req.flash('danger', error.message)
     }
-    
 
-});
+    res.redirect('/admin/train')
 
-router.delete('/api/admin/exercise/:id_exercise', adminCheckerApi, parserJson, async(req, res, next) => {
+})
 
-    const idExercise = req.params.id_exercise;
-    let exercise = await Exercise.findOne({where : {id: idExercise}});
+router.post('/program/id/train/id/exercise', parserJson, async(req, res) => {
 
-    if (exercise){
+    try {
 
-        Exercise.destroy({where: {id: idExercise}});
-        let exerciseDel = await Exercise.findOne({where : {id: idExercise}});
+        const rawData = req.body;
+        req.flash('success', "L'exercice ${exercise.name} a bien été ajouté à l'entraînement ${train.name} du programme ${program.name}.")
 
-        if (!exerciseDel) {
-    
-            res.statusCode = 204;
-            res.send({code : res.statusCode, message: 'Exercise instance successfully delated'});
-    
-        } else {
-    
-            res.statusCode = 500;
-            res.send({code : res.statusCode, message : 'This exercise delation didn\'t works'});
-    
-        }
+    } catch (error) {
 
-    } else {
-
-        res.statusCode = 404;
-        res.send({code : res.statusCode, message : 'This exercise was not found'});
+        req.flash('danger', error.message)
 
     }
 
+    res.redirect('/program/id/train/id/edit')
 
-});
+})
 
 module.exports = router

@@ -18,9 +18,9 @@
                 <th scope="col">
                     Répétitions
                 </th>
-                <th scope="col">
+                <!-- <th scope="col">
                     jour
-                </th>
+                </th> -->
             </tr>
         </thead>
 
@@ -41,25 +41,8 @@
                         <%= train.exerciseTrain[i].sets %> x <%= train.exerciseTrain[i].reps %> <%= train.exerciseTrain[i].repsMode %> 
                     </td> 
                     <td>
-                        <%= train.exerciseTrain[i].day %> 
                     </td> 
                 </tr>
-                <% if (train.exerciseTrain[i+1] !== undefined) {  %>
-                    <% if (train.exerciseTrain[i].day != train.exerciseTrain[i+1].day) {  %>
-                        
-                        <tr>
-                            <td colspan="3"> 
-                                <button class="btn btn-primary play-train" data-train="<%= train.exerciseTrain[i].day %>"> Play </button> 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3 align-middle"> 
-                                <h4><%= train.exerciseTrain[i+1].day %></h4>
-                            </td>
-                        </tr>
-                    <% } %> 
-                <% } %>  
-
             <% } %>
         </tbody>
     </table>
