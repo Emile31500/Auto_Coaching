@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/program/:idP/train/:idT/exercise/:idE/delete', async (req, res) => {
 
-    // try {
+    try {
 
         const idP = req.params.idP;
         const idT = req.params.idT;
@@ -43,11 +43,11 @@ router.get('/program/:idP/train/:idT/exercise/:idE/delete', async (req, res) => 
         req.flash('success', `L exercice ${exerciseName} du programme ${programName} a bien été supprimé`);
         res.redirect(`/program/${idP}/train/${idT}/edit`)
 
-    // } catch (error) {
+    } catch (error) {
 
-    //     req.flash('danger', error.message)
-    //     res.redirect('/admin/train')
-    // }
+        req.flash('danger', error.message)
+        res.redirect('/admin/train')
+    }
 })
 
 router.get('/admin/exercise/id/delete', async(req, res) => {
