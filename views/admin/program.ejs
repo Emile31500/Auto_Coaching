@@ -1,11 +1,11 @@
 <% title = "Child Template" %>exerciseAlerte
 <%- contentFor('mainNotMarged') %>  
 <%- contentFor('main') %>
-<form action="/program/id/train/id/edit" method="POST">
+<form action="/program/<%= programDraft.id %>/train/<%= trainDraft.id %>/edit" method="POST">
     <h2 class="my-5">
         <a href="/admin/train" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>  
         <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deletePromalModalprogramid"><i class="fa-solid fa-trash"></i></button>   
-        <input type="text" name="program.name" class="form-control w-auto h1" placeholder="nom du programme" value="Entraînement"/>
+        <input type="text" name="programName" class="form-control w-auto h1" placeholder="nom du programme" value="Entraînement"/>
         <input type="submit" name="save" class="btn btn-primary" value="Sauvegarder"/>
     </h2>
     <div class="bg-light py-3 pt-0">
@@ -21,24 +21,57 @@
             </thead>
         </table>
         <div >
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <div style="background-image: url(/media/photo/program.imageUrl); background-size: cover;" class="card-img-top">
-                        <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+            <% programDraft.TrainDrafts.forEach(async(train) => { %>
+                <div class="col">
+                    <div class="card <% if (train.id === trainDraft.id ) { %> border border-dark bg-light border-opacity-50 <% } %>" style="width: 18rem;">
+                        <div style="background-image: url(/media/photo/<%= train.imageUrl %>); background-size: cover;" class="card-img-top">
+                            <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <% if(!train.name) { %>
+                                    <% if (train.id === trainDraft.id) { %>
+                                        <input type='numer' name='trainName' class='form-control w-auto' placeholder='Entrez un nom de séance'/>
+                                    <% } else { %>
+                                        <a href="/program/<%= programDraft.id %>/train/<%= train.id %>/edit" >
+                                            <i>Nouvelle entrainement</i>
+                                        </a> 
+                                    <% } %> 
+                                <% } else { %> 
+                                    <a href="/program/<%= programDraft.id %>/train/<%= train.id %>/edit" class="link link-dark">
+                                        <%= train.name %>
+                                    </a>
+                                <% } %> 
+                            </h5>
+                            <p class="card-text">
+                                <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteTrainModal<%= train.id %> "><i class="fa-solid fa-trash"></i></button>   
+                            </p>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"> dish[i].name </a>
-                        </h5>
-                        <p class="card-text">
-                            <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteTrainModaltrainid"><i class="fa-solid fa-trash"></i></button>   
-                        </p>
+                </div>
+                <div class="modal" id="deleteTrainModal<%= train.id %>" tabindex="-1">  
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Attention ! </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Vous êtes sur le point de supprimer l'entrainement :<br> <%= train.name || 'entraînement sans nom' %>
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/program/<%= programDraft.id %>/train/<%= train.id %>/delete" class="btn btn-danger">Confirmer</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <% }) %>
         </div>
     </div>
+</form>
 
 
     <table class="table table-striped my-5">
@@ -46,8 +79,8 @@
             <tr>
                 <th colspan="6">
                 <h3>
-                        <input type="text" value="Séance n° 1" class="form-control w-auto bg-dark bg-opacity-0 text-white" name="train.name"/>  
-                        <button class="btn btn-primary w-auto" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> 
+                        Exercice de l'entrainement <%= trainDraft.name %>
+                        <button class="btn block-btn btn-primary w-auto" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> 
                     </h3> 
                 </th>
             </tr>
@@ -73,51 +106,51 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <img src=""/>
-                </td>  
-                <td>
-                    Pompe
-                </td>
-                <td>
-                    45
-                </td>
-                <td>
-                    seconde
-                </td>
-                <td>
-                    4
-                </td>
-                <td>
-                    <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexerciseid"> <i class="fa-solid fa-trash"></i> </button>
-                </td>  
-            </tr>
-            </form>
+            <% trainDraft.ExerciseTrainDrafts.forEach(exerciseTrainDraft => { %>
+                <tr>
+                    <td>
+                        <img src="<%= exerciseTrainDraft.Exercise.imageUrl %>"/>
+                    </td>  
+                    <td>
+                        <%= exerciseTrainDraft.Exercise.name %>
+                    </td>
+                    <td>
+                        <%= exerciseTrainDraft.reps %>
+                    </td>
+                    <td>
+                        <%= exerciseTrainDraft.repsMode %>
+                    </td>
+                    <td>
+                        <%= exerciseTrainDraft.sets %>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexercise<%= exerciseTrainDraft.id %>"> <i class="fa-solid fa-trash"></i> </button>
+                    </td>  
+                </tr>
 
-            <div class="modal" id="deleteExerciseModalexerciseid" tabindex="-1">   
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Attention ! </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>
-                                Vous êtes sur le point de supprimer l'exercice : exercise.name
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="/program/id/train/exercise/id/delete" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                <div class="modal" id="deleteExerciseModalexercise<%= exerciseTrainDraft.id %>" tabindex="-1">   
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Attention ! </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Vous êtes sur le point de supprimer l'exercice :<br> <%= exerciseTrainDraft.Exercise?.name || 'temp null' %>
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/program/<%= programDraft.id %>/train/<%= trainDraft.id %>/exercise/<%= exerciseTrainDraft.id %>/delete" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            <%}) %>
         </tbody>
 
         <div class="modal" id="addExerciseModal" tabindex="-1">
-            <form action="/program/id/train/id/exercise" method="POST">    
+            <form action="/program/<%= programDraft.id %>/train/<%= trainDraft.id %>/exercise" method="POST">    
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -125,20 +158,17 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <select class="form-control my-3" name="session.exercice" placeholder="exercice" >
-                                <option>Pompes</option>
+                            <select class="form-control my-3" name="exerciseId" placeholder="exercice" >
+                                <option value="1">Pompes</option>
                             </select>
+                            <input type="number" name="reps" class="form-control my-3" placeholder="Répétitions"/>
+                            <select class="form-control my-3" name="repsMode" placeholder="mode de répétition" >
+                                <option value="scd">Seconde</option>
+                                <option value="reps">Seconde</option>
 
-                            <input type="number" name="session.reps" class="form-control my-3" placeholder="Répétitions"/>
-
-                            <select class="form-control my-3" name="session.repsMode" placeholder="mode de répétition" >
-                                <option></option>
                             </select>
-
-                            <input type="number" name="session.sets" class="form-control my-3" placeholder="Séries"/>
-
-
-                        </div>
+                            <input type="number" name="sets" class="form-control my-3" placeholder="Séries"/>
+                        </div>  
                         <div class="modal-footer">
                             <input type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal">
                             <input type="submit" class="btn btn-primary">
@@ -147,27 +177,6 @@
                 </div>
             </form>
         </div>
-
-         <div class="modal" id="deleteTrainModaltrainid" tabindex="-1">  
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Attention ! </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            Vous êtes sur le point de supprimer l'entrainement : train.name
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="/program/id/train/id/delete" class="btn btn-danger">Confirmer</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        
     </table>
 <%- include('../_modals/_program-delete.modal.ejs'); %>
 

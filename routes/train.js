@@ -1,12 +1,14 @@
 const express = require('express');
-const { Exercise, ExerciseTrain, Program, Train, NutritionRequirement} = require('../models/');
+const { Exercise, ExerciseTrain, ExerciseTrainDraft, Program, ProgramDraft, Train, TrainDraft, NutritionRequirement} = require('../models/');
 const router = express.Router();
+const { Op } = require('sequelize');
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
 var adminChecker = require('../middlewares/adminChecker');
 var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
 const parserJson = require('../middlewares/parserJson');
+const program = require('../models/program');
 
 
 router.get('/admin/program/id/delete', async(req, res) => {
@@ -21,80 +23,6 @@ router.get('/admin/program/id/delete', async(req, res) => {
     }
 
     res.redirect('/admin/train')
-
-})
-
-router.get('/program/id/publish', async(req, res) => {
-
-    try {
-
-        req.flash('success', 'Le programme ${program.libele} a bien été publié');
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-    }
-
-    res.redirect('/admin/train')
-
-})
-
-router.get('/program/create', async(req, res) => {
-
-    try {
-
-        req.flash('success', 'Le programme ${program.libele} a bien été publié');
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-    }
-
-    res.locals.message = req.flash();
-    res.render('../views/admin/program',  {
-        page : '/train',
-        layout: '../views/main-admin' 
-    });
-
-})
-
-router.get('/program/id/train/id/edit', async(req, res) => {
-
-    res.locals.message = req.flash();
-    res.render('../views/admin/program',  {
-        page : '/train',
-        layout: '../views/main-admin' 
-    });
-
-})
-
-router.post('/program/id/train/id/edit', parserJson, async(req, res) => {
-
-    try {
-
-        const rawData = req.body;
-
-        req.flash('success', 'Votre programme ${program.name} a bien été sauvegarder')
-
-
-        if (rawData.save === 'Sauvegarder') {
-
-            res.redirect('/admin/train')
-        
-        } else {
-
-            console.log("Créer un nouveau Train")
-            res.redirect('/program/id/train/id/edit')
-
-        }
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-
-    }
-
-    res.redirect('/program/id/train/id/edit')
 
 })
 
@@ -241,13 +169,6 @@ router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, r
 
 })
 
-router.get('/admin/train', (req, res) => {
-
-    res.locals.message = req.flash();
-    res.render('../views/admin/train',  {layout: '../views/main-admin' });
-
-})
-
 router.post('/api/admin/train', adminCheckerApi, async (req, res) => {
 
     const rawTrain = req.body.train;
@@ -311,4 +232,4 @@ router.patch('/api/admin/train', adminCheckerApi, async (req, res) => {
 
 });
 
- module.exports = router;
+module.exports = router;

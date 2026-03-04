@@ -29,6 +29,9 @@ app.use(session({
   }),
 }));
 
+const adminTrain = require('./routes/admin/train');
+
+
 const academy = require('./routes/academy');
 const atedish = require('./routes/atedish');
 const checkout = require('./routes/checkout');
@@ -76,6 +79,9 @@ app.use(nutritionrequirement);
 app.use(performance);
 app.use(train);
 app.use(user);
+
+app.use(adminTrain);
+
 
 const server = app.listen(3000, () => {
   
