@@ -1,0 +1,50 @@
+<% title = "Child Template" %>exerciseAlerte
+<%- contentFor('mainNotMarged') %>  
+<%- contentFor('main') %>
+<form action="/admin/program/create" method="POST">
+    <h2 class="my-5">
+        <a href="/admin/train" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>  
+        <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deletePromalModalprogramid"><i class="fa-solid fa-trash"></i></button>   
+        <input type="text" name="name" class="form-control w-auto h1" placeholder="nom du programme" value="Entraînement" required/>
+        <input type="submit" name="save" class="btn btn-primary" value="Sauvegarder"/>
+    </h2>
+    <div class="my-5">
+        <textarea name="description" class="form-control" placeholder="Descripton" required></textarea>
+    </div>
+    <div class="bg-light py-3 pt-0">
+        <table class="table table-striped my-5">
+            <thead class="table-dark">
+                <tr>
+                    <th colspan="3 ">
+                    <h3>
+                        Séances d'entraînement <input type="submit" name="save" class="btn btn-primary" value="+"/>
+                    </h3> 
+                    </th>
+                </tr>
+            </thead>
+        </table>
+        <div >
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div style="background-image: url(/media/photo/program.imageUrl); background-size: cover;" class="card-img-top">
+                        <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"> train[i].name </a>
+                        </h5>
+                        <p class="card-text">
+                            <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteTrainModaltrainid"><i class="fa-solid fa-trash"></i></button>   
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../_modals/_program-delete.modal.ejs'); %>
+
+<script>
+    btns = document.querySelectorAll('.block-btn')
+    btns.forEach(btn => btn.addEventListener('click', function(e){e.preventDefault();}));
+</script>

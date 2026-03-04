@@ -8,31 +8,35 @@
         <thead class="table-dark">
             <tr>
                 <th colspan="3 ">
-                <h3>Programmes <button class="btn btn-primary"> + </button> </h3> 
+                <h3>Programmes <a href="/admin/program/create" class="btn btn-primary"> + </a> </h3> 
                 </th>
             </tr>
         </thead>
     </table>
     <div >
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <div style="background-image: url(/media/photo/program.imageUrl); background-size: cover;" class="card-img-top">
-                    <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+    
+        <% programs.forEach(async(program) => { %>
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"> <%= program.name %> </a>
+                        </h5>
+                         <div style="background-image: url(/media/photo/<%=program.imageUrl%>); background-size: cover;" class="card-img-top">
+                            <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                            </div>
+                        </div>  
+                        <p class="card-text">
+                            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePromalModalprogramid"><i class="fa-solid fa-trash"></i></button>
+                            <a href="/program/<%= program.id %>/train/<%= program.TrainDrafts[0]?.id %>/edit" class="btn btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                            <a href="/program/<%= program.id %>/publish"  class="btn btn-outline-primary">Publié</a>
+                        </p>
                     </div>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"> dish[i].name </a>
-                    </h5>
-                    <p class="card-text">
-                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePromalModalprogramid"><i class="fa-solid fa-trash"></i></button>
-                        <a href="/program/id/train/id/edit" class="btn btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
-                        <a href="/program/id/publish"  class="btn btn-outline-primary">Publié</a>
-                    </p>
-                </div>
             </div>
-            <%- include('../_modals/_program-delete.modal.ejs'); %>
-        </div>
+        <% }); %>
+        <%- include('../_modals/_program-delete.modal.ejs'); %>
+
     </div>
 </div>
 

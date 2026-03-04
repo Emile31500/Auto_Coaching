@@ -11,6 +11,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Exercise.hasMany(models.ExerciseTrain, {
+        foreignKey : {
+          name : 'exerciseId',
+          allowNull : false
+        }
+      })
+      Exercise.hasMany(models.ExerciseTrainDraft, {
+        foreignKey : {
+          name : 'exerciseId',
+          allowNull : false
+        }
+      })
     }
   }
   Exercise.init({
