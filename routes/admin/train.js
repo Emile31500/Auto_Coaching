@@ -2,6 +2,7 @@ const express = require('express');
 const { Exercise, ExerciseTrainDraft, ProgramDraft, TrainDraft} = require('../../models/');
 const router = express.Router();
 const parserJson = require('../../middlewares/parserJson');
+const { Op } = require('sequelize');
 
 
 router.get('/program/create', async(req, res) => {
@@ -44,6 +45,9 @@ router.get('/program/:idP/train/:idT/edit', async(req, res) => {
             model : TrainDraft,
             include : {
                 model : ExerciseTrainDraft,
+                include : {
+                    model : Exercise
+                }
             }
         },
         where : {
@@ -65,9 +69,12 @@ router.get('/program/:idP/train/:idT/edit', async(req, res) => {
         }
     })
 
+    const exercises = await Exercise.findAll()
+
     res.locals.message = req.flash();
     res.render('../views/admin/program',  {
         page : '/train',
+        exercises : exercises,
         trainDraft : trainDraft,
         programDraft : programDraft,
         layout: '../views/main-admin' 
@@ -99,11 +106,11 @@ router.get('/program/:idP/train/:idT/delete', async(req, res) => {
                     [Op.not] : idT
                 }
             },
-            orderBy : [['id', 'ASC']]
+            orderBy : [['id', 'DESC']]
         })
 
         req.flash('success', `L'entraînement ${trainDraftName} a bien été supprimé.`)
-        res.redirect(`/program/${programDraft.id}/train/${trainDraftRedirect.id}`)
+        res.redirect(`/program/${programDraft.id}/train/${trainDraftRedirect.id}/edit`)
 
     } catch (error) {
         req.flash('danger', error.message)
@@ -163,9 +170,12 @@ router.get('/admin/train', async (req, res) => {
         required : false
     }});
 
+    const exercises = await Exercise.findAll();
+
     res.locals.message = req.flash();
     res.render('../views/admin/train',  {
         layout: '../views/main-admin',
+        exercises : exercises,
         programs : programDraft
     });
 

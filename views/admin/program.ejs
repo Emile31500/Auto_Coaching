@@ -20,16 +20,17 @@
                 </tr>
             </thead>
         </table>
-        <div >
+        <div class="card-group  row-cols-2 row-cols-md-4 row-cols-lg-5  g-4">
             <% programDraft.TrainDrafts.forEach(async(train) => { %>
-                <div class="col">
-                    <div class="card <% if (train.id === trainDraft.id ) { %> border border-dark bg-light border-opacity-50 <% } %>" style="width: 18rem;">
+                <div class="col" >
+                    <div class="card <% if (train.id === trainDraft.id ) { %> border border-dark bg-light border-opacity-50 <% } %>" style="width: 10em;">
                         <div style="background-image: url(/media/photo/<%= train.imageUrl %>); background-size: cover;" class="card-img-top">
                             <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
                             </div>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">
+                                <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteTrainModal<%= train.id %> "><i class="fa-solid fa-trash"></i></button>   
                                 <% if(!train.name) { %>
                                     <% if (train.id === trainDraft.id) { %>
                                         <input type='numer' name='trainName' class='form-control w-auto' placeholder='Entrez un nom de séance'/>
@@ -44,8 +45,10 @@
                                     </a>
                                 <% } %> 
                             </h5>
-                            <p class="card-text">
-                                <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteTrainModal<%= train.id %> "><i class="fa-solid fa-trash"></i></button>   
+                            <p class="card-text overflow-auto " style="max-height: 100px;">
+                                <% train.ExerciseTrainDrafts.forEach(exercisesTrain => { %>
+                                    <%= exercisesTrain.reps %> x <%= exercisesTrain.sets %> : <%= exercisesTrain.Exercise.name %><br>
+                                <% }) %>
                             </p>
                         </div>
                     </div>
@@ -79,7 +82,7 @@
             <tr>
                 <th colspan="6">
                 <h3>
-                        Exercice de l'entrainement <%= trainDraft.name %>
+                        Exercices de l'entrainement <%= trainDraft.name %>
                         <button class="btn block-btn btn-primary w-auto" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> 
                     </h3> 
                 </th>
@@ -109,7 +112,7 @@
             <% trainDraft.ExerciseTrainDrafts.forEach(exerciseTrainDraft => { %>
                 <tr>
                     <td>
-                        <img src="<%= exerciseTrainDraft.Exercise.imageUrl %>"/>
+                        <img src="/media/photo/<%= exerciseTrainDraft.Exercise.imageUrl %>" style="width: 4rem;"/>
                     </td>  
                     <td>
                         <%= exerciseTrainDraft.Exercise.name %>
@@ -158,13 +161,27 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <select class="form-control my-3" name="exerciseId" placeholder="exercice" >
-                                <option value="1">Pompes</option>
-                            </select>
+                            <!-- <select class="form-control my-3" name="exerciseId" placeholder="exercice" >
+                                <% exercises.forEach(exercise => {%>
+                                    <option ><%= exercise.name %></option>
+                                <% }) %>
+                            </select> -->
+                            <div class="row overflow-auto" style="max-height: 20em; ">
+                                <% exercises.forEach(exercise => {%>
+                                    <div class="col my-5 p-0">
+                                        <div style="background-image: url(/public/media/photo/<%= exercise.imageUrl %>);">
+                                            <img src="/media/photo/<%= exercise.imageUrl %>"  style="width: 8em;"/>
+                                            <p>
+                                                <input value="<%= exercise.id %>" type="radio" class="" name="exerciseId"/> <%= exercise.name %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
                             <input type="number" name="reps" class="form-control my-3" placeholder="Répétitions"/>
                             <select class="form-control my-3" name="repsMode" placeholder="mode de répétition" >
                                 <option value="scd">Seconde</option>
-                                <option value="reps">Seconde</option>
+                                <option value="reps">Répétition</option>
 
                             </select>
                             <input type="number" name="sets" class="form-control my-3" placeholder="Séries"/>

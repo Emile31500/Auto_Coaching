@@ -39,63 +39,64 @@
 
     </div>
 </div>
+<div class="my-5">
+    <h3 class="my-3">Exercices <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> </h3> 
 
-
-<table class="table table-striped my-5">
-    <thead class="table-dark">
-        <tr>
-             <th colspan="3 ">
-               <h3>Exercices <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> </h3> 
-            </th>
-        </tr>
-        <tr>
-             <th scope="col">
-                Image
-            </th>  
-            <th scope="col">
-                Nom
-            </th>
-            <th scope="col">
-                Action
-            </th>  
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                <img src=""/>
-            </td>  
-            <td>
-                Nom
-            </td>
-            <td>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexerciseid"> <i class="fa-solid fa-trash"></i> </button>
-            </td>  
-        </tr>
-
-        <div class="modal" id="deleteExerciseModalexerciseid" tabindex="-1">   
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Attention ! </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- <table class="table table-striped my-5">
+        <thead class="table-dark">
+            <tr>
+                <th colspan="3 ">
+                <h3>Exercices <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExerciseModal"> + </button> </h3> 
+                </th>
+            </tr>
+            <tr>
+                <th scope="col">
+                    Image
+                </th>  
+                <th scope="col">
+                    Nom
+                </th>
+                <th scope="col">
+                    Action
+                </th>  
+            </tr>
+        </thead>
+    </table> -->
+    <div class="card-group  row-cols-2 row-cols-md-5 row-cols-lg-6 row-cols-xl-7 g-4">
+        <% exercises.forEach(exercise => { %>
+            <div class="col">
+                <div class="card" style="width: 10rem;">
+                    <img src="/media/photo/<%= exercise.imageUrl %>" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= exercise.name %></h5>
+                        <p class="card-text d-none">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexercise<%= exercise.id %>"> <i class="fa-solid fa-trash"></i> </button>
                     </div>
-                    <div class="modal-body">
-                        <p>
-                            Vous êtes sur le point de supprimer l'exercice : exercise.name
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="/admin/exercise/id/delete" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                </div>
+                <div class="modal" id="deleteExerciseModalexercise<%= exercise.id %>" tabindex="-1">   
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Attention ! </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Vous êtes sur le point de supprimer l'exercice : <%= exercise.name %>
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/admin/exercise/<%= exercise.id %>/delete" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-    </tbody>
+        <%})%>
+    </div>
 
     <div class="modal" id="addExerciseModal" tabindex="-1">
-        <form action="/admin/exercise" method="POST">    
+        <form action="/admin/exercise" method="POST"  enctype="multipart/form-data">    
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -105,7 +106,7 @@
                     <div class="modal-body">
                         <input type="text" name="name" class="form-control my-2" placeholder="Nom"/>
 
-                        <input type="file" name="imageUrl" class="form-control my-2" placeholder="Image de l'Exercice"/>
+                        <input type="file" name="imageUrl" class="form-control my-2" placeholder="Image de l'Exercice zefzef"/>
 
                     </div>
                     <div class="modal-footer">
@@ -116,4 +117,4 @@
             </div>
         </form>
     </div>
-</table>
+</div>
