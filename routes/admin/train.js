@@ -1,5 +1,5 @@
 const express = require('express');
-const { Exercise, ExerciseTrainDraft, ProgramDraft, TrainDraft} = require('../../models/');
+const { Exercise, ExerciseTrain, ExerciseTrainDraft, Program, ProgramDraft, Train, TrainDraft} = require('../../models/');
 const router = express.Router();
 const parserJson = require('../../middlewares/parserJson');
 const { Op } = require('sequelize');
@@ -229,18 +229,98 @@ router.post('/program/:idP/train/:idT/edit', parserJson, async(req, res) => {
 
 })
 
-router.get('/program/id/publish', async(req, res) => {
+
+router.get('/temp/program/clear', async(req, res) => {
+
+    const program = await Program.findOne({
+        include : {
+            model : Train,
+            include : {
+                model : ExerciseTrain,
+                include : {
+                    model : Exercise
+                }
+            }
+        },      
+        where : {
+            id : 1
+        }
+    })
+
+            
+
+
+})
+
+
+router.get('/program/:id/publish', async(req, res) => {
 
     try {
 
-        req.flash('success', 'Le programme ${program.libele} a bien été publié');
+        const id = req.params.id
+
+        const programDraft = await ProgramDraft.findOne({ 
+            include : {
+                model : TrainDraft,
+                include : {
+                    model : ExerciseTrainDraft,
+                    include : {
+                        model : Exercise
+                    }
+                }
+            },        
+            where : {
+                id : id
+            }
+        })
+
+        let program = await Program.findOne({
+            include : {
+                model : Train,
+                require : false
+            },
+            where : {
+                programDraftId : id
+            }
+        })
+
+       if (!(program instanceof Program)) program = await Program.create({programDraftId : id});
+
+        await program.update({
+            name : programDraft.name,
+            description : programDraft.description
+        })
+
+        program.Trains?.forEach(train => {train.destroy()}) 
+
+        programDraft.TrainDrafts.forEach(async(trainDraft) => {
+
+            let train = await Train.create({
+                name : trainDraft.name,
+                description :  trainDraft.description,
+                programId :  program.id
+            }) 
+
+            trainDraft.ExerciseTrainDrafts.forEach(async(exerciseTrainDraft) => {
+                let exerciseTrain = await ExerciseTrain.create({
+                    exerciseId : exerciseTrainDraft.exerciseId,
+                    trainId : train.id,
+                    reps : exerciseTrainDraft.reps,
+                    repsMode : exerciseTrainDraft.repsMode,
+                    sets : exerciseTrainDraft.sets,
+                })
+
+            })
+        });
+
+        req.flash('success', `Le programme ${program.name} a bien été publié`);
 
     } catch (error) {
 
         req.flash('danger', error.message)
     }
-
-    res.redirect('/admin/train')
+    return false;
+    // res.redirect('/admin/train')
 
 })
 

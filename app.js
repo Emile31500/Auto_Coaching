@@ -29,14 +29,13 @@ app.use(session({
   }),
 }));
 
+const adminExercise = require('./routes/admin/exercise');
 const adminTrain = require('./routes/admin/train');
-
 
 const academy = require('./routes/academy');
 const atedish = require('./routes/atedish');
 const checkout = require('./routes/checkout');
 const dish = require('./routes/dish');
-const exercise = require('./routes/exercise');
 const food = require('./routes/food');
 const foodAte = require('./routes/foodate');
 const home = require('./routes/home');
@@ -68,7 +67,6 @@ app.use(academy);
 app.use(atedish);
 app.use(checkout);
 app.use(dish);
-app.use(exercise);
 app.use(home);
 app.use(food);
 app.use(foodAte);
@@ -80,6 +78,7 @@ app.use(performance);
 app.use(train);
 app.use(user);
 
+app.use(adminExercise);
 app.use(adminTrain);
 
 
