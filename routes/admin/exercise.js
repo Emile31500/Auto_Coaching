@@ -12,9 +12,10 @@ const storage = multer.diskStorage({
         cb(null, 'public/media/photo/')
     },
     filename: function (req, file, cb) {
-        const ext = path.extname(file.originalname);
-        fileFullName = (finalName + ext) 
-        cb(null, fileFullName)
+        fileFullName = finalName 
+        cb(null, fileFullName + '.gif')
+        cb(null, fileFullName + '.png')
+
     }
 })
 const upload = multer({ storage : storage });
@@ -80,7 +81,7 @@ router.get('/admin/exercise/id/delete', async(req, res) => {
 
 })
 
-router.post('/admin/exercise', parserJson,  upload.single('imageUrl'), async(req, res) => {
+router.post('/admin/exercise', parserJson, upload.single('imageUrl'), async(req, res) => {
 
     try {
 

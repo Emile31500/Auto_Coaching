@@ -3,6 +3,22 @@ const { Exercise, ExerciseTrain, ExerciseTrainDraft, Program, ProgramDraft, Trai
 const router = express.Router();
 const parserJson = require('../../middlewares/parserJson');
 const { Op } = require('sequelize');
+const multer = require('multer')
+const path = require('path');
+const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
+const finalName = 'program-image-' + uniqueSuffix;
+let fileFullName = ''
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/media/photo/')
+    },
+    filename: function (req, file, cb) {
+        fileFullName = finalName + '.png'
+        cb(null, fileFullName )
+
+    }
+})
+const upload = multer({ storage : storage });
 
 router.get('/program-draft/:id/delete', async(req, res) => {
 
@@ -47,26 +63,6 @@ router.get('/program/:id/delete', async(req, res) => {
     }
 
     res.redirect('/admin/train')
-
-})
-
-
-router.get('/program-draft/create', async(req, res) => {
-
-    try {
-
-        req.flash('success', 'Le programme ${program.libele} a bien été publié');
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-    }
-
-    res.locals.message = req.flash();
-    res.render('../views/admin/program-create',  {
-        page : '/train',
-        layout: '../views/main-admin' 
-    });
 
 })
 
@@ -166,7 +162,7 @@ router.get('/program-draft/:idP/train/:idT/delete', async(req, res) => {
 
 })
 
-router.post('/admin/program-draft/create', parserJson, async(req, res) => {
+router.post('/admin/program-draft/create', parserJson,  upload.single('imageUrl'), async(req, res) => {
 
     try {
 
@@ -174,6 +170,7 @@ router.post('/admin/program-draft/create', parserJson, async(req, res) => {
 
         const porgramDraft = await ProgramDraft.create({
             name : rawData.name,
+            imageUrl : fileFullName,
             description : rawData.description,
         })
 
@@ -181,7 +178,7 @@ router.post('/admin/program-draft/create', parserJson, async(req, res) => {
             programDraftId : programDraft.id
         });
 
-        req.flash('success', `Votre programme ${porgramDraft.name} a bien été sauvegarder`)
+        req.flash('success', `Votre programme ${porgramDraft.name} a bien été sauvegardé.`)
 
 
         if (rawData.save === 'Sauvegarder') {
@@ -237,7 +234,7 @@ router.get('/admin/train', async (req, res) => {
 
 })
 
-router.post('/program-draft/:idP/train/:idT/edit', parserJson, async(req, res) => {
+router.post('/program-draft/:idP/train/:idT/edit', parserJson, upload.single('imageUrl'), async(req, res) => {
 
     try {
 
@@ -250,7 +247,9 @@ router.post('/program-draft/:idP/train/:idT/edit', parserJson, async(req, res) =
             id : idP
         }})
         await programDraft.update({
+            imageUrl : fileFullName,
             name : rawData.programName,
+            description : rawData.description,
         })
 
         const trainDraft = await TrainDraft.findOne({ where : {
