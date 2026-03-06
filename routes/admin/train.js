@@ -352,8 +352,8 @@ router.get('/program-draft/:id/publish', async(req, res) => {
 
         req.flash('danger', error.message)
     }
-    return false;
-    // res.redirect('/admin/train')
+    
+    res.redirect('/admin/train')
 
 })
 
