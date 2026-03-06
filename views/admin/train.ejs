@@ -8,7 +8,7 @@
         <thead class="table-dark">
             <tr>
                 <th colspan="3 ">
-                <h3>Programmes  brouillon <a href="/admin/program-draft/create" class="btn btn-primary"> + </a> </h3> 
+                <h3>Programmes brouillon <a href="/admin/program-draft/create" class="btn btn-primary"> + </a> </h3> 
                 </th>
             </tr>
         </thead>
@@ -19,15 +19,15 @@
         <% programDrafts.forEach(async(programDraft) => { %>
             <div class="col">
                 <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a class="link link-dark"> <%= programDraft.name %> </a>
-                        </h5>
-                         <div style="background-image: url(/media/photo/<%=programDraft.imageUrl%>); background-size: cover;" class="card-img-top">
+                    <div class="card-body m-0 p-0 ">
+                         <div style="background-image: url(/media/photo/<%=programDraft.imageUrl || 'palceholder-elderly-fit.jpg' %>); background-size: cover; min-height: 10em;" class="card-img-top w-100">
                             <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                                <h5 class="card-title">
+                                    <a class="link link-dark"> <%= programDraft.name %> </a>
+                                </h5>
                             </div>
                         </div>  
-                        <p class="card-text">
+                        <p class="card-text p-3">
                             <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProgramModal<%= programDraft.id %>"><i class="fa-solid fa-trash"></i></button>
                             <a href="/program-draft/<%= programDraft.id %>/train/<%= programDraft.TrainDrafts[0]?.id %>/edit" class="btn btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                             <a href="/program-draft/<%= programDraft.id %>/publish"  class="btn btn-outline-primary">Publié</a>
@@ -47,7 +47,7 @@
         <thead class="table-dark">
             <tr>
                 <th colspan="3 ">
-                <h3>Programmes  publié  </h3> 
+                <h3>Programmes publié  </h3> 
                 </th>
             </tr>
         </thead>
@@ -56,16 +56,16 @@
     
         <% programs.forEach(async(program) => { %>
             <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a class="link link-dark" > <%= program.name %> </a>
-                        </h5>
-                         <div style="background-image: url(/media/photo/<%=program.imageUrl%>); background-size: cover;" class="card-img-top">
-                            <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
+                <div class="card m-0" style="width: 18rem;">
+                    <div class="card-body m-0 p-0" >
+                        <div style="background-image: url('/media/photo/<%= program.imageUrl %>'); background-size: cover; min-height: 10em;" class="card-img-top w-100 h-auto">
+                            <div class="w-100 h-50 p-2 bg-light bg-opacity-75">
+                                <h5 class="card-title p-3 m-0">
+                                    <a class="link link-dark" > <%= program.name %> </a>
+                                </h5>
                             </div>
-                        </div>  
-                        <p class="card-text">
+                        </div> 
+                        <p class="card-text p-3">
                             <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProgramModal<%= program.id %>"><i class="fa-solid fa-trash"></i></button>
                             <a href="/program-draft/<%= program.id %>/hidde"  class="btn btn-outline-primary">Dépublier</a>
                         </p>
@@ -84,7 +84,7 @@
         <% exercises.forEach(exercise => { %>
             <div class="col">
                 <div class="card" style="width: 10rem;">
-                    <img src="/media/photo/<%= exercise.imageUrl %>" class="card-img-top" alt="...">
+                    <img src="/media/photo/<%= exercise.imageUrl %>.gif" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title"><%= exercise.name %></h5>
                         <p class="card-text d-none">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
