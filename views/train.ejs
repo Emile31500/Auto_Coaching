@@ -2,73 +2,30 @@
 
 <%- contentFor('mainWithoutMarge') %>
 <%- contentFor('main') %>
-<div class="d-flex justify-content-center my-5">
-    <a class="h3 p-3 mb-2 border border-warning rounded link-underline-light bg-warning link-white" href="/train/request">
-        Let's start a new program !
-    </a>
+<div>
+
+  <h2 class="my-5"> Nos programmes</h2>
+
+  <% programs.forEach(program => {%>
+
+    <div class="my-5 d-flex border w-auto p-0 shadow">
+      <div>
+        <img src="/media/photo/<%= program.imageUrl %>" style="max-height: 168px;"/>
+      </div>
+       <div class="px-3 w-auto" >
+        <h3 class="my-2"><%= program.name %></h3>
+        <p class="my-2 h-auto overflow-hidden"><%= program.description%></p>
+        <div>
+        <div>
+          <p>
+            <a class="btn btn-primary my-1 me-2 ">Suivre</a><a  href="/program/<%= program.id %>"  class="btn btn-outline-primary my-1 ms-2">Voir</a>
+          </p>
+        </div>
+       </div> 
+      </div>
+    </div>
+
+  <% }) %>
 </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col" colspan="2">
-                    Train name
-                </th>
-            </tr>
-        </thead>
-        <tbody id="trainList">
-        </tbody>
-    </table>
-<script>
-    const exercises = [
-  {
-    nameExercise: 'Push-ups',
-    time: 60 // in seconds
-  },
-  {
-    nameExercise: 'Squats',
-    time: 45
-  },
-  {
-    nameExercise: 'Plank',
-    time: 30
-  }
-];
-
-let currentExerciseIndex = 0;
-let timeLeft = 0;
-let timerInterval = null;
-
-function startWorkout(exercisesArray) {
-  currentExerciseIndex = 0;
-  startExercise(exercisesArray);
-}
-
-function startExercise(exercisesArray) {
-  if (currentExerciseIndex >= exercisesArray.length) {
-    console.log("Workout finished 💪");
-    return;
-  }
-
-  const currentExercise = exercisesArray[currentExerciseIndex];
-  timeLeft = currentExercise.time;
-
-  console.log(`Start: ${currentExercise.nameExercise} (${timeLeft}s)`);
-
-  timerInterval = setInterval(() => {
-    console.log(`${currentExercise.nameExercise}: ${timeLeft}s remaining`);
-    timeLeft--;
-
-    if (timeLeft < 0) {
-      clearInterval(timerInterval);
-      console.log(`${currentExercise.nameExercise} done ✅\n`);
-      currentExerciseIndex++;
-      startExercise(exercisesArray);
-    }
-  }, 1000);
-}
-
-// Start the workout
-startWorkout(exercises);
-</script>
-<script src='/js/train/get.js'></script>
+<!-- <script src='/js/train/get.js'></script> -->

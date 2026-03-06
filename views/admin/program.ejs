@@ -1,10 +1,10 @@
 <% title = "Child Template" %>exerciseAlerte
 <%- contentFor('mainNotMarged') %>  
 <%- contentFor('main') %>
-<form action="/program/<%= programDraft.id %>/train/<%= trainDraft.id %>/edit" method="POST">
+<form action="/program-draft/<%= programDraft.id %>/train/<%= trainDraft.id %>/edit" method="POST">
     <h2 class="my-5">
         <a href="/admin/train" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>  
-        <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deletePromalModalprogramid"><i class="fa-solid fa-trash"></i></button>   
+        <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteProgramDraftModal<%= programDraft.id %>""><i class="fa-solid fa-trash"></i></button>   
         <input type="text" name="programName" class="form-control w-auto h1" placeholder="nom du programme" value="Entraînement"/>
         <input type="submit" name="save" class="btn btn-primary" value="Sauvegarder"/>
     </h2>
@@ -35,12 +35,12 @@
                                     <% if (train.id === trainDraft.id) { %>
                                         <input type='numer' name='trainName' class='form-control w-auto' placeholder='Entrez un nom de séance'/>
                                     <% } else { %>
-                                        <a href="/program/<%= programDraft.id %>/train/<%= train.id %>/edit" >
+                                        <a href="/program-draft/<%= programDraft.id %>/train/<%= train.id %>/edit" >
                                             <i>Nouvelle entrainement</i>
                                         </a> 
                                     <% } %> 
                                 <% } else { %> 
-                                    <a href="/program/<%= programDraft.id %>/train/<%= train.id %>/edit" class="link link-dark">
+                                    <a href="/program-draft/<%= programDraft.id %>/train/<%= train.id %>/edit" class="link link-dark">
                                         <%= train.name %>
                                     </a>
                                 <% } %> 
@@ -66,7 +66,7 @@
                                 </p>
                             </div>
                             <div class="modal-footer">
-                                <a href="/program/<%= programDraft.id %>/train/<%= train.id %>/delete" class="btn btn-danger">Confirmer</a>
+                                <a href="/program-draft/<%= programDraft.id %>/train/<%= train.id %>/delete" class="btn btn-danger">Confirmer</a>
                             </div>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                                 </p>
                             </div>
                             <div class="modal-footer">
-                                <a href="/program/<%= programDraft.id %>/train/<%= trainDraft.id %>/exercise/<%= exerciseTrainDraft.id %>/delete" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                                <a href="/program-draft/<%= programDraft.id %>/train/<%= trainDraft.id %>/exercise/<%= exerciseTrainDraft.id %>/delete" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
                             </div>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
         </tbody>
 
         <div class="modal" id="addExerciseModal" tabindex="-1">
-            <form action="/program/<%= programDraft.id %>/train/<%= trainDraft.id %>/exercise" method="POST">    
+            <form action="/program-draft/<%= programDraft.id %>/train/<%= trainDraft.id %>/exercise" method="POST">    
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -195,7 +195,7 @@
             </form>
         </div>
     </table>
-<%- include('../_modals/_program-delete.modal.ejs'); %>
+<%- include('../_modals/_program-draft-delete.modal.ejs', { programDraft : programDraft}); %>
 
 <script>
     btns = document.querySelectorAll('.block-btn')

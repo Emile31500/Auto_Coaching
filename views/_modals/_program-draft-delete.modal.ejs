@@ -1,4 +1,4 @@
-<div class="modal" id="deleteProgramModal<%= program.id %>" tabindex="-1">   
+<div class="modal" id="deleteProgramDraftModal<%= programDraft.id %>" tabindex="-1">   
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,11 +7,11 @@
             </div>
             <div class="modal-body">
                 <p>
-                    Vous êtes sur le point de supprimer le programme : <%= program.name %>
+                    Vous êtes sur le point de supprimer le brouillon de programme : <%= programDraft.name %>
                 </p>
             </div>
             <div class="modal-footer">
-                <a href="/program/<%= program.id %>/delete" class="btn btn-danger">Supprimer</a>
+                <a href="/program-draft/<%= programDraft.id %>/delete" class="btn btn-danger">Supprimer</a>
             </div>
         </div>
     </div>

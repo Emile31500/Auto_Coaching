@@ -1,200 +1,191 @@
-let indexEx = 0;
-let previousIndexEx = 0;
-let isPlayed = false;
-let temps = 5
-let i = 0;
-let isPaused = false;
-let isStoped = false;
-let isTrainDone = false;
-let timerActivated = false;
-let startTimeout = 0;
-let interval, timeout;
-let fullTrain = [];
 
-play.addEventListener('click', async function(event){
+    const id = document.querySelector('#trainId').innerHTML
+    document.querySelector('#trainId').remove()
+    const plus = document.querySelector('#plus')
+    const pause = document.querySelector('#pause')
+    const play = document.querySelector('#play')
+    const stop = document.querySelector('#stop')
+    const preventExerciseNameElement = document.querySelector('#preventExerciseNameElement')
+    const preventExerciseImageElement = document.querySelector('#preventExerciseImageElement')
+    const nextExerciseNameElement = document.querySelector('#nextExerciseNameElement')
+    const nextExerciseImageElement = document.querySelector('#nextExerciseImageElement')
+    const currentExerciseNameElement = document.querySelector('#currentExerciseNameElement')
+    const currentExerciseRepsElement = document.querySelector('#currentExerciseRepsElement')
+    const currentExerciseRepsModeElement = document.querySelector('#currentExerciseRepsModeElement')
+    const currentExerciseImageElement = document.querySelector('#currentExerciseImageElement')
 
-    isPaused = false;
-    if (!isTrainDone){
+    let exerciseName = '';
+    let exerciseImageUrl = '';
+    let exerciseRepsMode = '';
+    let exerciseReps = '';
+    let exerciseSets = '';
 
-        if (!isPlayed) {
 
-            indexEx = 0;
-            fullTrain = await parseTrain();
-            isPlayed = true;
+
+    const moins = document.querySelector('#moins')
+    let notInPause = true;
+
+    pause.addEventListener('click', function name(params) {
+        notInPause = !notInPause
+    })
+
+    let currentExerciseIndex = 0;
+    let timeLeft = 0;
+    let timerInterval = null;
+    let notInPuse = true;
+
     
+
+    fetch('/api/train/'+id, {
+        method : 'GET',
+        headers : {
+            'Content-Type' : 'application/json'
+        }
+    }).then(response => response.json())
+    .then(data => {
+
+        const exerciseTrains = data.data.ExerciseTrains
+
+        function startExercise() 
+        {
+           
+            
+            const currentExercise = exerciseTrains[currentExerciseIndex];
+            printPreventExercise(currentExerciseIndex)
+            printExercise(currentExerciseIndex)
+            printNextExercise(currentExerciseIndex)
+
+            if (currentExerciseIndex < exerciseTrains.length) {
+
+                 if (currentExercise.repsMode === 'scd') {
+
+                    timeLeft = currentExercise.reps;
+                    timerInterval = setInterval(() => {
+
+                        if (notInPause) {
+                            
+                            timeLeft--;
+                            printTimer()
+
+                            if (timeLeft <= 0) {
+                                clearInterval(timerInterval);
+                                currentExerciseIndex++;
+                                startExercise(exerciseTrains);
+                            }
+                        }
+
+                    }, 1000);
+
+                } else {
+
+                    plus.removeEventListener('click', nextWrapper)
+                    plus.addEventListener('click', nextWrapper)
+                
+                }
+            }
+
+           
         }
 
-        printExercises()
-    }
-});
+        function next (e){
+        
+            currentExerciseIndex++;
+            clearInterval(timerInterval)
+            startExercise()
+        }
 
-next.addEventListener('click', async function(event){
+        function nextWrapper(event){
+            
+            next.call(this, event)
+        }
 
-    event.preventDefault();
+        function printPreventExercise(currentExerciseIndex) {
 
+            if (currentExerciseIndex > 0) {
 
-    if (!timerActivated && !isTrainDone) {
-
-        nextSets();
-
-    }  else if (timerActivated) {
-
-        isStoped = true;
-        timerActivated = false;
-        isPaused = false;
-        previousIndexEx = indexEx;
-        nextSets();
-   
-    }
-});
-
-previous.addEventListener('click', async function(event){
-
-    isPaused = false;
-    event.preventDefault();
-    previousSets();
-
-})
-
-pause.addEventListener('click', function (event){
-
-    event.preventDefault();
-    isPaused = true;
-    startTimeout = parseInt(secondTimer.innerHTML);
-    pause.classList.add('d-none');
-    play.classList.remove('d-none');
-
-})
-
-function diminuerTemps() {
-
-    temps--;
-    if (temps <= 0) {
-        clearInterval(interval)
-    }
-
-}
-
-function delayedLoop(i, temps, callback) {
-
-    if (i <= temps) {
-
-        if (!isPaused){
-
-            if (!isStoped){
-
-                timerActivated = true;            
-                setTimeout(() => {
-
-                        i++
-                        delayedLoop(i, temps, callback);
-                
-                }, 1000);
-
-                secondTimer.innerHTML = i    
-                play.classList.add('d-none')
-                pause.classList.remove('d-none')
+                exerciseName = exerciseTrains[currentExerciseIndex-1].Exercise.name;
+                exerciseImageUrl  = '/media/photo/'+exerciseTrains[currentExerciseIndex-1].Exercise.imageUrl;
 
             } else {
 
-                i = 0;
-                isStoped = false;
-                secondTimer.innerHTML = '';
-                return false;
+                exerciseName = ''
+                exerciseImageUrl  = '';
             }
 
-        } else {
-
-            return false;
+            preventExerciseNameElement.innerHTML = exerciseName ;
+            preventExerciseImageElement.setAttribute('src', exerciseImageUrl);
         }
 
-    } else {
+        function printExercise(currentExerciseIndex) {
 
-        startTimeout = 0;
-        
-        if (callback !== undefined) {
+            if (currentExerciseIndex < exerciseTrains.length) {
 
-            timerActivated = false
-            callback();
+                exerciseName = exerciseTrains[currentExerciseIndex].Exercise.name;
+                exerciseImageUrl = '/media/photo/'+exerciseTrains[currentExerciseIndex].Exercise.imageUrl;
+                exerciseReps = exerciseTrains[currentExerciseIndex].reps;
+                exerciseSets = exerciseTrains[currentExerciseIndex].sets;
+                if ( exerciseTrains[currentExerciseIndex].repsMode === 'scd') {
+                    exerciseRepsMode = 'secondes'
+                } else {
+                    exerciseRepsMode = 'répitions'
+                }
+               
+            } else {
 
+                exerciseName =  'Job finish !'
+
+            }
+
+            currentExerciseNameElement.innerHTML = exerciseName
+            currentExerciseRepsModeElement.innerHTML = exerciseRepsMode
+            currentExerciseRepsElement.innerHTML = exerciseReps
+            currentExerciseImageElement.setAttribute('src', exerciseImageUrl);
+           
         }
-    }
-}
-
-function nextSets() {
-
-    indexEx++;
-    startTimeout = 0;
-    printExercises();
-
-}
-
-function previousSets () {
-
-    indexEx = indexEx-1;
-    isStoped = true;
-    startTimeout = 0;
-    printExercises();
-
-}
-
-
-function printExercises() {
-
-    play.classList.add('d-none')
-    pause.classList.remove('d-none')
-    secondTimer.innerHTML = '';
-
-    if (fullTrain[indexEx] !== undefined){
-
-        currentExercise.innerHTML = fullTrain[indexEx].exercise.name + ' n° ' + (fullTrain[indexEx].sets +1);
-
-        if (fullTrain[indexEx].exercise.name !== 'Rest') {
-
-            printPreviousExercise();
-            printNextExercise();
-
-        }
-        
-        if (fullTrain[indexEx].repsMode === 'scd') {
-
-            isStoped = false;
-            temps = fullTrain[indexEx].reps
-            delayedLoop(startTimeout, temps, nextSets)
-
-        }
-
-    } else {
-
-        isTrainDone = true;
-        currentExercise.innerHTML = 'Done !'
-
-    }
-
-}
-
-function printNextExercise(){
-
-    if (fullTrain[indexEx+2] !== undefined){
-
-        nextExercise.innerHTML = fullTrain[indexEx+2].exercise.name + ' n° ' + (fullTrain[indexEx+2].sets+1);
     
-    } else {
+        function printNextExercise(currentExerciseIndex) {
 
-        nextExercise.innerHTML = 'Done !';
+            if (currentExerciseIndex < exerciseTrains.length-1) {
 
+                exerciseName = exerciseTrains[currentExerciseIndex+1].Exercise.name;
+                exerciseImageUrl  = '/media/photo/'+exerciseTrains[currentExerciseIndex+1].Exercise.imageUrl;
+
+            } else if  (currentExerciseIndex === exerciseTrains.length-1) {
+
+                exerciseName = 'Job finis !'
+                exerciseImageUrl  = '';
+
+            } else {
+
+                exerciseName = ''
+                exerciseImageUrl  = '';
+
+            }
+
+            nextExerciseNameElement.innerHTML = exerciseName ;
+            nextExerciseImageElement.setAttribute('src', exerciseImageUrl);
+        }
+
+
+        function startWorkout() {
+            currentExerciseIndex = 0;
+            startExercise();
+            pause.classList.remove('d-none')
+            pause.classList.remove('d-none')
+            play.removeEventListener('click', startWorkoutWrapper)
+        }
+
+        function startWorkoutWrapper() {
+
+            startWorkout.call(this, event)
+
+            
+        }
+
+        play.addEventListener('click', startWorkoutWrapper)
+
+    })
+
+    function printTimer () {
+        currentExerciseRepsElement.innerHTML = timeLeft;
     }
-}
-
-function printPreviousExercise(){
-
-    if (indexEx <= 1) {
-
-         previousExercise.innerHTML = '';
-
-    } else {
-
-        nextExercise.innerHTML = fullTrain[indexEx-1].exercise.name + ' n° ' + (fullTrain[indexEx-1].sets + 1);
-        
-    }
-}

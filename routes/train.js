@@ -1,34 +1,51 @@
 const express = require('express');
-const { Exercise, ExerciseTrain, ExerciseTrainDraft, Program, ProgramDraft, Train, TrainDraft, NutritionRequirement} = require('../models/');
+const { Exercise, ExerciseTrain, Program, Train, User} = require('../models/');
 const router = express.Router();
-const { Op } = require('sequelize');
 var authenticationChecker = require('../middlewares/authenticationChecker')
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
-var adminChecker = require('../middlewares/adminChecker');
 var adminCheckerApi = require('../middlewares/adminCheckerApi');
 const premiumChecker = require('../middlewares/premiumChecker');
-const parserJson = require('../middlewares/parserJson');
-const program = require('../models/program');
+
+router.get('/train', authenticationChecker, premiumChecker, async ( req, res) => {
 
 
-router.get('/admin/program/id/delete', async(req, res) => {
+    programs = await Program.findAll({
+        include : {
+            model : Train,
+            include : {
+                model : ExerciseTrain
+            }
+        }
+    })
 
-    try {
-
-        req.flash('success', 'Le programme ${program.libele} a bien été supprimé');
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-    }
-
-    res.redirect('/admin/train')
+    res.render('../views/train',  {
+        user : req.user,
+        programs : programs,
+        page : '/train',
+        layout: '../views/main' 
+    });
 
 })
 
-router.get('/train', authenticationChecker, premiumChecker, (req, res) => {
+router.get('/train/:id/play',  authenticationChecker, premiumChecker, async ( req, res) => {
 
-    res.render('../views/train',  {
+    const id = req.params.id
+
+    const train = await Train.findOne({
+        include : {
+            model : ExerciseTrain,
+            include : {
+                model : Exercise
+            }
+        },
+        where : {
+            id : id
+        }
+    })
+
+    res.render('../views/train-play',  {
+        user : req.user,
+        train : train,
         page : '/train',
         layout: '../views/main' 
     });
@@ -39,26 +56,30 @@ router.get('/program/:id', authenticationChecker, premiumChecker, async (req, re
 
     const id = req.params.id
 
-    const programOrNull = await Program.findOne({
+    const program = await Program.findOne({
         include : {
             model : Train,
             include : {
-                model : ExerciseTrain
-            }
+                model : ExerciseTrain,
+                include : {
+                    model : Exercise
+                },
+                require : false
+
+            },
+            require : false
         },
-        where : {id : id}
+        where : {
+            id : id
+        }
     });
 
-    if (programOrNull instanceof Program) {
-
-        res.render('../views/train-detail',  {layout: '../views/main', train : program });
-
-    } else {
-
-        res.statusCode = 404
-        res.render('../views/error/error', {layout: '../views/main', code : res.statusCode, message : 'L\'élément que vous recherchez n\'existe pas.'})
-
-    }
+    res.render('../views/train-detail', {
+        user : req.user,
+        layout : '../views/main',
+        program : program,
+        page : '/train'
+    });
 })
 
 router.get('/program/:idP/train/:idT/play', authenticationChecker, premiumChecker, async (req, res) => {
@@ -148,17 +169,25 @@ router.get('/api/train/:id_train/exercise/:day', authenticationCheckerApi, premi
     }
 })
 
-router.get('/api/train', authenticationCheckerApi, premiumChecker, async (req, res) => {
+router.get('/api/train/:id', async (req, res) => {
 
-    const userId = req.user.id;
+    const id = req.params.id;
 
-    var trains = await Train.findAll({where:{userId: userId}});
+    var train = await Train.findOne({
+        include : {
+            model : ExerciseTrain,
+            include : {
+                model : Exercise
+            }
+        },
+        where:{id: id}
+    });
 
-    if (trains) {
+    if (train) {
 
         res.statusCode = 200
 
-        res.send({code: res.statusCode, message: 'Trains models have been requested', data: trains});
+        res.send({code: res.statusCode, message: 'Trains models have been requested', data: train});
 
     } else {
 

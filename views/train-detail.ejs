@@ -1,49 +1,65 @@
 <% title = "Child Template" %>
 
-<%- contentFor('mainWithoutMarge') %>
-<%- contentFor('main') %>
-<h2 class="my-5">Entraînement</h2>
-<div class="d-flex justify-content-center">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <td colspan="3 align-middle"> 
-                    <h3 class="align-middle"><%= train.name %></h3>
-                </td>
-            </tr>
-            <tr>
-                <th scope="col">
-                    Nom
-                </th>
-                <th scope="col">
-                    Répétitions
-                </th>
-                <!-- <th scope="col">
-                    jour
-                </th> -->
-            </tr>
-        </thead>
+<%- contentFor('mainWithoutMarge') %>     
+<div class="row">
+    <div class="col-8" style="height: 18em; max-width: 70%; background-image: url(/media/photo/<%= program.imageUrl %>); background-size: cover; background-position : center; background-color: rgb(255, 255, 255);" ></div>
 
-        <tbody id="trainList">
-            <% if (train.exerciseTrain.length > 0) { %>
-                <tr>
-                    <td colspan="3 align-middle"> 
-                        <h4 class="align-middle"><%= train.exerciseTrain[0].day %></h4>
-                    </td>
-                </tr>
-            <% } %>
-            <% for (var i = 0; i < train.exerciseTrain.length ;  i++ ) { %>
-                <tr>
-                    <td>
-                        <%= train.exerciseTrain[i].exercise.name %> 
-                    </td> 
-                    <td>
-                        <%= train.exerciseTrain[i].sets %> x <%= train.exerciseTrain[i].reps %> <%= train.exerciseTrain[i].repsMode %> 
-                    </td> 
-                    <td>
-                    </td> 
-                </tr>
-            <% } %>
-        </tbody>
-    </table>
+    <div class="col-4 d-flex align-items-center ">
+        <h2> <a href="/train" class="btn btn-primary"><i class="fa-solid fa-arrow-left-long"></i></a>  <%= program.name %></h2>
+    </div>
+</div>
+<%- contentFor('main') %>
+
+<div class="my-5 p-3 border shadow">
+    <%= program.description %>
+</div>
+
+
+
+<div class="my-5 accordion" id="accordion">
+    <% 
+    isFirst = true;
+    program.Trains.forEach(train => { %>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading<%= train.name + train.id %>">
+                 <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= train.name + train.id %>" aria-expanded="false" aria-controls="collapse<%= train.name + train.id %>">
+                    <%= train.name %>
+                </div>
+            </h2>
+            <div id="collapse<%= train.name+train.id %>" class="accordion-collapse collapse <% if(isFirst){ %> show <% isFirst = false;} %> " aria-labelledby="heading<%= train.name + train.id %>" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="my-2">
+                    <%= 
+                        train.description || `I'm Emile Armengaud, a 23-year-old back-end developer working as a freelancer. I specialize in PHP, particularly with the Symfony framework. If you're looking for a trustworthy partner to help create your project, you can contact me via the email provided in the "Main" section below. Hoping we will meet us soon !`
+                    %>
+                </div>
+                <div class="my-2">
+                    <a href="/train/<%= train.id %>/play" class="btn btn-outline-primary">M'entraîner</a>
+                </div>
+                
+
+                <% train.ExerciseTrains.forEach(exerciseTrain => {%>
+                    <div class="my-5 d-flex border w-auto p-0 shadow">
+                        <div>
+                            <img src="/media/photo/<%= exerciseTrain.Exercise.imageUrl %>" style="max-height: 168px;"/>
+                        </div>
+                        <div class="px-3 w-auto" >
+                            <h4 class="my-2"><%= exerciseTrain.Exercise.name %></h3>
+                                <p class="my-2 h-auto overflow-hidden"><%= program.description%>
+                                    I'm Emile Armengaud, a 23-year-old back-end developer working as a freelancer. I specialize in PHP, particularly with the Symfony framework. If you're looking for a trustworthy partner to help create your project, you can contact me via the email provided in the "Main" section below. Hoping we will meet us soon !
+                                </p>
+                            <div>
+                                <div>
+                                    <h5 class="my-2">
+                                        <%= exerciseTrain.reps %> répétitions x <%= exerciseTrain.sets %> séries
+                                    </h5>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                <%}) %>
+            </div>
+        </div>
+    <% })%>
 </div>

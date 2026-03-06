@@ -4,8 +4,54 @@ const router = express.Router();
 const parserJson = require('../../middlewares/parserJson');
 const { Op } = require('sequelize');
 
+router.get('/program-draft/:id/delete', async(req, res) => {
 
-router.get('/program/create', async(req, res) => {
+    try {
+
+        const id = req.params.id
+        const programDraft = await ProgramDraft.findOne({where : {
+            id : id
+        }})
+
+        const programName = programDraft;
+        await programDraft.destroy();
+
+        req.flash('success', `Le brouillon de programme ${programName} a bien été supprimé`);
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+    }
+
+    res.redirect('/admin/train')
+
+})
+
+router.get('/program/:id/delete', async(req, res) => {
+
+    try {
+
+        const id = req.params.id
+        const program = await Program.findOne({where : {
+            id : id
+        }})
+
+        const programName = program;
+        await program.destroy();
+
+        req.flash('success', `Le programme ${programName} a bien été supprimé`);
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+    }
+
+    res.redirect('/admin/train')
+
+})
+
+
+router.get('/program-draft/create', async(req, res) => {
 
     try {
 
@@ -24,7 +70,7 @@ router.get('/program/create', async(req, res) => {
 
 })
 
-router.get('/admin/program/create', async(req, res) => {
+router.get('/admin/program-draft/create', async(req, res) => {
 
     res.locals.message = req.flash();
     res.render('../views/admin/program-create',  {
@@ -34,7 +80,7 @@ router.get('/admin/program/create', async(req, res) => {
 
 })
 
-router.get('/program/:idP/train/:idT/edit', async(req, res) => {
+router.get('/program-draft/:idP/train/:idT/edit', async(req, res) => {
 
 
     const idP = req.params.idP
@@ -82,7 +128,7 @@ router.get('/program/:idP/train/:idT/edit', async(req, res) => {
 
 })
 
-router.get('/program/:idP/train/:idT/delete', async(req, res) => {
+router.get('/program-draft/:idP/train/:idT/delete', async(req, res) => {
 
     try {
 
@@ -110,7 +156,7 @@ router.get('/program/:idP/train/:idT/delete', async(req, res) => {
         })
 
         req.flash('success', `L'entraînement ${trainDraftName} a bien été supprimé.`)
-        res.redirect(`/program/${programDraft.id}/train/${trainDraftRedirect.id}/edit`)
+        res.redirect(`/program-draft/${programDraft.id}/train/${trainDraftRedirect.id}/edit`)
 
     } catch (error) {
         req.flash('danger', error.message)
@@ -120,7 +166,7 @@ router.get('/program/:idP/train/:idT/delete', async(req, res) => {
 
 })
 
-router.post('/admin/program/create', parserJson, async(req, res) => {
+router.post('/admin/program-draft/create', parserJson, async(req, res) => {
 
     try {
 
@@ -145,7 +191,7 @@ router.post('/admin/program/create', parserJson, async(req, res) => {
         } else {
 
             const trainDraft = await TrainDraft.create();
-            res.redirect(`/program/${porgramDraft.id}/train/${trainDraft.id}/edit`)
+            res.redirect(`/program-draft/${porgramDraft.id}/train/${trainDraft.id}/edit`)
 
         }
 
@@ -155,7 +201,7 @@ router.post('/admin/program/create', parserJson, async(req, res) => {
 
     }
 
-    res.redirect('/program/id/train/id/edit')
+    res.redirect('/program-draft/id/train/id/edit')
 
 })
 
@@ -170,18 +216,28 @@ router.get('/admin/train', async (req, res) => {
         required : false
     }});
 
+    const programs = await Program.findAll({ include : {
+        model : Train,
+        include : {
+            model : ExerciseTrain,
+            required : false
+        },  
+        required : false
+    }});
+
     const exercises = await Exercise.findAll();
 
     res.locals.message = req.flash();
     res.render('../views/admin/train',  {
         layout: '../views/main-admin',
         exercises : exercises,
-        programs : programDraft
+        programDrafts : programDraft,
+        programs : programs
     });
 
 })
 
-router.post('/program/:idP/train/:idT/edit', parserJson, async(req, res) => {
+router.post('/program-draft/:idP/train/:idT/edit', parserJson, async(req, res) => {
 
     try {
 
@@ -215,7 +271,7 @@ router.post('/program/:idP/train/:idT/edit', parserJson, async(req, res) => {
         } else {
 
             const newTrainDraft = await TrainDraft.create({programDraftId : programDraft.id});
-            res.redirect(`/program/${programDraft.id}/train/${newTrainDraft.id}/edit`)
+            res.redirect(`/program-draft/${programDraft.id}/train/${newTrainDraft.id}/edit`)
 
         }
 
@@ -225,35 +281,12 @@ router.post('/program/:idP/train/:idT/edit', parserJson, async(req, res) => {
 
     }
 
-    res.redirect('/program/id/train/id/edit')
+    res.redirect('/program-draft/id/train/id/edit')
 
 })
 
 
-router.get('/temp/program/clear', async(req, res) => {
-
-    const program = await Program.findOne({
-        include : {
-            model : Train,
-            include : {
-                model : ExerciseTrain,
-                include : {
-                    model : Exercise
-                }
-            }
-        },      
-        where : {
-            id : 1
-        }
-    })
-
-            
-
-
-})
-
-
-router.get('/program/:id/publish', async(req, res) => {
+router.get('/program-draft/:id/publish', async(req, res) => {
 
     try {
 

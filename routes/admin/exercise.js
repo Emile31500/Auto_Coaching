@@ -21,7 +21,7 @@ const upload = multer({ storage : storage });
 
 const router = express.Router();
 
-router.get('/program/:idP/train/:idT/exercise/:idE/delete', async (req, res) => {
+router.get('/program-draft/:idP/train/:idT/exercise/:idE/delete', async (req, res) => {
 
     try {
 
@@ -56,7 +56,7 @@ router.get('/program/:idP/train/:idT/exercise/:idE/delete', async (req, res) => 
 
         await exerciseTrainDraft.destroy();
         req.flash('success', `L exercice ${exerciseName} du programme ${programName} a bien été supprimé`);
-        res.redirect(`/program/${idP}/train/${idT}/edit`)
+        res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
 
     } catch (error) {
 
@@ -103,7 +103,7 @@ router.post('/admin/exercise', parserJson,  upload.single('imageUrl'), async(req
 
 })
 
-router.post('/program/:idP/train/:idT/exercise', parserJson, async(req, res) => {
+router.post('/program-draft/:idP/train/:idT/exercise', parserJson, async(req, res) => {
 
     try {
 
@@ -134,7 +134,7 @@ router.post('/program/:idP/train/:idT/exercise', parserJson, async(req, res) => 
 
 
         req.flash('success', `L'exercice ${exerciseTrainDraft.name} a bien été ajouté à l'entraînement ${trainDraft.name} du programme ${programDraft.name}.`)
-        res.redirect(`/program/${programDraft.id}/train/${trainDraft.id}/edit`)
+        res.redirect(`/program-draft/${programDraft.id}/train/${trainDraft.id}/edit`)
 
     } catch (error) {
 

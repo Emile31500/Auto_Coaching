@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Program.init({
     name: DataTypes.STRING,
+    imageUrl: DataTypes.STRING,
     description: DataTypes.CHAR,
   }, {
     sequelize,
