@@ -62,7 +62,7 @@
     <div class="d-flex">
         <% train.ExerciseTrains.forEach(exerciseTrain => { %>
             <div class="border shadow m-3 h-auto "  style="width: 11em;" >
-                <img src="/media/photo/<%= exerciseTrain.Exercise.imageUrl %>" class="w-100 border"/>
+                <img src="/media/photo/<%= exerciseTrain.Exercise.imageUrlPng %>" class="w-100 border png-gif-img"/>
                 <div class="p-2 border">
                     <h4><%= exerciseTrain.Exercise.name %></h4>
                     <%= exerciseTrain.reps %> répétition x <%= exerciseTrain.sets %> 
@@ -73,3 +73,4 @@
 </div>
 <span id="trainId" class="d-none"><%= train.id %></span>
 <script Type="text/javascript" src="/js/train/play.js"></script>
+<script src="/js/exercise/image.js" type="text/javascript"></script>

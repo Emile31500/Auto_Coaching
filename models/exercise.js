@@ -27,7 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Exercise.init({
     name: DataTypes.STRING,
-    imageUrl : DataTypes.STRING
+    imageUrlGif : DataTypes.STRING,
+    imageUrlPng : DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Exercise',

@@ -104,7 +104,7 @@
             if (currentExerciseIndex > 0) {
 
                 exerciseName = exerciseTrains[currentExerciseIndex-1].Exercise.name;
-                exerciseImageUrl  = '/media/photo/'+exerciseTrains[currentExerciseIndex-1].Exercise.imageUrl;
+                exerciseImageUrl  = '/media/photo/'+exerciseTrains[currentExerciseIndex-1].Exercise.imageUrlPng;
 
             } else {
 
@@ -121,7 +121,7 @@
             if (currentExerciseIndex < exerciseTrains.length) {
 
                 exerciseName = exerciseTrains[currentExerciseIndex].Exercise.name;
-                exerciseImageUrl = '/media/photo/'+exerciseTrains[currentExerciseIndex].Exercise.imageUrl;
+                exerciseImageUrl = '/media/photo/'+exerciseTrains[currentExerciseIndex].Exercise.imageUrlGif;
                 exerciseReps = exerciseTrains[currentExerciseIndex].reps;
                 exerciseSets = exerciseTrains[currentExerciseIndex].sets;
                 if ( exerciseTrains[currentExerciseIndex].repsMode === 'scd') {
@@ -148,7 +148,7 @@
             if (currentExerciseIndex < exerciseTrains.length-1) {
 
                 exerciseName = exerciseTrains[currentExerciseIndex+1].Exercise.name;
-                exerciseImageUrl  = '/media/photo/'+exerciseTrains[currentExerciseIndex+1].Exercise.imageUrl;
+                exerciseImageUrl  = '/media/photo/'+exerciseTrains[currentExerciseIndex+1].Exercise.imageUrlPng;
 
             } else if  (currentExerciseIndex === exerciseTrains.length-1) {
 

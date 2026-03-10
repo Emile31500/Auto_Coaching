@@ -5,20 +5,23 @@ var adminCheckerApi = require('../../middlewares/adminCheckerApi');
 const multer  = require('multer');
 const path = require('path');
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
-const finalName = 'exercise-image-' + uniqueSuffix;
-let fileFullName = ''
+communName = '';
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/media/photo/')
     },
     filename: function (req, file, cb) {
-        fileFullName = finalName 
-        cb(null, fileFullName + '.gif')
-        cb(null, fileFullName + '.png')
-
+        communName = 'exercise-image-' + uniqueSuffix;
+        const ext = path.extname(file.originalname);
+        const completeName = communName + ext
+        cb(null, completeName)
     }
 })
+
 const upload = multer({ storage : storage });
+// const upload = multer({ dest: 'public/media/photo/' })*/
 
 const router = express.Router();
 
@@ -81,7 +84,7 @@ router.get('/admin/exercise/id/delete', async(req, res) => {
 
 })
 
-router.post('/admin/exercise', parserJson, upload.single('imageUrl'), async(req, res) => {
+router.post('/admin/exercise', parserJson, upload.fields([{name : 'imageUrlGif'}, {name : 'imageUrlPng'}]), async(req, res) => {
 
     try {
 
@@ -89,7 +92,9 @@ router.post('/admin/exercise', parserJson, upload.single('imageUrl'), async(req,
 
         const exercise = await Exercise.create({
             name : rawData.name,
-            imageUrl : fileFullName,
+            imageUrlGif : communName + '.gif',
+            imageUrlPng : communName + '.png',
+
         })
 
         req.flash('success', `Le exercice ${exercise.name} a bien été créé`);

@@ -1,23 +1,23 @@
 const express = require('express');
 const { Exercise, ExerciseTrainDraft, ProgramDraft, TrainDraft } = require('../models');
 var parserJson = require('../middlewares/parserJson');
-var adminCheckerApi = require('../middlewares/adminCheckerApi');
-const multer  = require('multer');
+// const multer  = require('multer');
 const path = require('path');
-const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
-const finalName = 'exercise-image-' + uniqueSuffix;
-let fileFullName = ''
+/*
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/media/photo/')
     },
     filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
+        const communName = 'exercise-image-' + uniqueSuffix;
         const ext = path.extname(file.originalname);
-        fileFullName = (finalName + ext) 
-        cb(null, fileFullName)
+        cb(null, (communName + '.gif') )
     }
 })
 const upload = multer({ storage : storage });
+// const upload = multer({ dest: 'public/media/photo/' })*/
 
 const router = express.Router();
 
@@ -80,28 +80,6 @@ router.get('/admin/exercise/id/delete', async(req, res) => {
 
 })
 
-router.post('/admin/exercise', parserJson,  upload.single('imageUrl'), async(req, res) => {
-
-    try {
-
-        const rawData = req.body;
-
-        const exercise = await Exercise.create({
-            name : rawData.name,
-            imageUrl : fileFullName,
-        })
-
-        req.flash('success', `Le exercice ${exercise.name} a bien été créé`);
-
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-    }
-
-    res.redirect('/admin/train')
-
-})
 
 router.post('/program/:idP/train/:idT/exercise', parserJson, async(req, res) => {
 
