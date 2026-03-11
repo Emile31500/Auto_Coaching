@@ -12,7 +12,7 @@
       <% if(locals.message){ %>
         <% if(locals.message.success){ %>
           <div class="alert alert-success my-0" role="alert">
-            <strong><%= locals.message.success %></strong> 
+            <strong><%= locals.message.success %></strong>
           </div>
         <% } if(locals.message.danger){ %>
           <div class="alert alert-danger my-0" role="alert">
@@ -28,46 +28,75 @@
           </div>
         <% } %>
       <% } %>
-      <header class="bg-dark p-1 d-none">
-          <div class="container">
-              <h1 class="text-light">Auto Coaching</h1>
+      <header class="bg-primary p-1 ">
+          <div class="container  ">
+            <div class="row">
+              <div class="col-4">
+                <img src="https://sf-nutrition.fr/wp-content/uploads/2023/06/seniorenturnen.png" class="rounded-circle" style="width: 5em;"/>
+              </div>
+              <div class="hv-100 d-flex justify-content-end align-items-center text-white col-8">
+                <% if (user) { %>
+                  <a class="nav-link" href="/logout">Déconnexion</a>
+                <% } %>
+              </div>
+            </div>
           </div>
       </header>
-      <nav class="navbar navbar-expand-lg">
+      <nav class="navbar navbar-light navbar-expand-lg">
           <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler p-0 m-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" style="color: white">
+              <span class="navbar-toggler-icon d-flex justify-content-center align-items-center "> <i class="fa-solid fa-bars"></i> </span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
                 <% if (!user) { %>
 
-                  <a class="nav-link <% if (page === '/train') { %> active <% }  %>" aria-current="page" href="/">ACCUEIL</a>
+                  <a class="nav-link <% if (page === '/train') { %> active <% }  %>" aria-current="page" href="/">Accueil</a>
                   <!-- <div class="navbar-nav"> -->
-                  <a class="nav-link <% if (page === '/login') { %> active <% }  %>" href="/login">CONNEXION</a>
-                  <a class="nav-link <% if (page === '/signup') { %> active <% }  %>" href="/signup">M'INSCRIRE</a>
+                  <a class="nav-link <% if (page === '/login') { %> active <% }  %>" href="/login">Connexion</a>
+                  <a class="nav-link <% if (page === '/signup') { %> active <% }  %>" href="/#payment-form">M'inscrire</a>
                   <!-- </div> -->
                 <% } else { %>
-                  <a class="nav-link <% if (page === '/academy') { %> active <% }  %>" href="/academy">ACADÉMIE</a>
-                  <a class="nav-link <% if (page === '/train') { %> active <% }  %>" href="/train">ENTRAÎNEMENT</a>
-                  <a class="nav-link  <% if (page === '/nutrition') { %> active <% }  %>" href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>">NUTRITION</a>
-                  <a class="nav-link <% if (page === '/profile') { %> active <% }  %>" href="/profile">PROFILE<%
-                      if (locals.profileNotification){
-                        %> <span class="badge badge-light">!</span><%
-                      }
-                  ;%> </a>
-                  <!-- <div class="navbar-nav"> -->
-                  <a class="nav-link" href="/logout">LOG OUT</a>
-                  <!-- </div> -->
+                  <a class="nav-link <% if (page === '/academy') { %> active <% }  %>" href="/academy">Académie</a>
+                  <a class="nav-link <% if (page === '/train') { %> active <% }  %>" href="/train">Entraînement</a>
+                  <a class="nav-link  <% if (page === '/nutrition') { %> active <% }  %>" href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>">Nutrition</a>
+                  <li class="nav-item dropdown">
+                    <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle nav-link <% if (page.startsWith('/profile')) { %> active <% }  %>"> 
+                      Profile
+                      <%
+                        if (locals.profileNotification){
+                          %> <span class="badge badge-light">!</span><%
+                        }
+                    ;%>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/profile/objectif">Aperçu</a></li>
+                      <li><a class="dropdown-item" href="/profile/progression">Progression</a></li>
+                      <li><a class="dropdown-item" href="/profile/compte">Compte</a></li>
+                    </ul>
+                  </li>
                 <% } %>
               </div>
             </div>
           </div>
         </nav>
+        <% if (page.startsWith('/profile')) { %> 
+          <nav class="navbar secondary-navbar p-0 navbar-expand-lg">
+            <div class="container">
+              <div class=" navbar-collapse" id="secondayNavbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/profile/objectif">Aperçu</a>
+                    <a class="nav-link" href="/profile/progression">Progression</a>
+                    <a class="nav-link" href="/profile/compte">Compte</a>
+                </div>
+              </div>
+            </div>
+          </nav>
+        <% }  %>
       <main class="w-100 min-vh-100">
-          <%- mainWithoutMarge %> 
+          <%- mainNotMarged %>
           <div class="container main-container">
-            <%- main %> 
+            <%- main %>
           </div>
       </main>
       <div class="bg-light shadow mb-0 mt-auto">
@@ -87,4 +116,8 @@
         </div>
       </div>
   </body>
-</html>
+<style>
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30'xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='red' stroke-width='2'stroke-linecap='round' stroke-miterlimit='10'd='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+</style></html>

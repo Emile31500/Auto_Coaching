@@ -3,6 +3,8 @@ const { User, Curse, CurseDraft, SessionBibliography, SessionBibliographyDraft, 
 const router = express.Router()
 const nodemailer = require("nodemailer");
 const adminChecker = require('../middlewares/adminChecker');
+const authenticationChecker = require('../middlewares/authenticationChecker');
+
 var parserJson = require('../middlewares/parserJson');
 const { Op, where, literal } = require('sequelize');
 
@@ -22,7 +24,7 @@ const storage = multer.diskStorage({
 })
 
 
-router.get('/academy', async (req, res) => {
+router.get('/academy', authenticationChecker, async (req, res) => {
 
     curses = await Curse.findAll({
         include : [{
@@ -59,7 +61,7 @@ router.get('/academy', async (req, res) => {
     });
 })
 
-router.get('/curse/:idC/session/:idS', async (req, res) => {
+router.get('/curse/:idC/session/:idS', authenticationChecker, async (req, res) => {
 
     const idC = req.params.idC
     const idS = req.params.idS
@@ -114,7 +116,7 @@ router.get('/curse/:idC/session/:idS', async (req, res) => {
     
 })
 
-router.post('/curse/:idC/session/:idS', parserJson, async (req, res) => {
+router.post('/curse/:idC/session/:idS', parserJson, authenticationChecker, async (req, res) => {
 
     try {
 
@@ -226,7 +228,7 @@ router.post('/curse/:idC/session/:idS', parserJson, async (req, res) => {
     }
 })
 
-router.get('/admin/curse', async (req, res) => {
+router.get('/admin/curse', adminChecker, async (req, res) => {
     //adminChecker, async (req, res) => {
 
     const cursesDraft = await CurseDraft.findAll({
@@ -254,7 +256,7 @@ router.get('/admin/curse', async (req, res) => {
     });
 })
 
-router.get('/admin/curse/create', async (req, res) => {
+router.get('/admin/curse/create', adminChecker, async (req, res) => {
 
     res.locals.message = req.flash()
     res.render('../views/admin/curse/create',  { 
@@ -265,7 +267,7 @@ router.get('/admin/curse/create', async (req, res) => {
 
 })
 
-router.post('/admin/curse/create', parserJson, async (req, res) => {
+router.post('/admin/curse/create', parserJson, adminChecker, async (req, res) => {
 
     try {
 
@@ -299,7 +301,7 @@ router.post('/admin/curse/create', parserJson, async (req, res) => {
 
 })
 
-router.get('/admin/curse/:idC/session/:idS', async (req, res) => {
+router.get('/admin/curse/:idC/session/:idS', adminChecker, async (req, res) => {
 
     try {
 
@@ -372,7 +374,7 @@ router.get('/admin/curse/:idC/session/:idS', async (req, res) => {
    
 })
 
-router.post('/admin/curse/:idC/session/:idS', parserJson, async (req, res) => {
+router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (req, res) => {
 
     try {
 
@@ -497,7 +499,7 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, async (req, res) => {
     }
 })
 
-router.get('/admin/curse/:id/publish', async (req, res) => {
+router.get('/admin/curse/:id/publish', adminChecker, async (req, res) => {
     //adminChecker, async (req, res) => {
 
     try {
@@ -599,7 +601,7 @@ router.get('/admin/curse/:id/publish', async (req, res) => {
     res.redirect('/admin/curse')
 })
 
-router.get('/admin/session/:id/delete', async (req, res) => {
+router.get('/admin/session/:id/delete', adminChecker, async (req, res) => {
 
     try{
         
@@ -654,7 +656,7 @@ router.get('/admin/session/:id/delete', async (req, res) => {
 
 })
 
-router.get('/admin/curse/:id/delete', async (req, res) => {
+router.get('/admin/curse/:id/delete', adminChecker, async (req, res) => {
 
     try {
 

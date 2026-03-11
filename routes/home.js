@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { User, NutritionRequirement, SessionBibliography, SessionBibliographyDraft} = require('../models')
-const { Op } = require('sequelize')
+const { Op, Sequelize, sql } = require('sequelize')
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 const router = express.Router()
 const isAuth = require('../middlewares/isAuth');
@@ -22,9 +22,19 @@ const transporter = nodemailer.createTransport({
 
 router.get('/bibliography', async (req, res) => {
 
-    const sessionBibliographies = await Draft.findAll({ where : {
-        isDeleted : null
-    }}); 
+    const sessionBibliographies = await SessionBibliography.findAll({ 
+        
+        attributes: [
+            [Sequelize.fn('DISTINCT', Sequelize.col('url')), 'url'],
+            'libele'
+        ],
+        where : {
+            isDeleted : null,
+        }
+    }); 
+
+
+    console.log(sessionBibliographies)
 
     res.render('../views/home/bibliography',  { 
         user : req.user, 
@@ -202,7 +212,7 @@ router.get('/', isAuth, async (req, res) => {
 
 
     if (req.user instanceof User) {
-        res.redirect('/profile')
+        res.redirect('/profile/progression')
     } else {
         
         users = await User.findAll()

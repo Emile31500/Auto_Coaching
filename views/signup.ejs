@@ -1,35 +1,35 @@
 <% title = "S'inscrire" %>
 
-<%- contentFor('mainWithoutMarge') %>
+<%- contentFor('mainNotMarged') %>
 <%- contentFor('main') %>
 <h2 class="my-5">S'inscire</h2>
 <form action="/sign" method="post">
     <div class="my-3">
         <label for="name">Name : <span class="text-danger">*</span></label>
-        <input class="form-control" id="name" name="name" type="text" autocomplete="name" value="Emile" required>
+        <input class="form-control" id="name" name="name" type="text" autocomplete="name" required>
     </div>
     <div class="my-3">
         <label for="email">Email : <span class="text-danger">*</span></label>
-        <input class="form-control" id="email" name="email" type="text" autocomplete="email" value="emile00013@gmail.com" required>
+        <input class="form-control" id="email" name="email" type="text" autocomplete="email" required>
     </div>
       <div class="my-3">
         <label for="birthDay">Date de naissance : <span class="text-danger">*</span></label>
-        <input class="form-control" id="birthDay" name="birthDay" type="date" autocomplete="birthDay" v required>
+        <input class="form-control" id="birthDay" name="birthDay" type="date" autocomplete="birthDay"  required>
     </div>
     <div class="my-3">
         <label for="new-password">Password : <span class="text-danger">*</span></label>
-        <input class="form-control" id="new-password" name="password" type="password" autocomplete="new-password" value="Password" required>
+        <input class="form-control" id="new-password" name="password" type="password" autocomplete="new-password"required>
        
         <label for="new-passwordConf">Password : <span class="text-danger">*</span></label>
-        <input class="form-control" id="new-passwordConf" name="passwordConf" type="password" autocomplete="passwordConf" value="Password" required>
+        <input class="form-control" id="new-passwordConf" name="passwordConf" type="password" autocomplete="passwordConf" required>
     </div>
     <div class="my-3">
         <label for="size">Taille : <span class="text-danger">*</span></label>
-        <input class="form-control" id="size" name="size" type="number" autocomplete="size" value="" required>
+        <input class="form-control" id="size" name="size" type="number" autocomplete="size" required>
     </div>
     <div class="my-3">
         <label for="weight">Poids : <span class="text-danger">*</span></label>
-        <input class="form-control" id="weight" name="weight" type="number" autocomplete="weight" value="" required>
+        <input class="form-control" id="weight" name="weight" type="number" autocomplete="weight" required>
     </div>
     <div class="my-5">
         <span class="text-danger">*</span>Requis<br>

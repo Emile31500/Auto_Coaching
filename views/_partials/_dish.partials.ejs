@@ -48,7 +48,7 @@
 
                   <div class="card-body">
                       <h5 class="card-title">
-                          <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal"><%= dish[i].name %></a>
+                          <a href="#turboRôti" class="link link-dark" data-bs-toggle="modal" data-bs-target="#dishModal<%= dish[i].id %>"><%= dish[i].name %></a>
                       </h5>
                       <p class="card-text">
                           <% if (dish[i].userId != null) { %> 
@@ -89,24 +89,33 @@
                 </div>
               </div>
             </div>
-          <% } %> 
+          <div class="modal fade" id="dishModal<%= dish[i].id %>" tabindex="-1" aria-labelledby="dishModal<%= dish[i].id %>Label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="dishModal<%= dish[i].id %>Label"><%=dish[i].name %> </h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="w-100">
+                    <img src="/media/photo/<%= dish[i].imageUrl %>"  class="w-100"  style="max-height: 300px; object-fit: cover;" >
+                  </div>
+                  <h5 class="my-3"> Ingédients : </h5>
+                  <% for(var e=0; e < dish[i].DishFoods.length; e++) { %> 
+                    <div class="my-2">
+                      <%= dish[i].DishFoods[e].Food.name %> : 
+                      <%= dish[i].DishFoods[e].weight %> G
+                    </div>
+                  <% } %>  
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+      <% } %> 
 </div>
 
 
-<div class="modal fade" id="dishModal" tabindex="-1" aria-labelledby="dishModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="dishModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>

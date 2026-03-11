@@ -38,7 +38,7 @@ router.post('/measurment', parserJson, authenticationChecker, premiumChecker, as
 
     }
 
-    res.redirect('/profile')
+    res.redirect('/profile/progression')
 });
 
 router.get('/api/measurment', authenticationCheckerApi, premiumChecker, async (req, res) => {

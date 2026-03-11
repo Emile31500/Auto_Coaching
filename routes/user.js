@@ -23,23 +23,13 @@ const FoodService = require('../services/food');
 const adminChecker = require('../middlewares/adminChecker');
 const { Op } = require('sequelize');
 
-router.get('/profile', authenticationChecker, getStripeCustomer,  async (req, res) => {
+router.get('/profile/:pageName', authenticationChecker, getStripeCustomer,  async (req, res) => {
 
     const user = req.user;
-
-    let subscriptions;
-    const subscriptionsPromise = await stripe.subscriptions.list({
-        customer: req.stripeCustomer.id
-    });
-
-    if (subscriptionsPromise.data.length > 0) {
-
-        subscriptions = subscriptionsPromise.data;
-
-    }
+    const pageName = req.params.pageName
 
     const measurments = await Measurment.findAll({
-         order: [
+        order: [
             ['createdAt', 'DESC']
         ],
         where : {
@@ -50,21 +40,61 @@ router.get('/profile', authenticationChecker, getStripeCustomer,  async (req, re
         }
     })
 
-    const isMoreThenAWeekDifference = await MeasurmentService.isMoreThenAWeekDifference(user);
-    if (isMoreThenAWeekDifference){ 
-        req.flash('warning', 'Attention : Il y a plus d\'une semiane que vous pas mis à jour votre progression.')
+
+    if (pageName === 'objectif') {
+
+        res.render('../views/profile/objectif',  { 
+            page : '/profile',
+            measurments : measurments,
+            user : user,
+            layout : '../views/main',
+        });
+
+    } else if (pageName === 'progression') {
+
+        let subscriptions;
+        const subscriptionsPromise = await stripe.subscriptions.list({
+            customer: req.stripeCustomer.id
+        });
+
+        res.locals.message = req.flash();
+        
+        if (subscriptionsPromise.data.length > 0) {
+
+            subscriptions = subscriptionsPromise.data;
+
+        }
+       
+        const isMoreThenAWeekDifference = await MeasurmentService.isMoreThenAWeekDifference(user);
+        if (isMoreThenAWeekDifference){ 
+            req.flash('warning', 'Attention : Il y a plus d\'une semiane que vous pas mis à jour votre progression.')
+        }
+
+        res.render('../views/profile/progression',  { 
+            page : '/profile',
+            user : user,
+            measurments : measurments,
+            layout : '../views/main',
+            isPremium : req.isPremium,
+            subscriptions : subscriptions 
+        });
+
+    } else if (pageName === 'compte') {
+
+        
+
+        res.render('../views/profile/compte',  { 
+            page : '/profile',
+            user : user,
+            layout : '../views/main',
+            isPremium : req.isPremium,
+        });
+
+    } else {
+
+        res.status(404)
     }
-
-    res.locals.message = req.flash();
-    res.render('../views/profile',  { 
-        page : '/profile',
-        user : user,
-        measurments : measurments,
-        layout : '../views/main',
-        isPremium : req.isPremium,
-        subscriptions : subscriptions 
-    });
-
+    
 })
 
 router.post('/user/:id', parserJson, authenticationChecker, premiumChecker, async (req, res) => {
@@ -110,7 +140,7 @@ router.post('/user/:id', parserJson, authenticationChecker, premiumChecker, asyn
         req.flash('danger', error)
     }
 
-    res.redirect('/profile')
+    res.redirect('/profile/compte')
 })
 
 
@@ -178,7 +208,7 @@ router.post('/sign', parserJson, async (req, res) => {
 
         } else throw 'Les mots de passe ne sont pas identique';
 
-        res.redirect('/profile')
+        res.redirect('/profile/compte')
 
     } catch (error){
 
@@ -267,7 +297,7 @@ router.post('/login', isAuth, parserJson, async (req, res, next) => {
 
                         res.redirect('/admin/train')
 
-                    } else res.redirect('/profile');
+                    } else res.redirect('/profile/objectif');
                     
                 } else throw 'Adresse mail ou mot de passe incorrect';
 

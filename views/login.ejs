@@ -1,17 +1,17 @@
 <% title = "Connexion" %>
 
-<%- contentFor('mainWithoutMarge') %>
+<%- contentFor('mainNotMarged') %>
 <%- contentFor('main') %>
 <h2 class="my-5">Login</h2>
 
 <form action="/login" method="post">
     <p>
       <label for="email">Email address</label>
-      <input type="email" name="email" value="emile00013+2@gmail.com" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+      <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
     </p>
     <p>
       <label for="password">Password</label>
-      <input type="password" name="password" class="form-control" value="Password" id="password" placeholder="Password">
+      <input type="password" name="password" class="form-control" id="password" placeholder="Password">
     </p>
     <p class="form-check">
       <input type="checkbox" class="form-check-input" id="exampleCheck1">

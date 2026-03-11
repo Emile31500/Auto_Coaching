@@ -1,6 +1,6 @@
 <% title = "Palt | création & édition " %>
 
-<%- contentFor('mainWithoutMarge') %>
+<%- contentFor('mainNotMarged') %>
 <%- contentFor('main') %>
 
 <h3 class="my-5 ">
@@ -8,11 +8,11 @@
     Aliments
 </h3>
 <div>
-    <form class="row my-2 foodDishForm" method="POST" >
+    <form class="my-2 foodDishForm" method="POST" >
 
         <!-- </form> enctype="multipart/form-data"> -->
-        <div class="col-auto">
-            <input type="hidden" class="hidden" name="foodsDish" id="foodsDishInput"/>
+        <div>
+            <input type="hidden" class="hidden" name="foodsDish" id="foodsDishInput" />
             <div class="row  my-2 ">
                 <div class="col-auto">
                     <% if (todoDelteThisOption) { %> 
@@ -22,23 +22,20 @@
             </div>
             <div class="row  my-2 ">
                 <div class="col-auto">
-                    <input type="text" name="name" class="form-control"  value="<% if (dish != null ) { %><%= dish.name %><% } %>" required />
+                    <input type="text" name="name" class="form-control" placeholder="Nom du plat"  value="<% if (dish != null ) { %><%= dish.name %><% } %>" required />
                 </div>
                 <input class=" col-auto  btn btn-outline-primary" type="submit"/>
             </div>
         </div>
-        <div class="col-auto">
+        <div class="my-5 p-3 border shadow border-circle">
             <% [
                 'fish-dish',
                 'redmeat-dish',
-                '',
-                '',
-                '',
-                ''].forEach(image => { %>
-                <div class="w-auto mx-2 d-inline-block">
+               ].forEach(image => { %>
+                <div class="w-auto mx-2 d-inline-block my-0 py-0">
                     <img src="/media/photo/<%= image %>-placeholder.png" class="rounded" style="max-width: 107px;"/>
                     </br>
-                    <input type="radio" name="imageUrl" value="<%= image %>-placeholder.png"/>
+                    <input type="radio" name="imageUrl my-0" value="<%= image %>-placeholder.png"/>
                 </div>
             <% }) %>
         </div>

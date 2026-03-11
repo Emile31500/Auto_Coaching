@@ -9,7 +9,7 @@
             <thead class="table-dark">
             <tr>
                 <th scope="col">
-                    <input type="text" class="form-control d-inline" id="alimentNameSearch"/>
+                    <input type="text" class="form-control d-inline" id="alimentNameSearch" placeholder="Nom de l'aliment"/>
                     <a href="#" class="link-light orderByButton" data-parameter="name">Nom</a> 
                   </th>
                 <th scope="col"><a href="#" class="link-light">Kcalorie</a></th>
@@ -36,7 +36,7 @@
         </table>
     </div>
     <div class='col-3'>
-        <form id='foodForm' class="my-3">
+        <form id='foodForm' class="my-3" action="/food/" method="POST">
             <input class="d-none" id='isUpdated' type='checkbox' disabled/>
             <input class="d-none" id='idFoodEl' type='text' disabled/>
             <div class='my-3'>
@@ -48,50 +48,50 @@
                 <div class="col">
                     <label for='kcalorieEl'> Kcalorie : </label>
                     <br>
-                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='kcalorieEl' class='form-control kcalorieEl' name='kcalorieEl'/>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='kcalorieEl' class='form-control kcalorieEl' name='kcalorie'/>
                 </div>
             </div>
             <div class='my-3 row'>
                 <div class="col">
                     <label for='carbohydrateEl'> Glucide : </label>
                     <br>
-                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='carbohydrateEl' class='form-control carbohydrateEl' name='carbohydrateEl'/>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='carbohydrateEl' class='form-control carbohydrateEl' name='carbohydrate'/>
                 </div>
                 <div class="col">
                     <label for='sugarEl'> Dont sucre : </label>
                     <br>
-                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='sugarEl' class='form-control sugarEl' name='sugarEl'/>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='sugarEl' class='form-control sugarEl' name='sugar'/>
                 </div>
             </div>
             <div class='my-3'>
                 <label for='proteinEl'> Protéine : </label>
                 <br>
-                <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='proteinEl' class='form-control proteinEl' name='proteinEl'/>
+                <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='proteinEl' class='form-control proteinEl' name='protein'/>
             </div>
             <div class='my-3'>
                 <div class='col'>
                     <label for='fatEl'> Lipide : </label>
                     <br>
-                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='fatEl' class='form-control fatEl' name='fatEl'/>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='fatEl' class='form-control fatEl' name='fat'/>
                 </div>
                 <div class='col'>
                     <label for='transFatEl'> Saturé : </label>
                     <br>
-                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='transFatEl' class='form-control transFatEl' name='transFatEl'/>
+                    <input pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" id='transFatEl' class='form-control transFatEl' name='transFat'/>
                 </div>
             </div>
             <div class='my-3'>
                 <div class='col'>
                     <div class='my-2'>
-                        <input type='checkbox' id='isMeatEl'/>
+                        <input type='checkbox' id='isMeatEl' name='is_meat'/>
                         <label for='transFatEl'> Contient de la viande </label>
                     </div>
                     <div class='my-2'>
-                        <input type='checkbox' id='isEggEl'/>
+                        <input type='checkbox' id='isEggEl' name='is_egg'/>
                         <label for='transFatEl'> Contient des eoufs </label>
                     </div>
                     <div class='my-2'>
-                        <input type='checkbox' id='isMilkEl'/>
+                        <input type='checkbox' id='isMilkEl' name='is_milk'/>
                         <label for='transFatEl'> Contient du lait</label>
                     </div>
                 </div>
@@ -122,12 +122,4 @@
         </div>
     </div>
 </div>
-<script src="/js/admin/food/edit.selector.js"></script>
-<script src="/js/admin/food/delete.js"></script>
-<script src="/js/admin/food/add.js"></script>
-<script>
-    isAdmin = true;
-</script>
-<script src="/js/food/get.all.js"></script>
-<script src="/js/food/print.js"></script>
 <%- contentFor('main') %>

@@ -110,7 +110,7 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
     } catch (error){
 
         req.flash('danger', error)
-        res.redirect('/profile')
+        res.redirect('/profile/objectif')
         
     }
 });

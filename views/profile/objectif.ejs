@@ -1,0 +1,69 @@
+<% title = "Profil" %>
+
+<%- contentFor('mainNotMarged') %>
+<%- contentFor('main') %>
+<!-- THERE WAS A PERFORMANCE TAB. A RETURN ?-->
+<div class="border border rounded-bottom p-3 ongletsProfile " id="profileDescription">
+    <form action="/nutritionrequirement" method="POST">
+        <div class="my-3">
+            <label for="size">Taille : </label>
+            <input class="form-control" id="size" name="size" type="number" value="<% if(measurments.length>0) { %><%=measurments[0].size;%><% } %>" autocomplete="size" required>
+        </div>
+        <div class="my-3">
+            <label for="weight">Poids : </label>
+            <input class="form-control" id="weight" name="weight" type="number" value="<% if(measurments.length>0) { %><%=measurments[0].weight;%><% } %>" autocomplete="weight" required>
+        </div>
+        <div class="my-3">
+            <label for="objectiv">Objectif : <span class="text-danger">*</span></label>
+            <select class="form-select" name="objectiv">
+                <option value="1">Conserver mon poids et être en meilleur form</option>
+                <option value="2">Perdre du poids</option>
+            </select>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                <span class="btn btn-outline-secondary rounded-circle p-0 px-2">?</span> <label for="poids"> Métabolisme : <span class="text-danger">*</span></label>
+            </div>
+            <select name="metabolismMultiplicator" class="form-select">
+                <option value="0.8"> Lent</option>
+                <option value="1"> Normal</option>
+                <option value="1.2"> Rapide</option>
+                <option selected value="1.5"> Très rapide</option>
+            </select>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                <span class="btn btn-outline-secondary rounded-circle p-0 px-2">?</span> <label for="step"> Combien de pas faîtes-vous en moyenne chaque jour : <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-control" id="step" name="step" type="number" autocomplete="step" required>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                <b>Or sport</b> combien de <b>minutes</b> de travail physique faîtes-vous en moyenne par <b>semaine</b> : <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-control" id="crafts" name="crafts" type="number" autocomplete="crafts" required>
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+               Sexe : <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-radio" selected id="sexe" name="sexe" type="radio" autocomplete="sexe" value="1" required> : Homme
+            <input class="form-radio" id="sexe" name="sexe" type="radio" autocomplete="sexe" value="2" required> : Femme
+        </div>
+        <div class="my-3">
+            <div class="my-2">
+                Voullez-vous faire le programme sportif proposé par la plateforme ? <span class="text-danger">*</span></label>
+            </div>
+            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="true" required>  : oui
+            <input class="form-radio" id="wantToTrain" name="wantToTrain" type="radio" autocomplete="wantToTrain" value="false" required selected> : non
+            <div class="alert alert-warning">
+                Il sera plus compliqué pour vous d'atteindre vos objectifs en cochant non.
+            </div>
+        </div>
+        <div class="my-5">
+           <input type="submit" class="btn btn-primary"/>
+        </div>
+    </form>
+</div>
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/@adminkit/core@latest/dist/css/app.css"> -->

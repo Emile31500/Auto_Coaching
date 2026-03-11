@@ -2,7 +2,7 @@
 
 
 
-<%- contentFor('mainWithoutMarge') %>
+<%- contentFor('mainNotMarged') %>
 <div class="hero ">
     <h2 class="text-white my-2 mt-5">Un programme remise en forme  enfin fait pour vous ! <br><span class="badge 
                     <% if (disposablePlace < 100) {%>
@@ -63,10 +63,10 @@
         <% if (disposablePlace > 0) {%>
             <form action="/create-payment-intent" id="payment-form" class="formDataUser" method="POST">
                 <h3 class="mb-5"> M'inscrire ! </h3>
-                <input placeholder="Prénom" class="bg-light my-4 form-control" type="text" name="name" id="name" vvalue="Emile" required/>
-                <input placeholder="Email" class="bg-light my-4 form-control" type="email" id="email" name="email" vvalue="emile00013@gmail.com" required/>
-                <input placeholder="Mot de passe" class="bg-light my-4 form-control" type="password" id="password" name="password" vvalue="1234" required/>
-                <input placeholder="Confimer le mot de passe" class="bg-light my-4 form-control" type="password" id="passwordConf" name="passwordConf" vvalue="1234" required/>
+                <input placeholder="Prénom" class="bg-light my-4 form-control" type="text" name="name" id="name"  required/>
+                <input placeholder="Email" class="bg-light my-4 form-control" type="email" id="email" name="email" required/>
+                <input placeholder="Mot de passe" class="bg-light my-4 form-control" type="password" id="password" name="password" required/>
+                <input placeholder="Confimer le mot de passe" class="bg-light my-4 form-control" type="password" id="passwordConf" name="passwordConf" required/>
             <!-- </div> -->
                 <div class="row my-5 justify-content-center g-4">
                     <div class="col-md-4 d-flex justify-content-center">

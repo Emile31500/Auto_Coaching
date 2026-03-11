@@ -1,0 +1,62 @@
+<% title = "Profil" %>
+
+<%- contentFor('mainNotMarged') %>
+<%- contentFor('main') %>
+
+<!-- THERE WAS A PERFORMANCE TAB. A RETURN ?-->
+<div class="border border rounded-bottom p-3 ongletsProfile w-auto" id="ongletMensuraions">
+        <canvas id="chartjs-line"></canvas>
+        <table class="table table-striped my-3">
+          <thead class="table-dark">
+            <tr>
+             <th scope="col">IMC </th>
+              <th scope="col">Poids</th>
+              <th scope="col">Taille</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let i = 0 ; i < measurments.length; i ++) { %>
+                <tr>
+                    <td><%= (measurments[i].weight/((measurments[i].size/100) * (measurments[i].size/100))).toFixed(1) %></td>
+                    <td><%= measurments[i].weight %> Kg</td>
+                    <td><%= measurments[i].size %> cm</td>
+                    <td><%= new Date(measurments[i].createdAt).toLocaleDateString('fr-FR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) %></td>
+                    <!-- <th scope="col">IMC (tours)</th> -->
+                </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <form action="/measurment" method="POST" class="my-5">
+            <div class="my-3 row my-1" >
+                <div class="col-2">
+                    <label for="weight">
+                        Poids 
+                    </label>
+                </div>
+                <div class="col-3">
+                    <input class="form-control" type="number" step="0.1" name="weight" id="weight"/>
+                </div>
+                <div class="col-2">
+                    <label for="size">
+                        Taille
+                    </label>
+                </div>
+                <div class="col-3">
+                    <input class="form-control" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" name="size" id="size"/>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary"/>
+        </form>
+
+    <div id="ongletMeasurmentAlert" class="alert d-none"></div>
+
+</div>
+<!-- <link rel="stylesheet" href="https://unpkg.com/@adminkit/core@latest/dist/css/app.css"> -->
+<script src="https://unpkg.com/@adminkit/core@latest/dist/js/app.js"></script>
+<script src="/js/user/measurments.js"></script>

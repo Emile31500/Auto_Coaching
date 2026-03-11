@@ -154,6 +154,7 @@ router.patch('/api/nutrition/requirement', authenticationChecker, premiumChecker
 router.get('/admin/nutrition', adminChecker, async (req, res) => {
     
     var food = await Food.findAll();
+    res.locals.message = req.flash();
     res.render('../views/admin/nutrition',  { food: food, layout: '../views/main-admin' });
 
 })
