@@ -222,6 +222,15 @@ router.get('/', isAuth, async (req, res) => {
             
         }
 
+        const productsList = await stripe.products.list({
+            active : true
+        });
+
+        const pricesList = await stripe.prices.list({
+            active : true
+
+        });
+
         const numberOfPLace = process.env.NUMBER_OF_PLACE;
         const count = users.length
         
@@ -235,6 +244,8 @@ router.get('/', isAuth, async (req, res) => {
         res.render('../views/home',  { 
             layout: '../views/main',
             disposablePlace : disposablePlace,
+            products : productsList.data,
+            prices : pricesList.data,
             page : '/',
             user : req.user, 
         });

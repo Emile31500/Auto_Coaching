@@ -3,57 +3,60 @@
 
 
 <%- contentFor('mainNotMarged') %>
-<div class="hero ">
-    <h2 class="text-white my-2 mt-5">Un programme remise en forme  enfin fait pour vous ! <br><span class="badge 
-                    <% if (disposablePlace < 100) {%>
-                        text-bg-danger 
-                    <%  } else { %>
-                        text-bg-primary 
-                    <% } %> text-white shadow-sm">Moins de <%= disposablePlace %> places disponible</span></h2>
-    </div>
+<div class="hero">
+    <h2 class="text-white my-2 reveal scroller">Un programme remise en forme  enfin fait pour vous ! <br><span class="badge 
+        <% if (disposablePlace < 100) {%>
+            text-bg-danger 
+        <%  } else { %>
+            text-bg-primary 
+        <% } %> text-white shadow-sm">100 % remboursable !</span></h2>
+</div>
 <%- contentFor('main') %>
-    <div class="container d-flex justify-content-center border-bottom" style="padding: 12% 0 12% 0; height: 70%;" >
-        <video controls autoplay class="w-75">
-            <source src="/media/video/placeholder.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-        </video>
+    <div class="d-flex justify-content-center border-bottom video-container"> <!---->
+        <div class="video d-flex justify-content-center">
+            <video controls autoplay>
+                <source src="/media/video/placeholder.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        </div>
     </div>
-    <div class="w-auto border-bottom" style="padding: 12% 0 12% 0; height: 70%;" >
-        <div class="row ">
-            <div class="col">
-                <img class="w-75" src="/media/photo/palceholder-home-page-photo.jpg">
+    <div class="w-auto border-bottom" style="padding: 12% 0 12% 0; height: 70%;" id="presentation-zone">
+        <div class="d-flex flex-column flex-lg-row-reverse">
+            <div class="w-100 w-lg-50 d-flex justify-content-center align-items-center p-5">
+                <img class="w-100" src="/media/photo/palceholder-home-page-photo.jpg" data-speed="0.1" style="position: relative;">
             </div>
-            <div class="col">
-                <h3 class="my-3">Qui suis-je ?</h3>
-                <p>Je suis Émile, j'ai 23 ans et je vis à Toulouse depuis ma naissance. Je me suis passioné pour le sport lorque j'étais qu lycée, shétif et ne pesant que 50 kg, je me suis passiament entrainé et j'ai ateind les 68 kg aujourd'hui. <b>+18 kg de muscle</b>.
+            <div class="w-100 w-lg-50 p-5">
+                <h3 class="my-5">Qui suis-je ?</h3>
+                <p class="text-responsive">Je suis Émile, j'ai 23 ans et je vis à Toulouse depuis ma naissance. Passioné de sport depuis le lycée, je suis passé d'un physique shétif presque enfantin à un corps athlétique et en bonne santé.
                 </p>
-                <p>Durant ce voyage j'ai fait beaucoup d'erreur, j'ai donc compilé toute la connaissance que j'ai pu accumuler dans un programme pour permettre à aux qui ont laisser leurs corps de côtés de pouvoir se reprendre en main. Et comme je suis très confiant sur ma capacité à vous aider, je m'engage à <b>vous rembourser à 100% </b>si cette méthode ne vous a pas permit de perdre du poids.
-                </p>
+                <p class="text-responsive">Ayant fait beaucoup d'erreur, j'ai compilé toute la connaissance que j'ai accumulé dans une méthode pour reprendre le contrôle sur sa santé qui soit accessible à tous quelque soit son âge ou sa forme de départ.
             </div>
         </div>
     </div>
-    <div class=" d-flex justify-content-center my-4 border-bottom" style="padding: 11% 0% 11% 0%; height: 70%;" >
-        <h3 class="h3" style="display: flex; align-items: center;">Ce que je vous propose</h3>
-        <ul class="w-50">
-            <li class="my-3">
-                <h5>Plan alimentaire personnalisé</h5> 
-                <p>a</p>
+    <div class="d-flex justify-content-center my-4 border-bottom vh-75" >
+        <div class="w-100 d-flex align-items-center justify-content-end p-5">
+            <h3 class="text-primary">Ce que je vous propose</h3>
+        </div>
+        <ul class="w-100 p-5">
+            <li class="my-5 ">
+                <h5 class="text-primary">Plan alimentaire personnalisé</h5> 
+                <p class="text-responsive">a</p>
             </li>
-            <li class="my-3">
-                <h5>Programme sportifs adapté aux débutants</h5>
-                <p>
+            <li class="my-5">
+                <h5 class="text-primary">Programme sportifs adapté aux débutants</h5>
+                <p class="text-responsive">
                     Je vous emène avec moi pour s'entraîner dans la sécurité et pour épanouissement personnel afin d'atteindre vos objectifs.
                 </p>
             </li>
-            <li class="my-3">
-                <h5>Cours pour maitriser sa perte de poids en gardant de l'énergie</h5>
-                 <p>
+            <li class="my-5 reveal">
+                <h5 class="text-primary">Cours pour maitriser sa perte de poids en gardant de l'énergie</h5>
+                 <p class="text-responsive">
                     Accéder à regimesenior.fr, c'est accéder à une académie pour comprendre simplement le corps humain, la nutrition et les clés de l'entrainement pour conserver ses gains et maximiser son énergie. 
                 </p>
             </li>
-            <li class="my-3">
-                <h5>Controle de diète</h5>
-                <p>
+            <li class="my-5">
+                <h5 class="text-primary">Controle de diète</h5>
+                <p class="text-responsive">
                     Une lise de recette et d'aliments et de plat avec leurs valeurs nutritionnelles détaillés afin de garder le contrôle sur sa diète.
                 </p>
             </li>
@@ -63,57 +66,17 @@
         <% if (disposablePlace > 0) {%>
             <form action="/create-payment-intent" id="payment-form" class="formDataUser" method="POST">
                 <h3 class="mb-5"> M'inscrire ! </h3>
-                <input placeholder="Prénom" class="bg-light my-4 form-control" type="text" name="name" id="name"  required/>
-                <input placeholder="Email" class="bg-light my-4 form-control" type="email" id="email" name="email" required/>
-                <input placeholder="Mot de passe" class="bg-light my-4 form-control" type="password" id="password" name="password" required/>
-                <input placeholder="Confimer le mot de passe" class="bg-light my-4 form-control" type="password" id="passwordConf" name="passwordConf" required/>
+                <input placeholder="Prénom" class="text-responsive bg-light my-4 form-control" type="text" name="name" id="name"  required/>
+                <input placeholder="Email" class="text-responsive bg-light my-4 form-control" type="email" id="email" name="email" required/>
+                <input placeholder="Mot de passe" class="text-responsive bg-light my-4 form-control" type="password" id="password" name="password" required/>
+                <input placeholder="Confimer le mot de passe" class="text-responsive bg-light my-4 form-control" type="password" id="passwordConf" name="passwordConf" required/>
+
+                
             <!-- </div> -->
                 <div class="row my-5 justify-content-center g-4">
-                    <div class="col-md-4 d-flex justify-content-center">
-                        <div class="card bg-light" style="width: 16rem;">
-                            <div class="card-body">
-                                <h5 class="card-title">Pass saisonié <input class="form-check-input productId" type="radio" name="productId" value="prod_TzohlOUTRe1vsb" required/> </h5>
-                                <h6 class="card-subtitle d-none mb-2 text-muted">Card subtitle</h6>
-                                <p class="card-text">
-                                    <p>
-                                        Accès au programme pendant 4 mois.
-                                    </p>
-                                    22.95 € / mois<br>
-                                    pendant 4 mois
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 d-flex justify-content-center">
-                        <div class="card bg-light" style="width: 16rem;">
-                            <div class="card-body">
-                                <h5 class="card-title">Pass annuel <input class="form-check-input productId" type="radio" name="productId" value="prod_TzogannVPLuYTw" required/></h5>
-                                <h6 class="card-subtitle d-none mb-2 text-muted">Card subtitle</h6>
-                                <p class="card-text">
-                                    <p>
-                                        Accès au programme pendant 12 mois.
-                                    </p>
-                                    11.95 € / mois<br>
-                                    pendant 12 mois
-                                </p>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 d-flex justify-content-center">
-                        <div class="card bg-light" style="width: 16rem;">
-                            <div class="card-body">
-                                <h5 class="card-title">Pass premium <input class="form-check-input productId" type="radio" name="productId" value="prod_TzofT7YP9GVDLx" required/> </h5>
-                                <h6 class="card-subtitle d-none mb-2 text-muted">Card subtitle</h6>
-                                <p class="card-text">
-                                    <p>
-                                        Accès au programme <b>à vie</b>.
-                                    </p><br>
-                                    15 € / mois <br>pendant 12 mois.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <% products.forEach((product)=> {%>
+                        <%- include('_partials/_premium-card.partials.ejs', { product : product, prices : prices}); %>
+                    <%} ) %>
                 </div>
                 <div>
                     <div id="card-element"></div>
@@ -136,7 +99,7 @@
         </div>
         <% } else { %>
             <form class="">
-                <p>
+                <p class="text-responsive">
                     Il n'y a plus de place disponible ? Saisissez-ici votre adresse mail pour être averti des prochaines place disponible.
                 </p>
                 <for label="email">
@@ -151,8 +114,7 @@
   .hero {
     position: relative;
     width: 100%;
-    max-height: 212px;
-    height: 100vh; /* Optional: fills viewport height until 500px max */
+    height: 30vh; /* Optional: fills viewport height until 500px max */
     overflow: hidden;
     background-image: url('https://www.offsoho.com/images/NYC_000021208828-2100-980.jpg'); /* Replace with your image */
     background-size: cover;
@@ -162,6 +124,32 @@
     justify-content: center;
   }
 
+    .video-container {
+        height : 75vh;
+        align-items: center;
+        justify-content: center;
+  
+    }
+
+    video {
+        width: 70%;
+    }
+
+    @media (max-width: 1000px) {
+        .hero {
+            height: 45vh; /* Optional: fills viewport height until 500px max */
+        }
+        video {
+            width: 100%;
+        } 
+
+        .video-container {
+            height : 55vh;
+        }
+
+    }
+
+    
   /* Semi-transparent black overlay */
   .hero::before {
     content: "";
@@ -174,11 +162,11 @@
     z-index: 1;
   }
 
-  .hero h2 {
-    position: relative;
-    z-index: 2; /* Above overlay */
-    text-align: center;
-  }
+    .hero h2 {
+        position: relative;
+        z-index: 2; /* Above overlay */
+        text-align: center;
+    }
 </style>
 <script src="https://js.stripe.com/v3/"></script>
-<script src="/js/stripe.js"></script> 
+<script src="/js/stripe.js"></script>

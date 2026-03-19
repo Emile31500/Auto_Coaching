@@ -91,6 +91,47 @@ body {
 }
 
 
+
+@media (max-width: 1300px) {
+
+    .main-container {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    h1, .h1 {font-size : 2.6em; }
+
+    h2, .h2 {font-size : 2.3em;}
+
+    h3, .h3 {font-size : 2.05em;}
+
+    h4, .h4 {font-size : 1.8em;}
+
+    h5, .h5 {font-size : 1.6em;}
+
+    .primary-text-responsive { 
+        font-size : 1.43em;
+    }
+
+   .text-responsive { 
+        font-size : 1.35em;
+    }
+
+    .text-body-secondary-responsive { 
+        font-size : 1.19em;
+    }
+
+    .modal-xl-down {
+        width: 100vw;
+        max-width: 100vw;
+        margin: 5px;
+    }
+
+    .my-md-5-down {
+        padding-top: 1.618em;
+    }
+}
+
 @media (max-width: 1000px) {
 
     .main-container {
@@ -98,18 +139,26 @@ body {
         width: 100%;
     }
 
-    h1 {font-size : 2.5em; }
+    h1, .h1 {font-size : 3em; }
 
-    h2 {font-size : 2.25em;}
+    h2, .h2 {font-size : 2.8em;}
 
-    h3 {font-size : 2em;}
+    h3, .h3 {font-size : 2.45em;}
 
-    h4 {font-size : 1.75em;}
+    h4, .h4 {font-size : 2.15em;}
 
-    h5 {font-size : 1.5em;}
+    h5, .h5 {font-size : 1.9em;}
+
+    .primary-text-responsive { 
+        font-size : 1.8em;
+    }
 
    .text-responsive { 
         font-size : 1.7em;
+    }
+
+    .text-body-secondary-responsive { 
+        font-size : 1.5em;
     }
 
     .modal-xl-down {

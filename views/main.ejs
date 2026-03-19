@@ -36,7 +36,7 @@
               </div>
               <div class="hv-100 d-flex justify-content-end align-items-center text-white col-8">
                 <% if (user) { %>
-                  <a class="nav-link" href="/logout">Déconnexion</a>
+                  <a class="nav-link text-responsive  " href="/logout">Déconnexion</a>
                 <% } %>
               </div>
             </div>
@@ -44,24 +44,24 @@
       </header>
       <nav class="navbar navbar-light navbar-expand-lg">
           <div class="container">
-            <button class="navbar-toggler p-0 m-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" style="color: white">
+            <button class="navbar-toggler p-0 m-0 text-responsive" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" style="color: white">
               <span class="navbar-toggler-icon d-flex justify-content-center align-items-center "> <i class="fa-solid fa-bars"></i> </span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
                 <% if (!user) { %>
 
-                  <a class="nav-link <% if (page === '/train') { %> active <% }  %>" aria-current="page" href="/">Accueil</a>
+                  <a class="nav-link text-responsive <% if (page === '/train') { %> active <% }  %>" aria-current="page" href="/">Accueil</a>
                   <!-- <div class="navbar-nav"> -->
-                  <a class="nav-link <% if (page === '/login') { %> active <% }  %>" href="/login">Connexion</a>
-                  <a class="nav-link <% if (page === '/signup') { %> active <% }  %>" href="/#payment-form">M'inscrire</a>
+                  <a class="nav-link text-responsive <% if (page === '/login') { %> active <% }  %>" href="/login">Connexion</a>
+                  <a class="nav-link text-responsive <% if (page === '/signup') { %> active <% }  %>" href="/#payment-form">M'inscrire</a>
                   <!-- </div> -->
                 <% } else { %>
-                  <a class="nav-link <% if (page === '/academy') { %> active <% }  %>" href="/academy">Académie</a>
-                  <a class="nav-link <% if (page === '/train') { %> active <% }  %>" href="/train">Entraînement</a>
-                  <a class="nav-link  <% if (page === '/nutrition') { %> active <% }  %>" href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>">Nutrition</a>
+                  <a class="nav-link text-responsive <% if (page === '/academy') { %> active <% }  %>" href="/academy">Académie</a>
+                  <a class="nav-link text-responsive <% if (page === '/train') { %> active <% }  %>" href="/train">Entraînement</a>
+                  <a class="nav-link text-responsive  <% if (page === '/nutrition') { %> active <% }  %>" href="/nutrition/<%= (new Date()).getFullYear()+"-"+((new Date()).getMonth()+1)+"-"+(new Date()).getDate() %>">Nutrition</a>
                   <li class="nav-item dropdown">
-                    <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle nav-link <% if (page.startsWith('/profile')) { %> active <% }  %>"> 
+                    <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle nav-link text-responsive <% if (page.startsWith('/profile')) { %> active <% }  %>"> 
                       Profile
                       <%
                         if (locals.profileNotification){
@@ -70,9 +70,9 @@
                     ;%>
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="/profile/objectif">Aperçu</a></li>
-                      <li><a class="dropdown-item" href="/profile/progression">Progression</a></li>
-                      <li><a class="dropdown-item" href="/profile/compte">Compte</a></li>
+                      <li><a class="dropdown-item text-responsive" href="/profile/objectif">Aperçu</a></li>
+                      <li><a class="dropdown-item text-responsive" href="/profile/progression">Progression</a></li>
+                      <li><a class="dropdown-item text-responsive" href="/profile/compte">Compte</a></li>
                     </ul>
                   </li>
                 <% } %>
@@ -85,9 +85,9 @@
             <div class="container">
               <div class=" navbar-collapse" id="secondayNavbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" href="/profile/objectif">Aperçu</a>
-                    <a class="nav-link" href="/profile/progression">Progression</a>
-                    <a class="nav-link" href="/profile/compte">Compte</a>
+                    <a class="nav-link text-responsive" href="/profile/objectif">Aperçu</a>
+                    <a class="nav-link text-responsive" href="/profile/progression">Progression</a>
+                    <a class="nav-link text-responsive" href="/profile/compte">Compte</a>
                 </div>
               </div>
             </div>
@@ -103,13 +103,13 @@
         <div class="container">
           <footer class="py-3 mt-4">
             <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-              <li class="nav-item"><a href="/" class="nav-link px-2 text-body-secondary">Accueil</a></li>
-              <li class="nav-item"><a href="/cgv" class="nav-link px-2 text-body-secondary">CGV</a></li>
-              <li class="nav-item"><a href="/contact" class="nav-link px-2 text-body-secondary">Contact</a></li>
-              <li class="nav-item"><a href="/cgv" class="nav-link px-2 text-body-secondary">FAQ</a></li>
-              <li class="nav-item"><a href="/bibliography" class="nav-link px-2 text-body-secondary">Bibliographie</a></li>
+              <li class="nav-item"><a href="/" class="nav-link px-2 text-body-secondary text-body-secondary-responsive">Accueil</a></li>
+              <li class="nav-item"><a href="/cgv" class="nav-link px-2 text-body-secondary text-body-secondary-responsive">CGV</a></li>
+              <li class="nav-item"><a href="/contact" class="nav-link px-2 text-body-secondary text-body-secondary-responsive">Contact</a></li>
+              <li class="nav-item"><a href="/cgv" class="nav-link px-2 text-body-secondary text-body-secondary-responsive">FAQ</a></li>
+              <li class="nav-item"><a href="/bibliography" class="nav-link px-2 text-body-secondary text-body-secondary-responsive">Bibliographie</a></li>
             </ul>
-            <p class="text-center text-body-secondary">
+            <p class="text-center text-body-secondary text-body-secondary-responsive">
               © 2025 Émile Armengaud
             </p>
           </footer>

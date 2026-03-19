@@ -4,54 +4,71 @@ const authenticationChecker = require('../middlewares/authenticationChecker');
 const parserJson = require('../middlewares/parserJson');
 const url = require('url');
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
+const { User } = require('../models');
 
-router.get('/premium', parserJson, authenticationChecker, async(req, res) => {
+router.get('/premium',  authenticationChecker, async(req, res) => {
 
-    const parsedUrl = url.parse(req.url, true);
-    let error_message;
-
-    if (parsedUrl.query.error_message){
-
-        error_message = parsedUrl.query.error_message;
-    }
      
-    let isPremium = false;
+    const productsList = await stripe.products.list({
+            active : true
+        });
 
-    const customerPromise = await stripe.customers.list({
-        email: req.user.email,
-        limit: 1
-    })
+    const pricesList = await stripe.prices.list({
+        active : true
 
-    let customer = customerPromise.data[0]
-
-    const subscriptions = await stripe.subscriptions.list({
-        customer: customer.id
     });
-
-    if(subscriptions.data.length > 0){
-
-        for(let i = 0; i > subscriptions.data.length || isPremium === false; i++ ){
-
-            if (subscriptions.data[i].status === "active") {
-
-                isPremium = true;
-
-            }
-        }
-    }
-
-    const products = await stripe.products.list({
-        limit: 3,
-    });
-
-    res.render('../views/rates',  { 
+    
+    req.flash('warning', 'Votre abonnement a expiré. Prenez-en un nouveau pour continuer à utiliser notre application !')
+    res.locals.message = req.flash();
+    res.render('../views/premium',  { 
+        user : req.user || await  User.findOne({ where : {id : 1}}),
         page : '',
         layout: '../views/main', 
-        products: products.data, 
-        errorMessage: error_message
+        products: productsList.data, 
+        prices: pricesList.data
     });
 
 })
+
+router.post('/premium',  async(req, res) => {
+
+    try {
+
+         const rawData = req.body;
+
+        const customerList = await stripe.customers.list({
+            email: req.user.email,
+            limit : 1        
+        });
+
+        const customer = customerList.data[0]
+
+        const product = await stripe.products.retrieve(rawData.productId);
+        const priceId = product.default_price;
+
+
+        const subscription = await stripe.subscriptions.create({
+            customer: customer.id,
+            items: [{ price: priceId},],
+            cancel_at: Math.floor(endDate.getTime() / 1000),
+            expand: ['latest_invoice.payment_intent'],
+        });
+
+        res.status(200).json({
+            subscriptionId: subscription.id,
+            /*clientSecret:
+                subscription.latest_invoice?.payment_intent?.client_secret?null,*/
+        });
+
+    
+    } catch (error) {
+    
+        console.error(error);
+        res.status(400).json({ error: error.message });
+    
+    }
+})
+
 
 router.get('/checkout/:id_product', authenticationChecker, async (req, res) => {
 

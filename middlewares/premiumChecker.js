@@ -4,9 +4,10 @@ const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 const premiumChecker = async function (req, res, next) {
         
-    req.isPremium = false;
     const authToken = req.session.token;
-    const user = await User.findOne({where: {'authToken': authToken}});
+    // const user = await User.findOne({where: {'authToken': authToken}});
+    const user = await User.findOne({where: {id : 1}});
+    req.user = user;
 
     const expireDate = addDaysToDate(user.createdAt)
     const currentDateTime = getCurrentDateTime();
@@ -21,31 +22,56 @@ const premiumChecker = async function (req, res, next) {
     const subscriptions = await stripe.subscriptions.list({
         customer: customer.id
     });
+    /*console.log(subscriptions)
+    console.log(subscriptions.data)
+    console.log(subscriptions.data.length)
+    console.log(subscriptions.data.length > 0)*/
 
-    if(subscriptions.data.length > 0){
+    let i = 0;  
+    subscriptions.data.forEach(async (subscription) => {
 
-        for(let i = 0; i > subscriptions.data.length || req.isPremium === false; i++ ){
 
-            if (subscriptions.data[i].status === "active") {
+        const productId = subscription.items?.data[0]?.plan?.product
+        if (typeof productId === "string") {
 
-                req.isPremium = true;
+            const product = await stripe.products.retrieve(productId)
 
+            if (['active', 'canceled', 'unpaid'].includes(subscription.status)) {
+                
+                console.log(product.id)
+                if (product.id === 'prod_TzofT7YP9GVDLx'){
+
+                    console.log('ta femme jai decharge dans la bouche !')
+                    req.isPremium = true;
+                    next();
+
+
+
+                } else {
+                    console.log(2)
+                    const expireDateSubscripbe = addDaysToDate(subscription.created, product.metadata.days_until_canceled);
+                    const expiredDateStamp = new Date(expireDateSubscripbe).getTime()
+                    const currentDateStamp = new Date(currentDateTime).getTime()
+                    if (currentDateStamp < expiredDateStamp) req.isPremium = true; next();
+
+                }
             }
-
         }
-    }
 
-    var timestampA = new Date(expireDate).getTime()
-    var timestampB = new Date(currentDateTime).getTime()
+        i++;
 
-    if (timestampB < timestampA || req.isPremium) {
+    });
+
+    var timestampA = new Date(expireDate).getTime();
+    var timestampB = new Date(currentDateTime).getTime();
+
+    if (timestampB < timestampA) {
 
         next();
 
-    } else {
+    } else if (req.isPremium === false) {
 
-        res.statusCode = 401
-        res.redirect('/premium?error_message=Trial period has expired. Take a premium to discover new features !');
+        res.redirect('/premium');
 
     }
 

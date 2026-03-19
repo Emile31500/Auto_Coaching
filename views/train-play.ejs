@@ -32,14 +32,14 @@
             <img src="" id="currentExerciseImageElement" class="w-100" />
         </div>
         <div class="d-flex justify-content-evenly my-3">
-            <button id="moins" class="btn btn-outline-primary"> <i class="fa-solid fa-backward"></i></button>
+            <button id="moins" class="primary-text-responsive btn btn-outline-primary"> <i class="fa-solid fa-backward"></i></button>
             <div>
-                <button id="stop" class="btn btn-outline-primary d-none"><i class="fa-solid fa-stop"></i> </button>
-                <button id="pause" class="btn btn-outline-primary d-none"> <i class="fa-solid fa-pause"></i> </button>
-                <button id="play" class="btn btn-outline-primary"> <i class="fa-solid fa-play"></i>  </button>
+                <!-- <button id="stop" class="primary-text-responsive btn btn-outline-primary d-none"><i class="fa-solid fa-stop"></i> </button> -->
+                <button id="pause" class="primary-text-responsive btn btn-outline-primary d-none"> <i class="fa-solid fa-pause"></i> </button>
+                <button id="play" class="primary-text-responsive btn btn-outline-primary"> <i class="fa-solid fa-play"></i>  </button>
             </div>
 
-            <button id="plus" class="btn btn-outline-primary"> <i class="fa-solid fa-forward"></i></button>
+            <button id="plus" class="primary-text-responsive btn btn-outline-primary"> <i class="fa-solid fa-forward"></i></button>
         </div>
     </div>
     <div class="h-75 shadow ms-3  w-25">
@@ -65,7 +65,7 @@
                 <img src="/media/photo/<%= exerciseTrain.Exercise.imageUrlPng %>" class="w-100 border png-gif-img"/>
                 <div class="p-2 border">
                     <h4><%= exerciseTrain.Exercise.name %></h4>
-                    <%= exerciseTrain.reps %> répétition x <%= exerciseTrain.sets %> 
+                    <span class="text-responsive"><%= exerciseTrain.reps %> répétition x <%= exerciseTrain.sets %> </span>
                 </div>
             </div>
         <% }) %>

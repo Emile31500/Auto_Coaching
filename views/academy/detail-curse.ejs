@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-center">
         <div class="border-bottom w-100">
             <div class="row" >
-                <div class="mt-5 opacity-50">
+                <div class="mt-5 opacity-50 text-body-secondary-responsive ">
                     <% if (isAdmin !=true) { %>
                         <%= curse.libele %>
                     <% }%>
@@ -16,7 +16,7 @@
                 <h2>
                     <% if (isAdmin === true) { %>
                         <a href="/admin/curse" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left-long"></i></a>
-                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteSessionDraftModal">
+                        <button class="btn btn-outline-danger text-responsive " data-bs-toggle="modal" data-bs-target="#deleteSessionDraftModal">
                             <i class="fa-solid fa-trash"></i> Supprimer
                         </button>
                         <form action="/admin/curse/<%= curse.id %>/session/<%= session.id %>" method="POST">
@@ -79,9 +79,9 @@
                             <% } %> link-underline link-underline-opacity-0" href="<%= adminPrefixOrNull %>/curse/<%= curse.id %>/session/<%= sessionIndex.id %>">
                             <% if (sessionIndex.id == session.id  ) { %>
                                 
-                                <strong>></strong> <%= sessionIndex.libele %> <strong><</strong>
+                                <strong>></strong> <span class="text-body-secondary-responsive "><%= sessionIndex.libele %></span> <strong><</strong>
                             <% } else { %>
-                                <%= sessionIndex.libele %>
+                                <span class="text-body-secondary-responsive "><%= sessionIndex.libele %> </span>
                             <% } %>
                         </a>
                     </div>
@@ -110,25 +110,25 @@
                 <div class="col d-flex justify-content-start">
                     <% if (isAdmin === true) { %>
                         <% if (isTherePrevious) {%> 
-                            <input type="submit" class="btn btn-outline-primary" name="buttonSelected" value="Sauvegarder & Précédent"/>
+                            <input type="submit" class="btn btn-outline-primary text-responsive"  name="buttonSelected" value="Sauvegarder & Précédent"/>
                         <% } %>
                     <% } else {%>
-                        <a href="" class="btn btn-outline-primary">Précédent</a>    
+                        <a href="" class="btn btn-outline-primary text-responsive">Précédent</a>    
                     <%} %>
                 </div> 
                 <% if (!isAdmin) { %>
                     <div class="col d-flex justify-content-center">
                         <form method="post">
-                        <p>
+                        <p class="text-responsive">
                             <input type="checkbox" name="isThisSessionViewed" class="form-check-input" /> : J'ai terminé ce cours
                         </p>
                     </div>
                 <% } %>
                 <div class="col d-flex justify-content-end">
                     <% if (isAdmin === true) { %>
-                        <input type="submit" class="btn btn-primary" name="buttonSelected" value="Sauvegarder & Suivant"/>
+                        <input type="submit" class="btn btn-primary text-responsive" name="buttonSelected" value="Sauvegarder & Suivant"/>
                     <% } else { %>
-                        <button class="btn btn-primary"> Suivant</button>    
+                        <button class="btn btn-primary text-responsive"> Suivant</button>    
                         </form>
                     <% } %>
                 </div>

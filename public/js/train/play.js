@@ -13,6 +13,7 @@
     const currentExerciseRepsElement = document.querySelector('#currentExerciseRepsElement')
     const currentExerciseRepsModeElement = document.querySelector('#currentExerciseRepsModeElement')
     const currentExerciseImageElement = document.querySelector('#currentExerciseImageElement')
+    const ding = new Audio('/media/audio/Bell Ding Sound EFFECT.mp3');
 
     let exerciseName = '';
     let exerciseImageUrl = '';
@@ -26,6 +27,12 @@
     let notInPause = true;
 
     pause.addEventListener('click', function name(params) {
+
+        if (!notInPause) {
+            pause.innerHTML='<i class="fa-solid fa-pause"></i>' 
+        } else {
+            pause.innerHTML='<i class="fa-solid fa-play"></i>' 
+        }
         notInPause = !notInPause
     })
 
@@ -49,7 +56,7 @@
         function startExercise() 
         {
            
-            
+            ding.play()
             const currentExercise = exerciseTrains[currentExerciseIndex];
             printPreventExercise(currentExerciseIndex)
             printExercise(currentExerciseIndex)
@@ -178,6 +185,7 @@
         function startWorkoutWrapper() {
 
             startWorkout.call(this, event)
+            this.classList.add('d-none')
 
             
         }

@@ -8,23 +8,23 @@
     <h3 class="my-3">Compte : </h3>
     <form action="/user/<%= user.id %>" method="POST" class="my-3">
         <p>
-            <label for="email"> Email : </label>
-            <input class="form-control" type="email" value='<%= user.email %>' name="email"  id="email" required>
+            <label for="email" class="text-responsive"> Email : </label>
+            <input class="form-control text-responsive" type="email" value='<%= user.email %>' name="email"  id="email" required>
         </p>
         <p>
-            <label for="name"> Nom : </label>
-            <input class="form-control" type="text" value='<%= user.name %>' name="name" id="name" required>
+            <label for="name" class="text-responsive"> Nom : </label>
+            <input class="form-control text-responsive" type="text" value='<%= user.name %>' name="name" id="name" required>
         </p>
         <p>
-            <label for="password"> Mot de passe : </label>
-            <input class="form-control" value="P4$$w0rd" type="password" name="password" id="password" required>
+            <label for="password" class="text-responsive"> Mot de passe : </label>
+            <input class="form-control text-responsive" value="P4$$w0rd" type="password" name="password" id="password" required>
         </p>
         <p>
-            <label for="passwordConf"> Confirmer le mot de passe : </label>
-            <input class="form-control" value="P4$$w0rd" type="password" name="passwordConf" id="passwordConf" required>
+            <label for="passwordConf" class="text-responsive"> Confirmer le mot de passe : </label>
+            <input class="form-control text-responsive" value="P4$$w0rd" type="password" name="passwordConf" id="passwordConf" required>
         </p> 
-        <div class="my-3">
-            <h4> Premium : </h4>
+        <!-- <div class="my-3">
+            <h4> Premium : </h4> -->
             <% if (isPremium) { %>
                 <table class="table">
                     <thead>
@@ -62,8 +62,8 @@
                 </table>
             <% } else { %>
             <% } %>
-        </div>  
-        <input type="submit" class="btn btn-primary my-3" id="submitUserFormButton" value="Mettre à jour"/>
+        <!-- </div>  -->
+        <input type="submit" class="btn btn-primary my-3 text-responsive" id="submitUserFormButton" value="Mettre à jour"/>
     </form>  
     <div id="ongletCompteAlert" class="alert d-none my-3"></div>
 </div>

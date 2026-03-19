@@ -15,13 +15,13 @@
     <tr>
       <th scope="col" class="row d-flex justify-content-center">
 
-            <button class="col-auto m-auto btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
+            <button class="col-auto m-auto btn btn-primary text-responsive" data-bs-toggle="modal" data-bs-target="#filterFoodModal">
               <i class="fa-solid fa-filter"></i> Filtrer
               <% if (countFilter) { %> 
                   <span class="badge badge-light"><%=  countFilter %></span>
               <% }%> 
             </button>
-            <a href="/dish" class="col-auto m-auto btn btn-primary">
+            <a href="/dish" class="col-auto m-auto btn btn-primary text-responsive">
               <i class="fa-solid fa-plus"></i>
             </a>
       </th>
@@ -38,11 +38,11 @@
                
 
                 <div style="background-image: url(/media/photo/<%= dish[i].imageUrl %>); background-size: cover;" class="card-img-top">
-                    <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
-                        <%= Math.round(dish[i].sumKcalorie) %> Kcal<br>
-                        <%= Math.round(dish[i].sumProtein) %> G protéine <br>
-                        <%= Math.round(dish[i].sumFat) %> G lipide<br>
-                        <%= Math.round(dish[i].sumCarbohydrate) %> G glucide
+                    <div class="w-100 h-auto text-responsive">
+                        <div class="w-100 bg-light bg-opacity-75 " ><%= Math.round(dish[i].sumKcalorie) %> Kcal</div>
+                        <div class="w-100 bg-light bg-opacity-75 d-none d-xl-block my-0"><%= Math.round(dish[i].sumProtein) %> G protéine </div>
+                        <div class="w-100 bg-light bg-opacity-75 d-none d-xl-block my-0"><%= Math.round(dish[i].sumFat) %> G lipide</div>
+                        <div class="w-100 bg-light bg-opacity-75 d-none d-xl-block my-0"><%= Math.round(dish[i].sumCarbohydrate) %> G glucide</div>
                     </div>
                 </div>
 
@@ -90,7 +90,7 @@
               </div>
             </div>
           <div class="modal fade" id="dishModal<%= dish[i].id %>" tabindex="-1" aria-labelledby="dishModal<%= dish[i].id %>Label" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-xl-down">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="dishModal<%= dish[i].id %>Label"><%=dish[i].name %> </h1>
@@ -102,7 +102,7 @@
                   </div>
                   <h5 class="my-3"> Ingédients : </h5>
                   <% for(var e=0; e < dish[i].DishFoods.length; e++) { %> 
-                    <div class="my-2">
+                    <div class="my-2 text-responsive">
                       <%= dish[i].DishFoods[e].Food.name %> : 
                       <%= dish[i].DishFoods[e].weight %> G
                     </div>

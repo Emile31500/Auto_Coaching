@@ -29,6 +29,7 @@ app.use(session({
   }),
 }));
 
+const adminFood = require('./routes/admin/food');
 const adminExercise = require('./routes/admin/exercise');
 const adminTrain = require('./routes/admin/train');
 
@@ -77,10 +78,11 @@ app.use(train);
 app.use(user);
 
 app.use(adminExercise);
+app.use(adminFood)
 app.use(adminTrain);
 
 
-const server = app.listen(3000, () => {
+const server = app.listen(3000, "0.0.0.0",() => {
   
   console.log('Server is running on port 3000');
 

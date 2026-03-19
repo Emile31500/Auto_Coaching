@@ -10,7 +10,7 @@
 </div>
 <%- contentFor('main') %>
 
-<div class="my-5 p-3 border shadow">
+<div class="my-5 p-3 border shadow  text-responsive">
     <%= program.description %>
 </div>
 
@@ -24,18 +24,18 @@
         <div class="accordion-item">
             <h2 class="accordion-header" id="heading<%= train.name + train.id %>">
                  <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= train.name + train.id %>" aria-expanded="false" aria-controls="collapse<%= train.name + train.id %>">
-                    <%= train.name %>
+                    <h4><%= train.name %></h4>
                 </div>
             </h2>
             <div id="collapse<%= train.name+train.id %>" class="accordion-collapse collapse <% if(isFirst){ %> show <% isFirst = false;} %> " aria-labelledby="heading<%= train.name + train.id %>" data-bs-parent="#accordionExample">
             <div class="accordion-body">
-                <div class="my-2">
+                <div class="my-2 text-responsive text-body-secondary-responsive ">
                     <%= 
                         train.description || `I'm Emile Armengaud, a 23-year-old back-end developer working as a freelancer. I specialize in PHP, particularly with the Symfony framework. If you're looking for a trustworthy partner to help create your project, you can contact me via the email provided in the "Main" section below. Hoping we will meet us soon !`
                     %>
                 </div>
                 <div class="my-2">
-                    <a href="/train/<%= train.id %>/play" class="btn btn-outline-primary">M'entraîner</a>
+                    <a href="/train/<%= train.id %>/play" class="btn btn-outline-primary  text-responsive">M'entraîner</a>
                 </div>
                 
 
@@ -45,8 +45,8 @@
                             <img src="/media/photo/<%= exerciseTrain.Exercise.imageUrlPng %>" style="max-height: 168px; max-width: 233px;" class="png-gif-img"/>
                         </div>
                         <div class="px-3 w-auto" >
-                            <h4 class="my-2"><%= exerciseTrain.Exercise.name %></h3>
-                                <p class="my-2 h-auto overflow-hidden"><%= program.description%>
+                            <h5 class="my-2"><%= exerciseTrain.Exercise.name %></h3>
+                                <p class="my-2 h-auto overflow-hidden text-responsive "><%= program.description%>
                                     I'm Emile Armengaud, a 23-year-old back-end developer working as a freelancer. I specialize in PHP, particularly with the Symfony framework. If you're looking for a trustworthy partner to help create your project, you can contact me via the email provided in the "Main" section below. Hoping we will meet us soon !
                                 </p>
                             <div>

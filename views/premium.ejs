@@ -1,0 +1,104 @@
+<% title = "Child Template" %>
+
+<%- contentFor('mainNotMarged') %>
+<%- contentFor('main') %>
+<h2 class="my-5">Abonnement premium</h2>
+
+<p class="my-3">
+    Passer à un abonnement premium pour un coaching personnalisé et pour utiliser l'application sans limite de temps !
+</p> 
+<form>    
+    <div class="row my-5 justify-content-center g-4">
+      
+    </div>
+    <div id="card-element"></div>
+    <div id="message" class="alert d-none"></div>
+    <div  style="height: 35px;" class="progress my-3 d-none" id="payment-progress-bar" role="progressbar" aria-label="Animated striped example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="height: 35px; width: 100%; font-size: 18px;">L'application est entrain de procédé au paiement stripe</div>
+    </div>
+
+    <button class="btn btn-primary">Payer</button>
+</form>
+<span id="emailValue" class="d-none"><%= user.email %></span>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const style = {
+  base: {
+    height : "30 px",
+    color: "#32325d",
+    fontFamily: "Arial, sans-serif",
+    fontSmoothing: "antialiased",
+    fontSize: "18px",
+    "::placeholder": {
+      color: "#a0aec0"
+    }
+  },
+  invalid: {
+    color: "#e53e3e",
+    iconColor: "#e53e3e"
+  }
+};
+
+const stripe = Stripe("pk_test_51SxQASJ7uGufFKhIp92vPaUU3Fx4wN2RsuSYr639oSIcw8PXbsFfhAssEAnegVDBYmommSyQk8RKTv0KGzGoegcW00BuzIUHwH"); // clé publique
+const formDataUser = document.querySelector('.formDataUser');
+const elements = stripe.elements();
+const card = elements.create("card", { style: style });
+const paymentProgressBar = document.querySelector('#payment-progress-bar')
+const messageElement = document.getElementById("message")
+card.mount("#card-element");
+const email = document.getElementById("emailValue").innerHTML;
+document.getElementById("emailValue").remove();
+
+const button = document.getElementById("confirmPay");
+
+button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    paymentProgressBar.classList.remove('d-none');
+    c
+    
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: card,
+        billing_details: {
+            email: email,
+        },
+    });
+
+    if (error) {
+        document.getElementById("message").innerText = error.message;
+        return;
+    }
+    
+    const formData = new FormData(formDataUser);
+    formData.append("paymentMethodId", paymentMethod.id);    
+    const formDataObject = Object.fromEntries(formData.entries());
+    
+    const response = await fetch("/create-subscription", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataObject),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+
+      paymentProgressBar.classList.add('d-none')
+      messageElement.classList.add('alert-danger')
+      messageElement.classList.remove('d-none')
+      messageElement.innerText = data.error;
+      return;
+
+    } else  {
+
+      paymentProgressBar.querySelector('.progress-bar').classList.add('bg-success')
+      paymentProgressBar.querySelector('.progress-bar').innerHTML = "Paiement effectué avec succès 🎉 ! Vous allez être regiriger à la page de connexion dans quelque instant.";
+      setTimeout(() => {
+          window.location.href = "/login";
+      }, 3000);
+
+    }
+});
+</script>

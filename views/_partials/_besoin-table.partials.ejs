@@ -3,7 +3,7 @@
   <table class="table table-bordered" >
     <thead>
       <tr>
-        <th colspan="3">
+        <th colspan="3" class="h4">
           Total calorique et nutritionel : <a href="/food/ate/<%= date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate() %> 00:00:00"><%= date.toLocaleDateString('fr-FR', {
             weekday: 'long',
             year: 'numeric',
@@ -13,30 +13,30 @@
         </th>
       </tr>
       <tr>
-        <th>Energie</th>
-        <th>Protéine</th>
-        <th>Lipide</th>
+        <th class="text-responsive">Energie</th>
+        <th class="text-responsive">Protéine</th>
+        <th class="text-responsive">Lipide</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td> <%= nutritionRequirement.kcalorie * nutritionRequirement.personnalMultiplicator | 1 %> Kcl </td>
-        <td> <%= nutritionRequirement.proteine * nutritionRequirement.proteinMultiplicator | 1 %> G </td>
-        <td> <%= nutritionRequirement.fat * nutritionRequirement.fatMultiplicator | 1 %> G </td>
+        <td> <span class="text-responsive"><%= nutritionRequirement.kcalorie * nutritionRequirement.personnalMultiplicator | 1 %> Kcl</span> </td>
+        <td> <span class="text-responsive"><%= nutritionRequirement.proteine * nutritionRequirement.proteinMultiplicator | 1 %> G</span> </td>
+        <td> <span class="text-responsive"><%= nutritionRequirement.fat * nutritionRequirement.fatMultiplicator | 1 %> G</span> </td>
       </tr>
       <tr>
-        <td> <span id="kcalAteAbs"></span> <%= Math.round(sumKcalorie) %> Kcl </td>
-        <td> <span id="protAteAbs"></span> <%= Math.round(sumProtein) %> G </td>
-        <td> <span id="fatAteAbs"></span> <%= Math.round(sumFat) %> G </td>
+        <td> <span id="kcalAteAbs"></span> <span class="text-responsive"><%= Math.round(sumKcalorie) %> Kcl</span> </td>
+        <td> <span id="protAteAbs"></span> <span class="text-responsive"><%= Math.round(sumProtein) %> G</span> </td>
+        <td> <span id="fatAteAbs"></span> <span class="text-responsive"><%= Math.round(sumFat) %> G</span> </td>
       </tr>
       <tr>
-        <td> <span id="kcalAtePrct"></span> <%= Math.round(sumKcalorie / nutritionRequirement.kcalorie * 100) %> % </td>
-        <td> <span id="protAtePrct"></span> <%= Math.round(sumProtein / nutritionRequirement.proteine * 100) %> % </td>
-        <td> <span id="fatAtePrct"></span> <%= Math.round(sumFat / nutritionRequirement.fat * 100) %> % </td>
+        <td> <span id="kcalAtePrct"></span> <span class="text-responsive"><%= Math.round(sumKcalorie / nutritionRequirement.kcalorie * 100) %> %</span> </td>
+        <td> <span id="protAtePrct"></span> <span class="text-responsive"><%= Math.round(sumProtein / nutritionRequirement.proteine * 100) %> %</span> </td>
+        <td> <span id="fatAtePrct"></span> <span class="text-responsive"><%= Math.round(sumFat / nutritionRequirement.fat * 100) %> %</span> </td>
       </tr>
       <tr>
         <td colspan="3" class="p-2" style="max-height: 130px;">
-          <div  class="row  w-100" style="white-space: nowrap; overflow-y: auto; max-height: 130px;">
+          <div  class="row  w-100 text-responsive" style="white-space: nowrap; overflow-y: auto; max-height: 130px;">
             <% for (aFIndx = 0; aFIndx < ateFood.length; aFIndx++) { %>
               <div class="shadow-sm border w-auto p-2 mx-2 rounded">
                 <%= new Date(ateFood[aFIndx].date).toLocaleDateString('fr-FR', {

@@ -8,17 +8,17 @@
 
   <% programs.forEach(program => {%>
 
-    <div class="my-5 d-flex border w-auto p-0 shadow">
-      <div>
-        <img src="/media/photo/<%= program.imageUrl %>" style="max-height: 168px;"/>
+    <div class="my-5 d-flex border w-auto p-0 shadow " >
+      <div class="h-auto m-0 p-0">
+        <img src="/media/photo/<%= program.imageUrl %>" class="h-100"  style="max-height: 290px; max-width: 340px; object-fit: cover;"/>
       </div>
        <div class="px-3 w-auto" >
-        <h3 class="my-2"><%= program.name %></h3>
-        <p class="my-2 h-auto overflow-hidden"><%= program.description%></p>
+        <h4 class="my-2"><%= program.name %></h4>
+        <p class="my-2 h-auto overflow-hidden "><%= program.description%></p>
         <div>
         <div>
           <p>
-            <a class="btn btn-primary my-1 me-2 ">Suivre</a><a  href="/program/<%= program.id %>"  class="btn btn-outline-primary my-1 ms-2">Voir</a>
+            <a class="btn btn-primary my-1 me-2 text-responsive">Suivre</a><a  href="/program/<%= program.id %>"  class="btn btn-outline-primary my-1 ms-2 text-responsive">Voir</a>
           </p>
         </div>
        </div> 

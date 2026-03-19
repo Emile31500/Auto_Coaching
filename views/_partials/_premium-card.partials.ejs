@@ -1,0 +1,21 @@
+<div class="col-md-4 d-flex justify-content-between">
+    <div class="card bg-light" style="width: 16rem;">
+        <div class="card-body">
+            <h5 class="card-title"><%= product.metadata.libele %> <input class="form-check-input productId" type="radio" name="productId" value="<%= product.id %>" required/> </h5>
+            <p class="card-text text-responsive">
+                <p>
+                    <%= product.metadata.description %>
+
+                </p>
+
+                <% prices.forEach((price) => { %>
+
+                    <% if (price.product === product.id) { %>
+                        <%=  price.unit_amount/100 %> €  / mois<br> pendant  <%= price.recurring.interval_count %> mois.                                      
+                        <% return false; %>
+                    <% } %>
+                <% }) %>
+            </p>
+        </div>
+    </div>
+</div>

@@ -9,19 +9,19 @@
         <table class="table table-striped my-3">
           <thead class="table-dark">
             <tr>
-             <th scope="col">IMC </th>
-              <th scope="col">Poids</th>
-              <th scope="col">Taille</th>
-              <th scope="col">Date</th>
+             <th scope="col" class="text-responsive">IMC </th>
+              <th scope="col" class="text-responsive">Poids</th>
+              <th scope="col" class="text-responsive">Taille</th>
+              <th scope="col" class="text-responsive">Date</th>
             </tr>
           </thead>
           <tbody>
             <% for (let i = 0 ; i < measurments.length; i ++) { %>
                 <tr>
-                    <td><%= (measurments[i].weight/((measurments[i].size/100) * (measurments[i].size/100))).toFixed(1) %></td>
-                    <td><%= measurments[i].weight %> Kg</td>
-                    <td><%= measurments[i].size %> cm</td>
-                    <td><%= new Date(measurments[i].createdAt).toLocaleDateString('fr-FR', {
+                    <td class="text-responsive"><%= (measurments[i].weight/((measurments[i].size/100) * (measurments[i].size/100))).toFixed(1) %></td>
+                    <td class="text-responsive"><%= measurments[i].weight %> Kg</td>
+                    <td class="text-responsive"><%= measurments[i].size %> cm</td>
+                    <td class="text-responsive"><%= new Date(measurments[i].createdAt).toLocaleDateString('fr-FR', {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
@@ -35,20 +35,20 @@
         <form action="/measurment" method="POST" class="my-5">
             <div class="my-3 row my-1" >
                 <div class="col-2">
-                    <label for="weight">
+                    <label for="weight" class="text-responsive">
                         Poids 
                     </label>
                 </div>
                 <div class="col-3">
-                    <input class="form-control" type="number" step="0.1" name="weight" id="weight"/>
+                    <input class="form-control text-responsive" type="number" step="0.1" name="weight" id="weight"/>
                 </div>
                 <div class="col-2">
-                    <label for="size">
+                    <label for="size" class="text-responsive">
                         Taille
                     </label>
                 </div>
                 <div class="col-3">
-                    <input class="form-control" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" name="size" id="size"/>
+                    <input class="form-control text-responsive" pattern="[0-9]*[.,]?[0-9]*" type="number" step="0.1" name="size" id="size"/>
                 </div>
             </div>
             <input type="submit" class="btn btn-primary"/>

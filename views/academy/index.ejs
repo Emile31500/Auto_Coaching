@@ -16,7 +16,7 @@
                     <img class="card-img-top>" placeholder-this-image src="/media/photo/<%= curse.imageUrl %>" alt="Card image cap">
                     <div class="card-body p-2">
                         <h5 class="my-2 card-title"><%= curse.libele %></h5>
-                        <p class="my-2 card-text">
+                        <p class="my-2 card-text ">
                             <%= curse.description %>
                         </p>
                         <a href="/admin/curse/<%= curse.id %>/session/<%= curse.SessionDrafts[0].id %>" class="btn btn-outline-primary">Éditer</a>
@@ -48,7 +48,7 @@
                     <img class="card-img-top <% if (haveToBeHidden) { %>opacity-25 <% } %>" placeholder-this-image src="/media/photo/<%= curse.imageUrl %>" alt="Card image cap">
                     <div class="card-body p-2">
                         <h5 class="my-2 card-title <% if (haveToBeHidden) { %> opacity-25  <% } %>"><%= curse.libele %></h5>
-                        <p class="my-2 card-text">
+                        <p class="my-2 card-text text-responsive">
                             
 
                             <% if (haveToBeHidden) { %>
@@ -60,7 +60,7 @@
                         <% if (!isThisCurseViewed) { %>
                             <a href="<% if(!haveToBeHidden) { %>/curse/<%= curse.id %>/session/<%= curse.Sessions[0].id %><% } %>" class="my-2 btn btn-primary  <% if (haveToBeHidden) { %> disabled <% } %>"">Accéder au cours</a>
                          <% } else { %>
-                            <a href="/curse/<%= curse.id %>/session/<%= curse.Sessions[0].id%>" class="my-2 btn btn-success">Revoir le cours</a>
+                            <a href="/curse/<%= curse.id %>/session/<%= curse.Sessions[0].id%>" class="my-2 btn btn-success text-responsive">Revoir le cours</a>
                         <% } %>
                     </div>
                 </div>
