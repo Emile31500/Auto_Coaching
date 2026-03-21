@@ -10,12 +10,11 @@ router.get('/premium',  authenticationChecker, async(req, res) => {
 
      
     const productsList = await stripe.products.list({
-            active : true
-        });
+        active : true
+    });
 
     const pricesList = await stripe.prices.list({
         active : true
-
     });
     
     req.flash('warning', 'Votre abonnement a expiré. Prenez-en un nouveau pour continuer à utiliser notre application !')

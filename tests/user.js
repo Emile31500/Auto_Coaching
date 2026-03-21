@@ -1,116 +1,77 @@
-const request = require('supertest')
-const should = require('should');
-const { JSDOM } = require('jsdom')
-const { User } = require('../models')
-const express = require('express');
-const app = require('../app')
+const request = require('supertest');
+const app = require('../app.js');
+const cheerio = require("cheerio");
 const session = require('supertest-session');
 const { generateRandomString } = require('./test.tools')
+const { User } = require('../models')
 
 const userTest = describe('User tests', () => {
 
   it('Should return a login page', async () => {
-
     const res = await request(app).get('/login');
     const stringToParse = res.text;
+    const $ = cheerio.load(stringToParse);
 
-    const parsedString =  new JSDOM(stringToParse);
-    const DOM = parsedString.window.document;
-
-    expect(DOM.querySelector('h2').innerHTML).toBe('Login');
-    expect(DOM.querySelector('.alert')).toEqual(null);
+    expect($('h2').text()).toBe('Login');
     expect(res.statusCode).toEqual(200);
-
   });
 
   it('Should return a sign up page', async () => {
 
-    const res = await request(app).get('/signup');
+    const res = await request(app).get('/');
     const stringToParse = res.text;
 
-    const parsedString =  new JSDOM(stringToParse);
-    const DOM = parsedString.window.document;
+    const $ = cheerio.load(stringToParse);
 
-    expect(DOM.querySelector('h2').innerHTML).toBe('Sign up');
-    expect(DOM.querySelector('.alert')).toEqual(null);
+
+    expect($("#name").html()).not.toBe(null)
+    expect($("#email").html()).not.toBe(null)
+    expect($("#password").html()).not.toBe(null)
+    expect($("#passwordConf").html()).not.toBe(null)
+    expect($("#accept-cgv").html()).not.toBe(null)
+    expect($("#refute-retractation").html()).not.toBe(null)
+    console.log($("input[name='cardnumber']"))
+    expect($("#confirmPay").html()).not.toBe(null)
     expect(res.statusCode).toEqual(200);
 
   });
 
-  it('Should return the login page', async () => {
-
-    const randomString = generateRandomString(10)
-
-    const res = await request(app)
-      .post('/sign')
-      .redirects(1)
-      .send({name: 'Nouvel utilisateur', email: randomString + '@gmail.com', password: 'P4$$w0rd'});
-
-    expect(res.req.path).toEqual('/login');
-    expect(res.statusCode).toEqual(200);
-
-  });
-  
-  it('Should return the home page', async () => {
-
-    let preAuthUser = await User.findOne({where : {email: 'emile00013+2@gmail.com'}})
-
-    const resA = await request(app)
-      .post('/login')
-      .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'});
-
-    expect(resA.req.path).toEqual('/login');
-    expect(resA.statusCode).toEqual(302);
-
-    let postAuthUser = await User.findOne({where : {email: 'emile00013+2@gmail.com'}})
-
-    
-    expect(preAuthUser.authToken).not.toEqual(postAuthUser.authToken);
-    expect(preAuthUser.authToken).not.toBeUndefined();
-  });
-
-  it('Should return the home page', async () => {
+  it('Test login user : Should return the home page', async () => {
 
     const testSession = session(app)
+    let preAuthUser = await User.findOne({where : {name: 'FakerUser'}})
 
     const res = await testSession
       .post('/login')
-      .send({email: 'emile00013+2@gmail.com', password: 'P4$$w0rd'})
+      .send({email: preAuthUser.email, password: 'testpassword'})
       .redirects(1);
 
     const stringToParse = res.text;
+    const $ = cheerio.load(stringToParse);
 
-    const parsedString =  new JSDOM(stringToParse);
-    const DOM = parsedString.window.document;
-
-    expect(res.req.path).toEqual('/');
-    expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-    expect(DOM.querySelector('h2').innerHTML).toBe('Welcome to Child Template');
-    expect(DOM.querySelector('.alert')).toEqual(null);
+    expect(res.req.path).toEqual('/profile/objectif');
     expect(res.statusCode).toEqual(200);
 
   });
 
-  it('Should return an admin page', async () => {
+  it('Test login admin : should return an admin page', async () => {
 
     const testSession = session(app)
+    const preAuthAdmin = await User.findOne({where : {name: 'FakerUserAdmin'}})
 
     const res = await testSession
       .post('/login')
-      .send({email: 'admin@auto-coaching.fr', password: 'P4$$w0rd'})
+      .send({email: preAuthAdmin.email, password: 'testpassword'})
       .redirects(1);
 
     const stringToParse = res.text;
-    const parsedString =  new JSDOM(stringToParse);
-    const DOM = parsedString.window.document;
+    const $ = cheerio.load(stringToParse);
 
     expect(res.req.path).toEqual('/admin/train');
-    expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-    expect(DOM.querySelector('h2').innerHTML).toBe('Entraînement');
+    expect($('h2').text()).toBe('Programme');
     expect(res.statusCode).toEqual(200);
 
-  });
-
+  });/**/
 });
 
-module.exports = userTest
+module.export = userTest

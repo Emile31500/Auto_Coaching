@@ -1,10 +1,14 @@
 const express = require('express');
 const { Exercise, ExerciseTrain, ExerciseTrainDraft, Program, ProgramDraft, Train, TrainDraft} = require('../../models/');
+const { publishTrain } = require('../../services/train');
 const router = express.Router();
 const parserJson = require('../../middlewares/parserJson');
 const { Op } = require('sequelize');
 const multer = require('multer')
 const path = require('path');
+const adminCheckerApi = require('../../middlewares/adminCheckerApi');
+const adminChecker = require('../../middlewares/adminChecker');
+
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
 const finalName = 'program-image-' + uniqueSuffix;
 let fileFullName = ''
@@ -202,7 +206,7 @@ router.post('/admin/program-draft/create', parserJson,  upload.single('imageUrl'
 
 })
 
-router.get('/admin/train', async (req, res) => {
+router.get('/admin/train', adminChecker, async (req, res) => {
 
     const programDraft = await ProgramDraft.findAll({ include : {
         model : TrainDraft,
@@ -291,61 +295,14 @@ router.get('/program-draft/:id/publish', async(req, res) => {
 
         const id = req.params.id
 
-        const programDraft = await ProgramDraft.findOne({ 
-            include : {
-                model : TrainDraft,
-                include : {
-                    model : ExerciseTrainDraft,
-                    include : {
-                        model : Exercise
-                    }
-                }
-            },        
-            where : {
-                id : id
-            }
-        })
+        const programOrFalse = publishTrain(id)
 
-        let program = await Program.findOne({
-            include : {
-                model : Train,
-                require : false
-            },
-            where : {
-                programDraftId : id
-            }
-        })
+        if (programOrFalse instanceof Program) {
+            req.flash('success', `Le programme ${program.name} a bien été publié`);
+        } else {
+            throw new Error('Un problème inconu est survenu lors de la publication du program')
+        }
 
-       if (!(program instanceof Program)) program = await Program.create({programDraftId : id});
-
-        await program.update({
-            name : programDraft.name,
-            description : programDraft.description
-        })
-
-        program.Trains?.forEach(train => {train.destroy()}) 
-
-        programDraft.TrainDrafts.forEach(async(trainDraft) => {
-
-            let train = await Train.create({
-                name : trainDraft.name,
-                description :  trainDraft.description,
-                programId :  program.id
-            }) 
-
-            trainDraft.ExerciseTrainDrafts.forEach(async(exerciseTrainDraft) => {
-                let exerciseTrain = await ExerciseTrain.create({
-                    exerciseId : exerciseTrainDraft.exerciseId,
-                    trainId : train.id,
-                    reps : exerciseTrainDraft.reps,
-                    repsMode : exerciseTrainDraft.repsMode,
-                    sets : exerciseTrainDraft.sets,
-                })
-
-            })
-        });
-
-        req.flash('success', `Le programme ${program.name} a bien été publié`);
 
     } catch (error) {
 

@@ -1,21 +1,23 @@
 {
   "dependencies": {
     "@adminkit/core": "^3.4.0",
+    "@faker-js/faker": "^10.3.0",
     "@mapbox/node-pre-gyp": "^2.0.3",
     "authenticate-user.js": "^1.0.1",
     "body-parser": "^2.2.2",
+    "cheerio": "^1.2.0",
     "connect-sqlite3": "^0.9.16",
     "dotenv": "^17.2.4",
-    "ejs": "^4.0.1",
+    "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
     "express-flash": "github:RGBboy/express-flash",
     "express-session": "^1.19.0",
+    "faker": "^6.6.6",
     "fs": "^0.0.1-security",
     "hash-password-pbkdf2": "^1.0.0",
     "http": "^0.0.1-security",
     "jest-cli": "^30.2.0",
-    "jsdom": "^28.0.0",
     "jsonwebtoken": "^9.0.3",
     "memorystore": "^1.6.7",
     "multer": "^2.0.2",
@@ -29,9 +31,11 @@
     "should": "^13.2.3",
     "socket.io": "^4.8.3",
     "stripe": "^20",
-    "tar": "^7.5.7"
+    "tar": "^7.5.12"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.2",
     "jest": "^30.2.0",
     "sequelize-cli": "^6.6.5",
     "supertest": "^7.2.2",

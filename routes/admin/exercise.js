@@ -2,6 +2,7 @@ const express = require('express');
 const { Exercise, ExerciseTrainDraft, ProgramDraft, TrainDraft } = require('../../models');
 var parserJson = require('../../middlewares/parserJson');
 var adminCheckerApi = require('../../middlewares/adminCheckerApi');
+var adminChecker = require('../../middlewares/adminChecker');
 const multer  = require('multer');
 const path = require('path');
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
@@ -69,11 +70,16 @@ router.get('/program-draft/:idP/train/:idT/exercise/:idE/delete', async (req, re
     }
 })
 
-router.get('/admin/exercise/id/delete', async(req, res) => {
+router.get('/admin/exercise/:id/delete', adminChecker, async(req, res) => {
 
     try {
 
-        req.flash('success', 'L exercice ${exercice.libele} a bien été supprimé');
+        const id = req.params.id
+        const exercice = await Exercise.findOne({where : { id : id}})
+        const exerciseName = exercice.libele;
+        await exercice.destroy();
+
+        req.flash('success', `L'exercice ${exerciseName} a bien été supprimé`);
 
     } catch (error) {
 
@@ -84,7 +90,7 @@ router.get('/admin/exercise/id/delete', async(req, res) => {
 
 })
 
-router.post('/admin/exercise', parserJson, upload.fields([{name : 'imageUrlGif'}, {name : 'imageUrlPng'}]), async(req, res) => {
+router.post('/admin/exercise', parserJson, adminChecker, upload.fields([{name : 'imageUrlGif'}, {name : 'imageUrlPng'}]), async(req, res) => {
 
     try {
 
@@ -97,7 +103,7 @@ router.post('/admin/exercise', parserJson, upload.fields([{name : 'imageUrlGif'}
 
         })
 
-        req.flash('success', `Le exercice ${exercise.name} a bien été créé`);
+        req.flash('success', `L'exercice ${exercise.name} a bien été créé`);
 
 
     } catch (error) {

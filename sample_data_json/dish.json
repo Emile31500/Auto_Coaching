@@ -1,0 +1,8 @@
+
+[
+{"name":"Petit déjeuner type","userId":"1","createdAt":"2026-02-09 14:40:44","updatedAt":"2026-02-26 13:49:21","imageUrl":"dish-image-1770647943354-812599267","sumKcalorie":"593","sumProtein":"39","sumFat":"18","sumCarbohydrate":"53"},
+{"name":"Repas à base de riz","userId":"1","createdAt":"2026-02-09 21:17:43","updatedAt":"2026-02-26 13:49:21","imageUrl":"dish-image-1770671437532-171600854","sumKcalorie":"906","sumProtein":"58","sumFat":"18","sumCarbohydrate":"126"},
+{"name":"Pâte avec saumon","userId":"1","createdAt":"2026-02-13 13:25:08","updatedAt":"2026-02-26 13:49:21","imageUrl":"fish-dish-placeholder.png","sumKcalorie":"972","sumProtein":"46","sumFat":"29","sumCarbohydrate":"127"},
+{"name":"Flocon d'avoine","userId":"1","createdAt":"2026-02-13 20:07:10","updatedAt":"2026-02-26 13:49:21","imageUrl":"fish-dish-placeholder.png","sumKcalorie":"422","sumProtein":"22","sumFat":"16","sumCarbohydrate":"46"},
+{"name":"Repas à base de riz","userId":"1","createdAt":"2026-02-19 20:54:42","updatedAt":"2026-02-26 13:49:21","imageUrl":"redmeat-dish-placeholder.png","sumKcalorie":"769","sumProtein":"13","sumFat":"17","sumCarbohydrate":"140"}
+]

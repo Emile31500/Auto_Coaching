@@ -1,21 +1,24 @@
 const Sequelize = require('sequelize');
+const process = require('process');
+const config = require('./config/config.json');
 
-const dotenv = require('dotenv').config();
+const env = process.env.NODE_ENV;
 
-const DB_HOST = process.env.DB_HOST;
-const DB_NAME = process.env.DB_NAME;
-const DB_USERNAME = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_DIALECT = process.env.DB_DIALECT;
+try {
+  const dbConfig = config[env];
+
+  const sequelize = new Sequelize(
+    dbConfig.database,
+    dbConfig.username,
+    dbConfig.password,
+    dbConfig
+  );
+} catch (error) {
+
+  console.log(error.message)
+  console.log(error)
 
 
-const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
-  host: DB_HOST,
-  dialect: DB_DIALECT   
-});
-
-
+}
 
 module.exports = sequelize;
-
-

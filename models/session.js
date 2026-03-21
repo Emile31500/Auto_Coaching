@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
           name : 'curseId',
           allowNull : false
         }
-      })/**/
+      })
       Session.hasMany(models.SessionBibliography, {
         foreignKey : {
           name : 'sessionId',
@@ -38,10 +38,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Session.init({
-    sessionDraftId: DataTypes.INTEGER,
+    // sessionDraftId: DataTypes.INTEGER,
     libele: DataTypes.STRING,
     videoUrl: DataTypes.STRING,
-    isDeleted: DataTypes.BOOLEAN
+    isDeleted: DataTypes.BOOLEAN,
+    // curseId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Session',

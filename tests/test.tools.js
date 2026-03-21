@@ -45,17 +45,21 @@ async function auth(rawData) {
 
 async function authUser() {
 
+    const user = await User.findOne({where : {name: 'FakerUser'}})
+
     return auth({
-        email : 'emile00013+2@gmail.com',
-        password : 'P4$$w0rd'
+        email : user.email,
+        password : 'testpassword'
     });
 }
 
 async function authAdmin() {
 
+    const userAdmin = await User.findOne({where : {name: 'FakerUserAdmin'}})
+
     return auth({
-        email : 'admin@auto-coaching.fr',
-        password : 'P4$$w0rd'
+        email : userAdmin.email,
+        password : 'testpassword'
     });
 }
 

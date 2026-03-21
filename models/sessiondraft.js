@@ -19,8 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       )
       SessionDraft.hasMany(models.SessionBibliographyDraft, 
-        {
-          name : 'sessionDraftId'
+        { foreignKey : 
+          {
+            name : 'sessionDraftId'
+          }
         }
       )
       

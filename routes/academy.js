@@ -11,6 +11,7 @@ const { Op, where, literal } = require('sequelize');
 
 const multer  = require('multer');
 const cursedraft = require('../models/cursedraft');
+const premiumChecker = require('../middlewares/premiumChecker');
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
 const finalName = 'curse-image-' + uniqueSuffix;
 
@@ -24,7 +25,7 @@ const storage = multer.diskStorage({
 })
 
 
-router.get('/academy', authenticationChecker, async (req, res) => {
+router.get('/academy', authenticationChecker, premiumChecker, async (req, res) => {
 
     curses = await Curse.findAll({
         include : [{
@@ -61,7 +62,7 @@ router.get('/academy', authenticationChecker, async (req, res) => {
     });
 })
 
-router.get('/curse/:idC/session/:idS', authenticationChecker, async (req, res) => {
+router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, async (req, res) => {
 
     const idC = req.params.idC
     const idS = req.params.idS
@@ -116,7 +117,7 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, async (req, res) =
     
 })
 
-router.post('/curse/:idC/session/:idS', parserJson, authenticationChecker, async (req, res) => {
+router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, parserJson, async (req, res) => {
 
     try {
 

@@ -26,7 +26,11 @@ module.exports = (sequelize, DataTypes) => {
           },
         }
       )//,
-      Curse.hasMany(models.Session, { name : 'curseId' })
+      Curse.hasMany(models.Session,{
+        foreignKey : { 
+          name : 'curseId' 
+        }
+      })
       Curse.hasMany(models.ViewedCurse,{
          foreignKey : {
           name : 'curseId',

@@ -65,22 +65,6 @@ router.get('/program/:idP/train/:idT/exercise/:idE/delete', async (req, res) => 
     }
 })
 
-router.get('/admin/exercise/id/delete', async(req, res) => {
-
-    try {
-
-        req.flash('success', 'L exercice ${exercice.libele} a bien été supprimé');
-
-    } catch (error) {
-
-        req.flash('danger', error.message)
-    }
-
-    res.redirect('/admin/train')
-
-})
-
-
 router.post('/program/:idP/train/:idT/exercise', parserJson, async(req, res) => {
 
     try {

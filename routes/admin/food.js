@@ -3,7 +3,8 @@ const { Food } = require('../../models');
 
 var parserJson = require('../../middlewares/parserJson');
 
-const adminChecker = require('../../middlewares/adminCheckerApi');
+const adminChecker = require('../../middlewares/adminChecker');
+const adminCheckerApi = require('../../middlewares/adminCheckerApi');
 
 const router = express.Router();
 
