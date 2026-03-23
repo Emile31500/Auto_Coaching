@@ -9,7 +9,9 @@
 </p> 
 <form>    
     <div class="row my-5 justify-content-center g-4">
-      
+        <% products.forEach((product)=> {%>
+            <%- include('_partials/_premium-card.partials.ejs', { product : product, prices : prices}); %>
+        <%} ) %>
     </div>
     <div id="card-element"></div>
     <div id="message" class="alert d-none"></div>

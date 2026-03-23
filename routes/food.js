@@ -70,7 +70,7 @@ router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, as
 
 });
 
-router.get('/api/food/:id_food', authenticationCheckerApi, parserJson, premiumChecker, async(req, res, next) => {
+router.get('/api/food/:id_food',premiumChecker, authenticationCheckerApi, parserJson,  async(req, res, next) => {
 
     const id = req.params.id_food;
 

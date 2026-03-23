@@ -6,11 +6,11 @@ const authenticationCheckerApi =  async function (req, res, next) {
     try {
         
         const authToken = req.session.token;
-        const decodedToken = jwt.verify(authToken, process.env.JWT_SECRET);
-      
-        if (!decodedToken) throw new Error
-  
-        const user = await User.findOne({where: {'authToken': authToken}});
+        const decodeToken = jwt.verify(authToken, process.env.JWT_SECRET);
+
+        if (!decodeToken) throw new Error
+    
+        const user = await User.findOne({where: {'email': decodeToken.email}});
       
         if(!user) {
         

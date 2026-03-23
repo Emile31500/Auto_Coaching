@@ -1,59 +1,92 @@
 const { User } = require('../models/');
 const session = require('express-session');
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
+const jwt = require('jsonwebtoken')
+
 
 const premiumChecker = async function (req, res, next) {
+    try {
+        const authToken = req.session.token;
+        const decodeToken = jwt.verify(authToken, process.env.JWT_SECRET);
         
-    const authToken = req.session.token;
-    const user = await User.findOne({where: {id : 1}});
-    req.user = user;
-
-    const customerPromise = await stripe.customers.list({
-        email: user.email,
-        limit: 1
-    })
-
-    let customer = customerPromise.data[0]
+        if (!decodeToken) {
+            console.log(1)
+            throw new Error
+        
+        }
     
-    const subscriptions = await stripe.subscriptions.list({
-        customer: customer.id
-    });
+        const user = await User.findOne({where: { email : decodeToken.email}});
+        req.user = user;
+
+        if (user.role.includes('admin')) {
+            req.isPremium = true;
+            next();
+
+        } else {
+
+            const customerPromise = await stripe.customers.list({
+                email: user.email,
+                limit: 1
+            })
+
+            let customer = customerPromise.data[0]
+            
+            const subscriptions = await stripe.subscriptions.list({
+                customer: customer.id
+            });
 
 
-    let i = 0; 
-    if (subscriptions.data.length > 0) {
+            let i = 0; 
+            if (subscriptions.data.length > 0) {
 
-        subscriptions.data.forEach(async (subscription) => {
+                subscriptions.data.forEach(async (subscription) => {
 
-            const productId = subscription.items?.data[0]?.plan?.product
-            if (typeof productId === "string") {
+                    const productId = subscription.items?.data[0]?.plan?.product
+                    if (typeof productId === "string") {
 
-                const product = await stripe.products.retrieve(productId)
+                        const product = await stripe.products.retrieve(productId)
 
-                if (['active', 'canceled', 'unpaid'].includes(subscription.status)) {
-                    
-                    if (product.id === 'prod_TzofT7YP9GVDLx'){
+                        if (['active', 'canceled', 'unpaid'].includes(subscription.status)) {
+                            
+                            if (product.id === 'prod_TzofT7YP9GVDLx'){
 
-                        req.isPremium = true;
-                        next();
+                                req.isPremium = true;
+                                next();
 
-                    } else {
-                        
-                        const expireDateSubscripbe = addDaysToDate(subscription.created, product.metadata.days_until_canceled);
-                        const expiredDateStamp = new Date(expireDateSubscripbe).getTime()
-                        const currentDateStamp = new Date(currentDateTime).getTime()
-                        if (currentDateStamp < expiredDateStamp) req.isPremium = true; next();
+                            } else {
+                                
+                                const expireDateSubscripbe = addDaysToDate(subscription.created, product.metadata.days_until_canceled);
+                                const expiredDateStamp = new Date(expireDateSubscripbe).getTime()
+                                const currentDateStamp = new Date(currentDateTime).getTime()
+                                if (currentDateStamp < expiredDateStamp) req.isPremium = true; 
+                                next();
 
+                            }
+                        }
                     }
-                }
-            }
 
-            i++;
-        });
-    } 
+                    i++;
+                });
+
+                console.log(2)
+                throw new Error
 
 
-    res.redirect('/premium');
+            } else {
+                console.log(3)
+                throw new Error
+
+            } 
+        }
+
+    } catch (error) {
+
+        console.log('fhbebukvdbnemfnerfb')
+        res.redirect('/premium');
+
+    }
+
+
 
 
     function addDaysToDate(inputDate, daysToAdd) {

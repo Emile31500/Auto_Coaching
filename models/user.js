@@ -15,10 +15,13 @@ module.exports = (sequelize, DataTypes) => {
 
     async getAuthenticationToken(){
 
-      const authToken = jwt.sign({ __id: this.id }, process.env.JWT_SECRET);
-      this.authToken = authToken;
-      await this.save();
-      return authToken;
+      const token = jwt.sign(
+          { email: this.email },
+          process.env.JWT_SECRET,
+          { expiresIn: "7d" }
+      )
+      
+      return token;
 
     }
   }

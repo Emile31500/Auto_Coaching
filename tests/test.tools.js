@@ -1,7 +1,7 @@
 const app = require('../app')
 const session = require('supertest-session');
 const { User } = require('../models');
-
+const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 function generateRandomString(length) {
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -42,6 +42,58 @@ async function auth(rawData) {
 
     return testSession;
 }
+
+
+
+async function authPremiumUser() {
+
+    const subscriptions = await stripe.subscriptions.list({
+        status : 'active'
+    });
+
+    const authRes = subscriptions.data.forEach(async (subscription) => {
+
+        const customerId =  subscription.customer
+        const customer = await stripe.customers.retrieve(customerId);
+        const user = await User.findOne({where : {name: customer.email}})
+
+        if (user instanceof User) {
+           return auth({
+                email : user.email,
+                password : 'testpassword'
+            });
+        }
+    });
+
+    return authRes;
+    
+}
+
+async function authNonPremiumUser() {
+
+    const users = await User.findAll({where : {name: 'FakerUser'}})
+    let subscription
+    let authRes = undefined;
+
+    for (let index = 0; index < users.length; index++) {
+        
+        const customers = await stripe.customers.list({email : users[index].email});
+        const customer = customers.data[0];
+        subscriptions = await stripe.subscriptions.list({
+            customer : customer.id
+        });
+        
+        authRes = auth({
+            email : users[index].email,
+            password : 'testpassword'
+        });
+        index = users.length
+    }
+
+    return authRes;
+    
+}
+
 
 async function authUser() {
 
@@ -86,6 +138,8 @@ module.exports = {
     auth,
     authAdmin,
     authUser,
+    authPremiumUser,
+    authNonPremiumUser,
     createRandomUser,
     generateRandomString,
     getDate,

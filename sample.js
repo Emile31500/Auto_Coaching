@@ -5,9 +5,9 @@ const {generateStripeUser} = require('./services/user');
 const foodsDataJson = require('./sample_data_json/food.json')
 const exerisesDataJson = require('./sample_data_json/exercise.json')
 const dishesDataJson  = require('./sample_data_json/dish.json')/**/
-
 const dotenv = require('dotenv').config();
 const pbkdf2 = require("hash-password-pbkdf2")
+const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 /*const args = process.argv.slice(2); // remove 'node' and 'file.js'
 let customOp; 
@@ -21,8 +21,12 @@ const exercises = []
 async function genrateSampleData () {
     try {
 
-
         if (process.env.NODE_ENV === 'test') {
+            
+            const customers = await stripe.customers.list({})
+            customers.data.forEach(async (customer) => {
+                await stripe.customers.del(customer.id)
+            });
 
             await sequelize.sync({ force: true })
             async function generateExercise() {
@@ -127,7 +131,8 @@ async function genrateSampleData () {
                         
                     });
 
-                    generateStripeUser(user);
+                    const customer = await generateStripeUser(user);
+                    // generateFalseSubscriptions(customer, i);
                 }
 
                 console.log('Generate users');
@@ -158,35 +163,37 @@ async function generateFalseSubscriptions(customer, dividor) {
         active : true
     });
 
-    const i = dividor % productsList.data.lenght 
+    const i = dividor % 6
 
-    const priceId = productsList.data[i].defaultPrice
+    if (i < productsList.data.length) {
+        const priceId = productsList.data[i].defaultPrice
+
+        const paymentMethod = await stripe.paymentMethods.create({
+            type: 'us_bank_account',
+            us_bank_account: {
+                account_holder_type: 'individual',
+                account_number: '000123456789',
+                routing_number: '110000000',
+            },
+            billing_details: {
+                name: 'John Doe',
+            },
+        });
         
-
-    const paymentMethod = await stripe.paymentMethods.create({
-        type: 'us_bank_account',
-        us_bank_account: {
-            account_holder_type: 'individual',
-            account_number: '000123456789',
-            routing_number: '110000000',
-        },
-        billing_details: {
-            name: 'John Doe',
-        },
-    });
-
-    const paymentMethodAttached = await stripe.paymentMethod.attach(
-        paymentMethod.id,
-        {
-            customer: customer.id
-        }
-    );
+        await stripe.paymentMethod.us_bank_account.verifySource()
     
-    const subscription = await stripe.subscriptions.create({
-        customer: customer.id,
-        items: [{ price: priceId},],
-        cancel_at: Math.floor(endDate.getTime() / 1000),
-        expand: ['latest_invoice.payment_intent'],
-    });
-
+        const paymentMethodAttached = await stripe.paymentMethods.attach(
+            paymentMethod.id,
+            {
+                customer: customer.id
+            }
+        );
+        /*
+        const subscription = await stripe.subscriptions.create({
+            customer: customer.id,
+            items: [{ price: priceId},],
+            cancel_at: Math.floor(endDate.getTime() / 1000),
+            expand: ['latest_invoice.payment_intent'],
+        });*/
+    }
 }

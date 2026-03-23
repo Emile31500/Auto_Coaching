@@ -1,7 +1,7 @@
 const app = require('../app')
 const session = require('supertest-session');
 const { Food } = require('../models');
-const { generateRandomString, authUser, authAdmin } = require('./test.tools')
+const { generateRandomString, authUser, authAdmin, authNonPremiumUser } = require('./test.tools')
 
 const foodTest = describe('Food tests', () => {
 
@@ -194,18 +194,31 @@ const foodTest = describe('Food tests', () => {
         
     });
 
-    it(" 9 : Should return a food instance", async () => {
+     it(" 9 : get a food non premium user " , async () => {
+
+        const testSession = await authNonPremiumUser()
+
+        const foods = await Food.findAll({limit: 1});
+        const foodSeq = foods[0]; 
+        console.log(foodSeq.id)
+        const res = await testSession
+            .get('/api/food/' + foodSeq.id)
+            .redirects(1);
+
+        expect(res.req.path).toEqual('/premium');
+
+    })
+
+    it(" 10 : get a food premium user " , async () => {
 
         const testSession = await authUser()
 
         const foods = await Food.findAll({limit: 1});
         const foodSeq = foods[0]; 
-
+        console.log(foodSeq.id)
         const res = await testSession
             .get('/api/food/' + foodSeq.id)
             .redirects(1);
-
-        // const foodApi = res._body.data
 
         expect(res.statusCode).toEqual(200);
         expect(res._body.code).toEqual(200);
@@ -215,6 +228,8 @@ const foodTest = describe('Food tests', () => {
 
     });/**/
 
+
+    // authNonPremiumUser
 });
 
 module.exports = foodTest;

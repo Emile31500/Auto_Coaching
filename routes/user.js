@@ -18,6 +18,7 @@ const authenticationCheckerApi = require('../middlewares/authenticationCheckerAp
 const isAuth = require('../middlewares/isAuth')
 const MeasurmentService = require('../services/measurment');
 const FoodService = require('../services/food');
+const session = require('express-session');
 
 
 const adminChecker = require('../middlewares/adminChecker');
