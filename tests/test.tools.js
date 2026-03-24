@@ -43,35 +43,6 @@ async function auth(rawData) {
     return testSession;
 }
 
-
-/*
-async function authPremiumUser() {
-
-    const subscriptions = await stripe.subscriptions.list({
-        status : 'active'
-    });
-
-    let user;
-
-    subscriptions.data.forEach(async (subscription) => {
-
-        const customerId =  subscription.customer
-        const customer = await stripe.customers.retrieve(customerId);
-        const userOrNull = await User.findOne({where : {name: customer.email}})
-
-        if (userOrNull instanceof User) {
-           user = userOrNull
-        }
-    });
-
-    return auth({
-        email : user.email,
-        password : 'testpassword'
-    });
-    
-}*/
-
-
 async function authPremiumUser() {
     const users = await User.findAll({where : {name: 'FakerUser'}})
     let authUser = undefined;

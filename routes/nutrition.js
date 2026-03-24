@@ -31,6 +31,12 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
         }
     });
 
+    if (!(nutritionRequirement instanceof NutritionRequirement)) {
+
+        req.flash('warning', 'Vous devez inscrire vos données corporel pour faire marcher la page Nutrition')
+        res.redirect('/profile/objectif')
+    }
+
     const ateFood = await AteFood.findAll({ 
         include : Food, 
         group: 'date',

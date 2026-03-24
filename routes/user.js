@@ -41,9 +41,10 @@ router.get('/profile/:pageName', authenticationChecker, getStripeCustomer,  asyn
         }
     })
 
-
+    
     if (pageName === 'objectif') {
 
+        res.locals.message = req.flash();
         res.render('../views/profile/objectif',  { 
             page : '/profile',
             measurments : measurments,
@@ -71,6 +72,7 @@ router.get('/profile/:pageName', authenticationChecker, getStripeCustomer,  asyn
             req.flash('warning', 'Attention : Il y a plus d\'une semiane que vous pas mis à jour votre progression.')
         }
 
+        res.locals.message = req.flash();
         res.render('../views/profile/progression',  { 
             page : '/profile',
             user : user,
@@ -84,6 +86,7 @@ router.get('/profile/:pageName', authenticationChecker, getStripeCustomer,  asyn
 
         
 
+        res.locals.message = req.flash();
         res.render('../views/profile/compte',  { 
             page : '/profile',
             user : user,

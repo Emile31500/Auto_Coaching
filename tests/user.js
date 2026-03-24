@@ -30,7 +30,6 @@ const userTest = describe('User tests', () => {
     expect($("#passwordConf").html()).not.toBe(null)
     expect($("#accept-cgv").html()).not.toBe(null)
     expect($("#refute-retractation").html()).not.toBe(null)
-    console.log($("input[name='cardnumber']"))
     expect($("#confirmPay").html()).not.toBe(null)
     expect(res.statusCode).toEqual(200);
 

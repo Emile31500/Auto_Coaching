@@ -1,4 +1,4 @@
-<% title = "Détais de la diette de ce jour" %>
+<% title = "étails de la diette de ce jour :" %>
 
 <%- contentFor('mainNotMarged') %>
 <%- contentFor('main') %>
@@ -11,7 +11,7 @@
   year: 'numeric',
   month: 'long',
   day: 'numeric'
-}) %></h3>
+}).replace(/^./, c => c.toUpperCase()) %></h3>
 
 <table class="my-3 table">
     <thead>

@@ -168,7 +168,7 @@ router.post('/api/food/ate', authenticationCheckerApi, parserJson, async (req, r
 
 })
 
-router.post('/food/ate', authenticationChecker, parserJson, async (req, res, next) => {
+router.post('/food/ate', authenticationChecker, premiumChecker, parserJson, async (req, res, next) => {
 
     try {
 

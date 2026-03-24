@@ -7,9 +7,9 @@ const { Op } = require('sequelize')
 
 router.post('/nutritionrequirement', authenticationChecker, parserJson, async (req, res) => {
 
-    const id = req.user.id
     try {
 
+        const id = req.user.id
         const rawData = req.body;
 
         await req.user.update({
@@ -27,24 +27,18 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
                 ['createdAt', 'DESC']
             ]
         })
-        weight;
-        size;
+        let weight;
+        let size;
 
         if (rawData.size && rawData.weight) {
 
             weight = rawData.weight;
             size = rawData.size;
-
-            if (measurment instanceof Measurment) {
-
-                const createMeasurment = await Measurment.create({
-                    size : size,
-                    weight : weight,
-                    userId : req.user.id
-                })
-            } else {
-                throw 'Vous n\'avez pas renseigner votre poids et/ou votre taille et aucune données n\'a pu être trouvé dans l\'onglet "mensurations"';
-            }
+            const createMeasurment = await Measurment.create({
+                size : size,
+                weight : weight,
+                userId : req.user.id
+            })
 
         }  else if (measurment instanceof Measurment) {
 
@@ -53,13 +47,13 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
         
         } else {
 
-            throw 'Vous n\'avez pas renseigner votre poids et/ou votre taille et aucune données n\'a pu être trouvé dans l\'onglet "mensurations"';
+            throw new Error ('Vous n\'avez pas renseigner votre poids et/ou votre taille et aucune données n\'a pu être trouvé dans l\'onglet "mensurations"');
         
         }
         
 
-        fat = measurment.weight;
-        protein = measurment.weight;
+        fat = weight;
+        protein = weight;
         if (rawData.objectiv == "1") protein *= 1.8;
         if (rawData.objectiv != "1") protein *= 2.2;
         
@@ -67,9 +61,9 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
 
 
         if (rawData.sexe == "1") {
-            kcalorie = 88.4 + (14 * measurment.weight) + (4.8 * measurment.size) - (5.7 * age);
+            kcalorie = 88.4 + (14 * weight) + (4.8 * size) - (5.7 * age);
         } else {
-            kcalorie = 447.6 + (9.3 * measurment.weight) + (3.1 * measurment.size) - (4.4 * age);
+            kcalorie = 447.6 + (9.3 * weight) + (3.1 * size) - (4.4 * age);
         }
 
         if (rawData.wantToTrain === "true"){
@@ -88,18 +82,18 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
         );
 
         kcalorie *= slowKcalorieBurningActivitesMultiplicator;
-        kcalorie += (rawData.step / 10000 * 496 * measurment.weight/70);
-        kcalorie += rawData.crafts/60 / 510 * measurment.weight/70/7;
+        kcalorie += (rawData.step / 10000 * 496 * weight/70);
+        kcalorie += rawData.crafts/60 / 510 * weight/70/7;
 
-        const nutritionRequirement = await NutritionRequirement.update({
+        const nutritionRequirement = await NutritionRequirement.create({
             kcalorie : parseInt(kcalorie),
             metabolismMultiplicator : rawData.metabolismMultiplicator,
             proteine : parseInt(protein),
             fat : parseInt(fat),
-        },{
-            where : {
-                userId : id
-            }
+            personnalMultiplicator : 1.0,
+            proteinMultiplicator : 1.0,
+            fatMultiplicator : 1.0,
+            userId : id
         })
 
 
@@ -109,7 +103,8 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
 
     } catch (error){
 
-        req.flash('danger', error)
+        console.log(error)
+        req.flash('danger', error.message)
         res.redirect('/profile/objectif')
         
     }

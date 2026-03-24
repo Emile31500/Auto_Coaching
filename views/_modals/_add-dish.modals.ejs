@@ -22,7 +22,7 @@
               <tr>
                 <th scope="row"><%= food[i].name %></th>
                 <td>
-                  <form action="/api/food/ate" class="alimentForms" method="post">
+                  <form class="alimentForms" method="post">
                     <div class="row"  style="max-width: 200px;">
                       <input type="number" name="foodId" hidden value=<%= food[i].id %> >
                       <div class="col">
