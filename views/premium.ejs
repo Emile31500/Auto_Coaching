@@ -7,7 +7,7 @@
 <p class="my-3">
     Passer à un abonnement premium pour un coaching personnalisé et pour utiliser l'application sans limite de temps !
 </p> 
-<form>    
+<form id="payment-form" method="POST">    
     <div class="row my-5 justify-content-center g-4">
         <% products.forEach((product)=> {%>
             <%- include('_partials/_premium-card.partials.ejs', { product : product, prices : prices}); %>
@@ -19,7 +19,7 @@
         <div class="progress-bar progress-bar-striped progress-bar-animated" style="height: 35px; width: 100%; font-size: 18px;">L'application est entrain de procédé au paiement stripe</div>
     </div>
 
-    <button class="btn btn-primary">Payer</button>
+    <button class="btn btn-primary" id="confirmPay">Payer</button>
 </form>
 <span id="emailValue" class="d-none"><%= user.email %></span>
 <script src="https://js.stripe.com/v3/"></script>
@@ -42,13 +42,14 @@
 };
 
 const stripe = Stripe("pk_test_51SxQASJ7uGufFKhIp92vPaUU3Fx4wN2RsuSYr639oSIcw8PXbsFfhAssEAnegVDBYmommSyQk8RKTv0KGzGoegcW00BuzIUHwH"); // clé publique
-const formDataUser = document.querySelector('.formDataUser');
+const paymentForm = document.querySelector('#payment-form');
 const elements = stripe.elements();
 const card = elements.create("card", { style: style });
 const paymentProgressBar = document.querySelector('#payment-progress-bar')
 const messageElement = document.getElementById("message")
 card.mount("#card-element");
 const email = document.getElementById("emailValue").innerHTML;
+console.log(email)
 document.getElementById("emailValue").remove();
 
 const button = document.getElementById("confirmPay");
@@ -56,7 +57,7 @@ const button = document.getElementById("confirmPay");
 button.addEventListener("click", async (event) => {
     event.preventDefault();
     paymentProgressBar.classList.remove('d-none');
-    c
+    
     
     const { paymentMethod, error } = await stripe.createPaymentMethod({
         type: "card",
@@ -71,11 +72,13 @@ button.addEventListener("click", async (event) => {
         return;
     }
     
-    const formData = new FormData(formDataUser);
+    const formData = new FormData(paymentForm);
     formData.append("paymentMethodId", paymentMethod.id);    
     const formDataObject = Object.fromEntries(formData.entries());
     
-    const response = await fetch("/create-subscription", {
+    console.log(formData)
+    
+    const response = await fetch("/premium", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -83,23 +86,22 @@ button.addEventListener("click", async (event) => {
         body: JSON.stringify(formDataObject),
     });
 
-    const data = await response.json();
+    if (response.status >= 300) {
 
-    if (data.error) {
-
-      paymentProgressBar.classList.add('d-none')
-      messageElement.classList.add('alert-danger')
-      messageElement.classList.remove('d-none')
-      messageElement.innerText = data.error;
-      return;
+        const data = await response.json();
+        paymentProgressBar.classList.add('d-none')
+        messageElement.classList.add('alert-danger')
+        messageElement.classList.remove('d-none')
+        messageElement.innerText = data.message;
+        return;
 
     } else  {
 
-      paymentProgressBar.querySelector('.progress-bar').classList.add('bg-success')
-      paymentProgressBar.querySelector('.progress-bar').innerHTML = "Paiement effectué avec succès 🎉 ! Vous allez être regiriger à la page de connexion dans quelque instant.";
-      setTimeout(() => {
-          window.location.href = "/login";
-      }, 3000);
+        paymentProgressBar.querySelector('.progress-bar').classList.add('bg-success')
+        paymentProgressBar.querySelector('.progress-bar').innerHTML = "Paiement effectué avec succès 🎉 ! Vous allez être regiriger à la page de connexion dans quelque instant.";
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 3000);
 
     }
 });

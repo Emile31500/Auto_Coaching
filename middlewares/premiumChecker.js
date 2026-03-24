@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 
 
 const premiumChecker = async function (req, res, next) {
+    let isPremium = false;
     try {
         const authToken = req.session.token;
         const decodeToken = jwt.verify(authToken, process.env.JWT_SECRET);
@@ -19,8 +20,7 @@ const premiumChecker = async function (req, res, next) {
         req.user = user;
 
         if (user.role.includes('admin')) {
-            req.isPremium = true;
-            next();
+            isPremium = true;
 
         } else {
 
@@ -39,50 +39,66 @@ const premiumChecker = async function (req, res, next) {
             let i = 0; 
             if (subscriptions.data.length > 0) {
 
-                subscriptions.data.forEach(async (subscription) => {
+               subscriptions.data.forEach((subscription) => {
 
                     const productId = subscription.items?.data[0]?.plan?.product
+
                     if (typeof productId === "string") {
 
-                        const product = await stripe.products.retrieve(productId)
+                        const product = stripe.products.retrieve(productId)
 
-                        if (['active', 'canceled', 'unpaid'].includes(subscription.status)) {
+                        // console.log(['active'].includes(subscription.status))
+
+                        if (['active'].includes(subscription.status)) {
+
+                            isPremium = true
                             
-                            if (product.id === 'prod_TzofT7YP9GVDLx'){
+                            /*if (product.id === 'prod_TzofT7YP9GVDLx'){
 
-                                req.isPremium = true;
-                                next();
+                                isPremium = true;
+                                console.log('its premium')
 
                             } else {
                                 
                                 const expireDateSubscripbe = addDaysToDate(subscription.created, product.metadata.days_until_canceled);
+                                const currentDateTime = getCurrentDateTime()
                                 const expiredDateStamp = new Date(expireDateSubscripbe).getTime()
                                 const currentDateStamp = new Date(currentDateTime).getTime()
-                                if (currentDateStamp < expiredDateStamp) req.isPremium = true; 
-                                next();
+                                if (currentDateStamp < expiredDateStamp) {
+                                    isPremium = true; 
+                                }
 
-                            }
+                            }*/
+                        } else if  (['active', 'canceled', 'unpaid'].includes(subscription.status)) {
+
+                            if (product.id === 'prod_TzofT7YP9GVDLx')isPremium = true;
+
                         }
+
+
+
+                    } else {
+                        throw new Error('Aucun produit trouvé attaché à votre abonnement. Contactez nous pour régler ce problème au plus vite.')
                     }
 
-                    i++;
                 });
+            }
+        }
 
-                console.log(2)
-                throw new Error
+        req.isPremium = isPremium;
+        console.log(isPremium);
 
-
-            } else {
-                console.log(3)
-                throw new Error
-
-            } 
+        if (isPremium) {
+            next();
+        } else {
+            res.redirect('/premium');
         }
 
     } catch (error) {
 
-        console.log('fhbebukvdbnemfnerfb')
-        res.redirect('/premium');
+        req.flash('danger', error.message)
+        res.locals.message = req.flash()
+        res.redirect('/');
 
     }
 

@@ -1,7 +1,7 @@
 const app = require('../app')
 const session = require('supertest-session');
 const { Food } = require('../models');
-const { generateRandomString, authUser, authAdmin, authNonPremiumUser } = require('./test.tools')
+const { generateRandomString, authUser, authAdmin, authNonPremiumUser, authPremiumUser } = require('./test.tools')
 
 const foodTest = describe('Food tests', () => {
 
@@ -17,8 +17,8 @@ const foodTest = describe('Food tests', () => {
         is_milk: false,
         is_egg: false
     }
-/*
-    /*it(' 0 Test create food not auth : not crated redirect', async () => {
+    
+    it(' 0 Test create food not auth : not crated redirect', async () => {
 
 
         const testSession = session(app)
@@ -37,7 +37,7 @@ const foodTest = describe('Food tests', () => {
     it(' 1 Test create food auth user : not crated redirect', async () => {
 
 
-        const testSession = await authUser();
+        const testSession = await authPremiumUser();
 
         const res = await testSession
             .post('/food')
@@ -47,7 +47,7 @@ const foodTest = describe('Food tests', () => {
         const food = await Food.findOne({where : rawData});
 
         expect(food).not.toBeInstanceOf(Food);
-        expect(res.req.path).toEqual('/profile/progression');
+        expect(res.req.path).toEqual('/');
 
     });
 
@@ -68,7 +68,7 @@ const foodTest = describe('Food tests', () => {
 
     });
 
-    /*it(' 3 : Should return a 401 error page because not auth', async () => {
+    it(' 3 : Should return a 401 error page because not auth', async () => {
 
         const testSession = session(app)
 
@@ -89,10 +89,10 @@ const foodTest = describe('Food tests', () => {
 
     });
 
-    it(' 4 : Should return the home page', async () => {
+    it(' 4.1 : Should return the home page', async () => {
 
 
-        const testSession = await authUser();
+        const testSession = await authPremiumUser();
 
         const foods = await Food.findAll({limits: 1});
         const foodSeq = foods[0];
@@ -112,6 +112,32 @@ const foodTest = describe('Food tests', () => {
 
     });
 
+    it(' 4.2 : Should return the 401', async () => {
+
+
+        const testSession = await authNonPremiumUser();
+
+        const foods = await Food.findAll({limits: 1});
+        const foodSeq = foods[0];
+        const foodBeforeUpdate = foodSeq
+
+        const newName = "New food name" + generateRandomString(5)
+        const res = await testSession
+            .patch('/api/admin/food/' + foodSeq.id)
+            .send({name : newName})
+            .redirects(1);
+
+        const food = await Food.findOne({ where : {
+            id : foodSeq.id
+        }});
+
+        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
+        expect(res.req.path).toEqual('/api/admin/food/' + food.id);
+        expect(res.statusCode).toEqual(401);
+        expect(res._body.code).toEqual(401);
+
+    });
+
     it(' 5 : Should update this food', async () => {
 
         const testSession = await authAdmin()
@@ -119,15 +145,20 @@ const foodTest = describe('Food tests', () => {
         const foods = await Food.findAll({limits: 1});
         const foodSeq = foods[0];
 
+        const newName = "New food name" + generateRandomString(5)
         const res = await testSession
             .patch('/api/admin/food/' + foodSeq.id)
-            .send({name : "New food name" + generateRandomString(5)})
+            .send({name : newName })
             .redirects(1);
+
+        const food = await Food.findOne({where : { id: foodSeq.id }});
 
         const foodApi = res._body.data;
 
         expect(foodApi.name).not.toEqual(foodSeq.name);
         expect(res.statusCode).toEqual(202);
+        expect(food.name).toEqual(newName);
+
 
     });
 
@@ -135,7 +166,11 @@ const foodTest = describe('Food tests', () => {
 
         const testSession = session(app)
     
-        const foods = await Food.findAll({limit: 1});
+        const foods = await Food.findAll({ 
+            where : {
+                userId : null
+            },
+            limit: 1});
         const food = foods[0]
         
         const res = await testSession
@@ -152,12 +187,16 @@ const foodTest = describe('Food tests', () => {
         
 
     });
-*/
-    it(" 7 : Sould not allow deletion of this food and redirect to home page", async () => {
 
-        const testSession = await authUser();
+    it(" 7.1 : Sould not allow deletion of this food and redirect to home page", async () => {
 
-        const foods = await Food.findAll({limit: 1});
+        const testSession = await authPremiumUser();
+
+        const foods = await Food.findAll({ 
+            where : {
+                userId : null
+            },
+            limit: 1});
         const food = foods[0]
         
         const res = await testSession
@@ -175,11 +214,38 @@ const foodTest = describe('Food tests', () => {
 
     });
 
+    it(" 7.2 : Sould not allow deletion of this food and redirect to premium page", async () => {
+
+        const testSession = await authNonPremiumUser();
+
+        const foods = await Food.findAll({ 
+            where : {
+                userId : null
+            },
+            limit: 1});
+        const food = foods[0]
+        
+        const res = await testSession
+            .delete('/api/food/' + food.id)
+            .redirects(1);
+
+        const nonDeletedFood = await Food.findOne({where : {id: food.id}});
+
+        expect(nonDeletedFood).toBeInstanceOf(Food);
+        expect(res.req.path).toEqual('/api/food/' + food.id);
+
+    });
+
+
     it(" 8 :Sould delete this food", async () => {
 
         const testSession = await authAdmin();
 
-        const foods = await Food.findAll({limit: 1});
+        const foods = await Food.findAll({ 
+            where : {
+                userId : null
+            },
+            limit: 1});
         const food = foods[0]
         
         const res = await testSession
@@ -200,7 +266,6 @@ const foodTest = describe('Food tests', () => {
 
         const foods = await Food.findAll({limit: 1});
         const foodSeq = foods[0]; 
-        console.log(foodSeq.id)
         const res = await testSession
             .get('/api/food/' + foodSeq.id)
             .redirects(1);
@@ -211,19 +276,19 @@ const foodTest = describe('Food tests', () => {
 
     it(" 10 : get a food premium user " , async () => {
 
-        const testSession = await authUser()
+        const testSession = await authPremiumUser()
 
         const foods = await Food.findAll({limit: 1});
         const foodSeq = foods[0]; 
-        console.log(foodSeq.id)
         const res = await testSession
             .get('/api/food/' + foodSeq.id)
             .redirects(1);
 
         expect(res.statusCode).toEqual(200);
         expect(res._body.code).toEqual(200);
-        // expect(foodApi.id).toEqual(foodSeq.id);
-        // expect(foodApi.name).toEqual(foodSeq.name);
+        const foodApi = res._body.data
+        expect(foodApi.id).toEqual(foodSeq.id);
+        expect(foodApi.name).toEqual(foodSeq.name);
         expect(res.req.path).toEqual('/api/food/' + foodSeq.id);
 
     });/**/

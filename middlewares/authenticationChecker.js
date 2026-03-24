@@ -13,22 +13,21 @@ const authenticationChecker =  async function (req, res, next) {
     
         const user = await User.findOne({where: {'email': decodeToken.email}});
       
-        if(!user) {
-        
-            throw new Error
-        
-        } else {
+        if (user instanceof User) {
 
             req.user = user;
-            try {
+            /*try {
                 res.locals.profileNotification = await MeasurmentService.isMoreThenAWeekDifference(user);
             } catch(error) {
                 console.log(error);
-            }
-
+            }*/
             next();
 
-        }
+        } else {
+        
+            throw new Error
+        
+        } 
         
     } catch (e) {
   

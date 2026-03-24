@@ -16,7 +16,9 @@ const url = require('url')
     await FoodService.getDishesForMainPage(parsedUrl.query, user)
 })*/
 
+// router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req, res) => {
 router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req, res) => {
+
 
     const parsedUrl = url.parse(req.url, true);
     const food = await FoodService.getFoodsForMainPage(parsedUrl.query, req.user)
@@ -41,7 +43,7 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
         include : Food, 
         where : {
             date : date,
-            userId : user.id
+            userId : req.user.id
         }
     });
 

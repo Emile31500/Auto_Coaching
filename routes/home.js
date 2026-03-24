@@ -105,7 +105,7 @@ router.get('/cgv', isAuth, async (req, res) => {
     });
 });
 
-router.post("/create-subscription", async (req, res) => {
+router.post("/create-cutomer-and-subscription", async (req, res) => {
 
     try {
 
@@ -165,8 +165,8 @@ router.post("/create-subscription", async (req, res) => {
 
                 res.status(200).json({
                     subscriptionId: subscription.id,
-                    /*clientSecret:
-                        subscription.latest_invoice?.payment_intent?.client_secret?null,*/
+                    clientSecret: subscription.latest_invoice.payment_intent.client_secret
+                        /*subscription.latest_invoice?.payment_intent?.client_secret?null/*,*/
                 });
 
                   await transporter.sendMail({

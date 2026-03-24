@@ -16,6 +16,7 @@ const router = express.Router();
 router.delete('/api/food/:id_food', authenticationCheckerApi, parserJson, async(req, res, next) => {
 
     const idFood = req.params.id_food;
+    let whereUserId;
     
     if (user.role.includes('admin') == true) {
         whereUserId = null;
@@ -70,7 +71,7 @@ router.get('/api/food', authenticationCheckerApi, parserJson, premiumChecker, as
 
 });
 
-router.get('/api/food/:id_food',premiumChecker, authenticationCheckerApi, parserJson,  async(req, res, next) => {
+router.get('/api/food/:id_food', authenticationCheckerApi, premiumChecker, parserJson,  async(req, res, next) => {
 
     const id = req.params.id_food;
 

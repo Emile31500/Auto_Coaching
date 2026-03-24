@@ -44,53 +44,85 @@ async function auth(rawData) {
 }
 
 
-
+/*
 async function authPremiumUser() {
 
     const subscriptions = await stripe.subscriptions.list({
         status : 'active'
     });
 
-    const authRes = subscriptions.data.forEach(async (subscription) => {
+    let user;
+
+    subscriptions.data.forEach(async (subscription) => {
 
         const customerId =  subscription.customer
         const customer = await stripe.customers.retrieve(customerId);
-        const user = await User.findOne({where : {name: customer.email}})
+        const userOrNull = await User.findOne({where : {name: customer.email}})
 
-        if (user instanceof User) {
-           return auth({
-                email : user.email,
-                password : 'testpassword'
-            });
+        if (userOrNull instanceof User) {
+           user = userOrNull
         }
     });
 
-    return authRes;
+    return auth({
+        email : user.email,
+        password : 'testpassword'
+    });
+    
+}*/
+
+
+async function authPremiumUser() {
+    const users = await User.findAll({where : {name: 'FakerUser'}})
+    let authUser = undefined;
+
+    for (let index = 0; index < users.length; index++) {
+        
+        const customers =  await stripe.customers.list({email : users[index].email});
+        const subscriptions =  await stripe.subscriptions.list({customer : customers.data[0].id, status : 'active'});
+
+        if (subscriptions.data.length > 0) {
+            console.log('indeeex')
+            authUser = users[index]
+            index = users.length
+        }
+
+    }
+    
+    
+    return auth({
+        email : authUser.email,
+        password : 'testpassword'
+    });
     
 }
 
 async function authNonPremiumUser() {
 
     const users = await User.findAll({where : {name: 'FakerUser'}})
-    let subscription
-    let authRes = undefined;
+    let authUser = undefined;
 
     for (let index = 0; index < users.length; index++) {
         
-        const customers = await stripe.customers.list({email : users[index].email});
-        const customer = customers.data[0];
-        subscriptions = await stripe.subscriptions.list({
-            customer : customer.id
-        });
-        
-        authRes = auth({
-            email : users[index].email,
-            password : 'testpassword'
-        });
-        index = users.length
-    }
+        const customers =  await stripe.customers.list({email : users[index].email});
 
-    return authRes;
+        const subscriptions =  await stripe.subscriptions.list({customer : customers.data[0].id});
+
+        console.log(subscriptions)
+
+        if (subscriptions.data.length <= 0) {
+            console.log('indeeex')
+            authUser = users[index]
+            index = users.length
+        }
+
+    }
+    
+    
+    return auth({
+        email : authUser.email,
+        password : 'testpassword'
+    });
     
 }
 

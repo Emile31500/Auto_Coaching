@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router()
 const authenticationChecker = require('../middlewares/authenticationChecker');
+const authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
 const parserJson = require('../middlewares/parserJson');
 const url = require('url');
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
@@ -29,22 +30,35 @@ router.get('/premium',  authenticationChecker, async(req, res) => {
 
 })
 
-router.post('/premium',  async(req, res) => {
+router.post('/premium',  authenticationCheckerApi, async(req, res) => {
 
     try {
 
-         const rawData = req.body;
-
+        const rawData = req.body;
         const customerList = await stripe.customers.list({
             email: req.user.email,
             limit : 1        
         });
 
-        const customer = customerList.data[0]
+        const customerId = customerList.data[0].id;
+        const paymentMethod = await stripe.paymentMethods.attach(
+        rawData.paymentMethodId, 
+        {
+            customer: customerId,
+        });
+
+        const customer = await stripe.customers.update(customerId, {
+            invoice_settings: {
+                default_payment_method: paymentMethod.id,
+            },
+        })
 
         const product = await stripe.products.retrieve(rawData.productId);
         const priceId = product.default_price;
 
+        const now = new Date();
+        const days = Number(product.metadata.days_until_canceled);
+        const endDate = new Date(now.getTime() +  (days * 24 * 60 * 60 * 1000))
 
         const subscription = await stripe.subscriptions.create({
             customer: customer.id,
@@ -55,15 +69,14 @@ router.post('/premium',  async(req, res) => {
 
         res.status(200).json({
             subscriptionId: subscription.id,
-            /*clientSecret:
-                subscription.latest_invoice?.payment_intent?.client_secret?null,*/
+            clientSecret: subscription.latest_invoice?.payment_intent?.client_secret ?? null
         });
 
     
     } catch (error) {
     
-        console.error(error);
-        res.status(400).json({ error: error.message });
+        res.statusCode = 400
+        res.send({code : res.statusCode, message : error.message});
     
     }
 })

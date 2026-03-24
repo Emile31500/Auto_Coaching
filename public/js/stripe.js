@@ -48,7 +48,7 @@ button.addEventListener("click", async (event) => {
     formData.append("paymentMethodId", paymentMethod.id);    
     const formDataObject = Object.fromEntries(formData.entries());
     
-    const response = await fetch("/create-subscription", {
+    const response = await fetch("/create-cutomer-and-subscription", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
