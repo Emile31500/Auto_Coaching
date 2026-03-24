@@ -95,7 +95,7 @@ router.delete('/api/food/ate/:id_foodate', authenticationCheckerApi, parserJson,
 
 })
 
-router.get('/delete/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
+router.get('/delete/food/ate/:id', authenticationChecker, premiumChecker, parserJson, async (req, res, next) => {
 
     let date;
     try {
@@ -205,11 +205,12 @@ router.post('/food/ate', authenticationChecker, premiumChecker, parserJson, asyn
 
 })
 
-router.post('/food/ate/:id', authenticationCheckerApi, parserJson, async (req, res, next) => {
+router.post('/food/ate/:id', authenticationChecker, premiumChecker, parserJson, async (req, res, next) => {
 
-    const date = req.body.date;
 
     try {
+
+        const date = req.body.date;
 
         if (req.body && req.session.token) {
 
@@ -222,7 +223,7 @@ router.post('/food/ate/:id', authenticationCheckerApi, parserJson, async (req, r
         req.flash('danger', error)
     }      
 
-    res.redirect('/food/ate/'+date);
+    res.redirect('/food/ate/' + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()));
 
 })
 

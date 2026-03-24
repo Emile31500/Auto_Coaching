@@ -53,7 +53,6 @@ async function authPremiumUser() {
         const subscriptions =  await stripe.subscriptions.list({customer : customers.data[0].id, status : 'active'});
 
         if (subscriptions.data.length > 0) {
-            console.log('indeeex')
             authUser = users[index]
             index = users.length
         }
@@ -79,10 +78,8 @@ async function authNonPremiumUser() {
 
         const subscriptions =  await stripe.subscriptions.list({customer : customers.data[0].id});
 
-        console.log(subscriptions)
 
         if (subscriptions.data.length <= 0) {
-            console.log('indeeex')
             authUser = users[index]
             index = users.length
         }

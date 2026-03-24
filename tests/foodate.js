@@ -1,4 +1,3 @@
-// const { JSDOM } = require('jsdom')
 const cheerio = require("cheerio");
 const app = require('../app')
 const session = require('supertest-session');
@@ -43,7 +42,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     });
 
-     it(' 1.2 : ate food page non premium user : Should return the premium page', async () => {
+     it(' 1.2 : ate food page premium user : Should return the ate food page', async () => {
 
         const testSession = await authPremiumUser()
 
@@ -162,6 +161,69 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     // TODO : test deletion of other food tenant
 
+    it(' 4 : test delete not auth : should return to the home page', async () => {
+
+        const testSession = session(app)
+        const ateFood = await AteFood.findOne()
+        const id = ateFood.id;
+        const res = await testSession
+            .get('/delete/food/ate/'+id)
+            .redirects(1);
+            
+        const ateFoodOrNull = await AteFood.findOne({where : { id : id}})
+        expect(res.req.path).toEqual('/');
+        expect(ateFoodOrNull).toBeInstanceOf(AteFood);
+        expect(ateFoodOrNull).toEqual(ateFood);
+
+    });
+
+    it(' 5.1 : test delete auth not premium : should return to the premium', async () => {
+
+        const testSession = await authNonPremiumUser()
+        const ateFood = await AteFood.findOne()
+        const id = ateFood.id;
+        const res = await testSession
+            .get('/delete/food/ate/'+id)
+            .redirects(1);
+            
+        const ateFoodOrNull = await AteFood.findOne({where : { id : id}})
+        expect(res.req.path).toEqual('/premium');
+        expect(ateFoodOrNull).toBeInstanceOf(AteFood);
+        expect(ateFoodOrNull).toEqual(ateFood);
+
+    });
+
+    it(' 5.2 : test delete auth premium : should delete and return ate food page', async () => {
+
+        const testSession = await authPremiumUser();
+        const ateFood = await AteFood.findOne();
+        const recoveryAteFood = ateFood.toJSON();
+
+        const frenchDate = new Date(ateFood.date).toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).replace(/^./, c => c.toUpperCase()) 
+
+        const id = ateFood.id;
+        const res = await testSession
+            .get('/delete/food/ate/'+id)
+            .redirects(1);
+
+        const stringToParse = res.text;
+        const $ = cheerio.load(stringToParse);
+            
+        const nullOrAteFood = await AteFood.findOne({where : { id : id}})
+        expect(nullOrAteFood).not.toBeInstanceOf(AteFood);
+        expect(res.req.path.replace('%20', ' ')).toMatch('/food/ate/20');
+        expect($('h2').html()).toMatch('Détails de la diette de ce jour :');
+        expect($('h3').html()).toMatch(frenchDate);
+        expect(res.statusCode).toEqual(200);
+        await AteFood.create(recoveryAteFood)
+
+    });
+
     /*it(' 4 : Should return a 401 error page because not auth', async () => {
 
         const currentDateTime = getDate();
@@ -210,6 +272,116 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     });*/
 
+    it(' 6 : Update ate food non auto : return to home page', async () => {
+
+        const currentDateTime = getDate();
+
+        const testSession = session(app)
+        const ateFood = await AteFood.findOne({include : Food})
+        const preventWeight = ateFood.weight;
+        let newWieght;
+        
+        do {
+
+            newWieght = randomInt()
+
+        } while (newWieght ===  ateFood.weight)
+
+            
+        const raw = {
+            foodId : ateFood.Food.id,
+            weight : newWieght,
+            date : currentDateTime
+        }
+
+        const res = await testSession
+            .post('/food/ate/'+ateFood.foodId)
+            .send(raw)
+            .redirects(1);
+
+        const nullORfood = await AteFood.findOne({where : raw})
+        expect(res.req.path).toEqual('/');
+        expect(nullORfood).not.toBeInstanceOf(AteFood);
+        expect(ateFood.weight).toEqual(preventWeight);
+
+    });
+
+    it(' 7.1 : Update ate food non premium user : should return premium page', async () => {
+
+        const currentDateTime = getDate();
+
+        const testSession = await authNonPremiumUser()
+        const ateFood = await AteFood.findOne({include : Food})
+        const preventWeight = ateFood.weight;
+        let newWieght;
+        
+        do {
+
+            newWieght = randomInt()
+
+        } while (newWieght ===  ateFood.weight)
+
+            
+        const raw = {
+            foodId : ateFood.Food.id,
+            weight : newWieght,
+            date : currentDateTime
+        }
+
+        const res = await testSession
+            .post('/food/ate/'+ateFood.foodId)
+            .send(raw)
+            .redirects(1);
+
+        
+        const nullORfood = await AteFood.findOne({where : raw})
+        expect(res.req.path).toEqual('/premium');
+        expect(nullORfood).not.toBeInstanceOf(AteFood);
+        expect(ateFood.weight).toEqual(preventWeight);
+
+
+    });
+
+    it(' 7.2 : Update ate food premium user : should return premium page', async () => {
+
+        const currentDateTime = getDate();
+        const testSession = await authPremiumUser();
+        const ateFood = await AteFood.findOne({include : Food})
+        const preventWeight = ateFood.weight;
+        let newWieght;
+        
+        do newWieght = randomInt(); while (newWieght ===  ateFood.weight);
+   
+        const raw = {
+            foodId : ateFood.Food.id,
+            weight : newWieght,
+            date : currentDateTime
+        }
+
+        const frenchDate = new Date(ateFood.date).toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).replace(/^./, c => c.toUpperCase()) 
+
+        const res = await testSession
+            .post('/food/ate/'+ateFood.foodId)
+            .send(raw)
+            .redirects(1);
+
+        const stringToParse = res.text;
+        const $ = cheerio.load(stringToParse);
+        const foodOrNull = await AteFood.findOne({where : raw})
+
+        expect(res.req.path).toMatch('/food/ate/20');
+        expect($('h2').html()).toMatch('Détails de la diette de ce jour :');
+        expect($('h3').html()).toBe(frenchDate);
+        expect(res.statusCode).toEqual(200);
+        expect($('.alert-success').html()).toMatch(`L'aliment : ${ateFood.Food.name} a bien été mis à jour dans votre diet.`);
+        expect(foodOrNull).toBeInstanceOf(AteFood);
+
+    });
 });
 
 module.exports = AteFoodTest;
