@@ -132,14 +132,14 @@ const getDishesForMainPage = async (parsedUrlQuery, user) => {
 
 const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
 
-    const origininalDate = new Date(measurment.createdAt);
+    const origininalDate = new Date(measurment.date);
     const startDay = new Date(origininalDate.getTime() - 15 * 24 * 60 * 60 * 1000);   
     const endDay = new Date(origininalDate.getTime() - 6 * 24 * 60 * 60 * 1000);
     const user = User.findOne({where : {id : measurment.userId}})
 
 
     const lastButOneMeasurment = await Measurment.findOne({ where : {
-        createdAt :{
+        date :{
             [Op.between] : [startDay, endDay]
         },
         userId : measurment.userId

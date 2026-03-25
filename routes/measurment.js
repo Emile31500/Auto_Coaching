@@ -16,6 +16,7 @@ router.post('/measurment',  authenticationChecker, premiumChecker, parserJson, a
         const measurment = await Measurment.create({
             size : rawData.size,
             weight : rawData.weight,
+            date : rawData.date,    
             userId : req.user.id
         });
         

@@ -54,31 +54,41 @@ router.get('/profile/:pageName', authenticationChecker, getStripeCustomer,  asyn
 
     } else if (pageName === 'progression') {
 
-        let subscriptions;
-        const subscriptionsPromise = await stripe.subscriptions.list({
-            customer: req.stripeCustomer.id
-        });
+        const nutritionRequirement = await NutritionRequirement.findOne({ where  : { userId : user.id }})
+        if (nutritionRequirement instanceof NutritionRequirement) {
+            let subscriptions;
+            const subscriptionsPromise = await stripe.subscriptions.list({
+                customer: req.stripeCustomer.id
+            });
+            
+            if (subscriptionsPromise.data.length > 0) {
+
+                subscriptions = subscriptionsPromise.data;
+
+            }
         
-        if (subscriptionsPromise.data.length > 0) {
+            const isMoreThenAWeekDifference = await MeasurmentService.isMoreThenAWeekDifference(user);
+            if (isMoreThenAWeekDifference){ 
+                req.flash('warning', 'Attention : Il y a plus d\'une semiane que vous pas mis à jour votre progression.')
+            }
 
-            subscriptions = subscriptionsPromise.data;
+            res.locals.message = req.flash();
+            res.render('../views/profile/progression',  { 
+                page : '/profile',
+                user : user,
+                measurments : measurments,
+                layout : '../views/main',
+                isPremium : req.isPremium,
+                subscriptions : subscriptions 
+            });
+            
+        } else {
+
+            req.flash('warning', 'Vous devez inscrire vos données corporel et votre objectif pour accéder à l\'onglet de progression')
+            res.redirect('/profile/objectif')
 
         }
-       
-        const isMoreThenAWeekDifference = await MeasurmentService.isMoreThenAWeekDifference(user);
-        if (isMoreThenAWeekDifference){ 
-            req.flash('warning', 'Attention : Il y a plus d\'une semiane que vous pas mis à jour votre progression.')
-        }
-
-        res.locals.message = req.flash();
-        res.render('../views/profile/progression',  { 
-            page : '/profile',
-            user : user,
-            measurments : measurments,
-            layout : '../views/main',
-            isPremium : req.isPremium,
-            subscriptions : subscriptions 
-        });
+        
 
     } else if (pageName === 'compte') {
 

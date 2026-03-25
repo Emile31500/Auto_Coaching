@@ -2,8 +2,8 @@
 // require('./tests/exercise.js');
 // require('./tests/checkout.js');
 // require('./tests/food.js');
-require('./tests/foodate.js');
-// require('./tests/measurment.js');
+// require('./tests/foodate.js');
+require('./tests/measurment.js');
 // require('./tests/nutrition.js');
 // require('./tests/performance.js');
 // require('./tests/profile.js');

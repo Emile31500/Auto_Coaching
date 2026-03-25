@@ -138,10 +138,10 @@ async function genrateSampleData () {
                 console.log('Generate users');
             }
 
-
             generateUsers();
             generateExercise();
             generateFoodNDish();
+            console.log('TODO : \n\n S\'abonner à un compte premium sur au moins 2 deux comptes. \n Créer un profession qui date de 6 à 15 jours sur deux comptes.')
             
         } else throw new Error('Il faut être en environnement de test.');
 

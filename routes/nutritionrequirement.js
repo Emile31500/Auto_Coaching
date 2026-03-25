@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router()
-const { NutritionRequirement, Measurment } = require('../models');
+const { NutritionRequirement } = require('../models');
 const parserJson = require('../middlewares/parserJson');
 const authenticationChecker = require('../middlewares/authenticationChecker');
 const { Op } = require('sequelize')
@@ -15,45 +15,7 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
         await req.user.update({
             objectiv : rawData.objectiv
         });
-
-        const measurment = await Measurment.findOne({
-            where : {
-                userId : id,
-                size: { [Op.gt]: 0 },
-                weight: { [Op.gt]: 0 },
-
-            },
-            order: [
-                ['createdAt', 'DESC']
-            ]
-        })
-        let weight;
-        let size;
-
-        if (rawData.size && rawData.weight) {
-
-            weight = rawData.weight;
-            size = rawData.size;
-            const createMeasurment = await Measurment.create({
-                size : size,
-                weight : weight,
-                userId : req.user.id
-            })
-
-        }  else if (measurment instanceof Measurment) {
-
-            weight = measurment.weight;
-            size = measurment.size;
-        
-        } else {
-
-            throw new Error ('Vous n\'avez pas renseigner votre poids et/ou votre taille et aucune données n\'a pu être trouvé dans l\'onglet "mensurations"');
-        
-        }
-        
-
-        fat = weight;
-        protein = weight;
+        let kcalorie, protein, fat;
         if (rawData.objectiv == "1") protein *= 1.8;
         if (rawData.objectiv != "1") protein *= 2.2;
         
@@ -61,9 +23,9 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
 
 
         if (rawData.sexe == "1") {
-            kcalorie = 88.4 + (14 * weight) + (4.8 * size) - (5.7 * age);
+            kcalorie = 88.4 + (14 * rawData.weight) + (4.8 * rawData.size) - (5.7 * age);
         } else {
-            kcalorie = 447.6 + (9.3 * weight) + (3.1 * size) - (4.4 * age);
+            kcalorie = 447.6 + (9.3 * rawData.weight) + (3.1 * rawData.size) - (4.4 * age);
         }
 
         if (rawData.wantToTrain === "true"){
@@ -71,19 +33,18 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
         } else {
             protein *= 0.7
             fat *= 0.9
-
         }
 
         const slowKcalorieBurningActivitesMultiplicator = calculateMultiplicatorOfNormalActivite(
             rawData.wantToTrain === "true",
             rawData.crafts,
             rawData.step,
-            measurment
+            rawData
         );
 
         kcalorie *= slowKcalorieBurningActivitesMultiplicator;
-        kcalorie += (rawData.step / 10000 * 496 * weight/70);
-        kcalorie += rawData.crafts/60 / 510 * weight/70/7;
+        kcalorie += (rawData.step / 10000 * 496 * rawData.weight/70);
+        kcalorie += rawData.crafts/60 / 510 * rawData.weight/70/7;
 
         const nutritionRequirement = await NutritionRequirement.create({
             kcalorie : parseInt(kcalorie),
@@ -124,11 +85,11 @@ function calculateAge(birthDay) {
     return intAge;
 }
 
-function calculateMultiplicatorOfNormalActivite(doSport, craft, setp, measurment) {
+function calculateMultiplicatorOfNormalActivite(doSport, craft, setp, rawMeasurment) {
 
     let ttlSlowKcalorieBurningActivites = 7 * 16;
     const ttlHouseAwakeWeekly = 7 * 16;
-    const setpByHoursEstimated = ((8/5)*1000) * measurment.size/1.8;
+    const setpByHoursEstimated = ((8/5)*1000) * rawMeasurment.size/1.8;
     const hoursMArching = (setp / setpByHoursEstimated)*7
 
     ttlSlowKcalorieBurningActivites -= (craft/60)

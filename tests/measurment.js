@@ -22,7 +22,13 @@ const MeasurmentTest = describe('Measurments tests', () => {
             .send(rawData)
             .redirects(1);
 
-        const nullOrMeasurment = await Measurment.findOne(rawData);
+        const nullOrMeasurment = await Measurment.findOne({ 
+            where : {
+                weight : rawData.weight,
+                size : rawData.size,
+                date : rawData.date,
+                userId : null
+        }});
         expect(res.req.path).toEqual('/')
         expect(nullOrMeasurment).not.toBeInstanceOf(Measurment)
 
@@ -37,7 +43,13 @@ const MeasurmentTest = describe('Measurments tests', () => {
             .send(rawData)
             .redirects(1);
 
-        const nullOrMeasurment = await Measurment.findOne(rawData);
+        const nullOrMeasurment = await Measurment.findOne({ 
+            where : {
+                weight : rawData.weight,
+                size : rawData.size,
+                date : rawData.date,
+                userId : user.id
+        }});
 
         expect(res.req.path).toEqual('/premium')
         expect(nullOrMeasurment).not.toBeInstanceOf(Measurment)
@@ -70,7 +82,12 @@ const MeasurmentTest = describe('Measurments tests', () => {
             .redirects(1);
 
         const $$ = cheerio.load(resSubmition.text);
-        const measurmentOrNull = await Measurment.findOne(rawData);
+        const nullOrMeasurment = await Measurment.findOne({
+            weight : rawData.weight,
+            size : rawData.size,
+            date : rawData.date,
+            userId : null
+        });
 
         expect(measurmentOrNull).toBeInstanceOf(Measurment)
         expect(resSubmition.req.path).toEqual('/profile/progression');
@@ -126,6 +143,7 @@ const MeasurmentTest = describe('Measurments tests', () => {
         const measurmentOrNull = await Measurment.findOne({ where : {
             size : contextRawData.size,
             weight : contextRawData.weight,
+            date : contextRawData.date,
             userId : user.id
         }});
 
