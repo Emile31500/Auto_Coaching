@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Measurment.init({
     weight: DataTypes.FLOAT,
     size: DataTypes.FLOAT,
+    date: DataTypes.DATEONLY,
     suroundShoulers: DataTypes.FLOAT,
     suroundWaist: DataTypes.FLOAT,
     suroundArms: DataTypes.FLOAT,

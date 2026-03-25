@@ -7,34 +7,25 @@ const { Measurment } = require('../models');
 const premiumChecker = require('../middlewares/premiumChecker');
 const FoodService = require('../services/food');
 
-router.post('/measurment', parserJson, authenticationChecker, premiumChecker, async (req, res) => {
+router.post('/measurment',  authenticationChecker, premiumChecker, parserJson, async (req, res) => {
 
     try {
 
-        if (req.body && req.session.token){
+        const rawData = req.body 
 
-            const rawData = req.body 
-
-            const measurment = await Measurment.create({
-                size : rawData.size,
-                weight : rawData.weight,
-                userId : req.user.id
-            });
-            
-            FoodService.recalculateMacroBelongWithLastMeasurment(measurment);
-            measurment.userId = req.user.id;
-
-            req.flash('success', 'Votre nouvelle progression a bien été créé');
+        const measurment = await Measurment.create({
+            size : rawData.size,
+            weight : rawData.weight,
+            userId : req.user.id
+        });
         
-        } else {
-
-            throw ('soumission du formulaire non valide')
-
-        }
+        await FoodService.recalculateMacroBelongWithLastMeasurment(measurment);
+        req.flash('success', 'Votre nouvelle progression a bien été enregistré avec succès !');
 
     } catch (error) {
 
-        req.flash('danger', error);
+        req.flash('danger', error.message);
+        console.log(error)
 
     }
 

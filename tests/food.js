@@ -37,7 +37,7 @@ const foodTest = describe('Food tests', () => {
     it(' 1 Test create food auth user : not crated redirect', async () => {
 
 
-        const testSession = await authPremiumUser();
+        const [testSession, user] = await authPremiumUser();
 
         const res = await testSession
             .post('/food')
@@ -92,7 +92,7 @@ const foodTest = describe('Food tests', () => {
     it(' 4.1 : Should return the home page', async () => {
 
 
-        const testSession = await authPremiumUser();
+        const [testSession, user] = await authPremiumUser();
 
         const foods = await Food.findAll({limits: 1});
         const foodSeq = foods[0];
@@ -115,7 +115,7 @@ const foodTest = describe('Food tests', () => {
     it(' 4.2 : Should return the 401', async () => {
 
 
-        const testSession = await authNonPremiumUser();
+        const [testSession, user] = await authNonPremiumUser();
 
         const foods = await Food.findAll({limits: 1});
         const foodSeq = foods[0];
@@ -190,7 +190,7 @@ const foodTest = describe('Food tests', () => {
 
     it(" 7.1 : Sould not allow deletion of this food and redirect to home page", async () => {
 
-        const testSession = await authPremiumUser();
+        const [testSession, user] = await authPremiumUser();
 
         const foods = await Food.findAll({ 
             where : {
@@ -216,7 +216,7 @@ const foodTest = describe('Food tests', () => {
 
     it(" 7.2 : Sould not allow deletion of this food and redirect to premium page", async () => {
 
-        const testSession = await authNonPremiumUser();
+        const [testSession, user] = await authNonPremiumUser();
 
         const foods = await Food.findAll({ 
             where : {
@@ -262,7 +262,7 @@ const foodTest = describe('Food tests', () => {
 
      it(" 9 : get a food non premium user " , async () => {
 
-        const testSession = await authNonPremiumUser()
+        const [testSession, user] = await authNonPremiumUser()
 
         const foods = await Food.findAll({limit: 1});
         const foodSeq = foods[0]; 
@@ -276,7 +276,7 @@ const foodTest = describe('Food tests', () => {
 
     it(" 10 : get a food premium user " , async () => {
 
-        const testSession = await authPremiumUser()
+        const [testSession, user] = await authPremiumUser()
 
         const foods = await Food.findAll({limit: 1});
         const foodSeq = foods[0]; 

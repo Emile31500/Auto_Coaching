@@ -1,4 +1,4 @@
-const { Dish, DishFood, Food, Measurment, NutritionRequirement } = require('../models');
+const { Dish, DishFood, Food, Measurment, NutritionRequirement, User } = require('../models');
 const { fn, Op, col } = require('sequelize');
 
 async function getAllFitlerParameters (parsedUrlQuery) {
@@ -133,27 +133,28 @@ const getDishesForMainPage = async (parsedUrlQuery, user) => {
 const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
 
     const origininalDate = new Date(measurment.createdAt);
-    const startDay = origininalDate;
-    startDay.setDate(startDay.getDate() - 6);
+    const startDay = new Date(origininalDate.getTime() - 15 * 24 * 60 * 60 * 1000);   
+    const endDay = new Date(origininalDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+    const user = User.findOne({where : {id : measurment.userId}})
 
-    const endDay = origininalDate;
-    endDay.setDate(endDay.getDate() - 15);
 
-    const lastButOneMeasurment = await Measurment.findOne({
+    const lastButOneMeasurment = await Measurment.findOne({ where : {
         createdAt :{
-            [Op.between] : [startDay, endDay]},
+            [Op.between] : [startDay, endDay]
+        },
         userId : measurment.userId
-    })
+    }})
 
-    const nutritionrequirement = await NutritionRequirement.findOne({
+    const nutritionrequirement = await NutritionRequirement.findOne({ where : {
         userId : measurment.userId
-    })
+    }})
 
-    const delta = measurment.weight - lastButOneMeasurment.weight
+  
+    if (lastButOneMeasurment instanceof Measurment) {
 
-    if (user.objectiv == 2 ) {
+        const delta = measurment.weight - lastButOneMeasurment.weight
 
-        if (lastButOneMeasurment instanceof Measurment) {
+        if (user.objectiv == 2 ) {
 
             if (delta < -0.6) {
 
@@ -170,11 +171,7 @@ const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
                 })
 
             }
-        }
-
-    } else {
-
-        if (lastButOneMeasurment instanceof Measurment) {
+        } else {
 
             if (delta < 0) {
 
@@ -193,6 +190,7 @@ const recalculateMacroBelongWithLastMeasurment = async (measurment) => {
                 })
 
             }
+
         }
 
     }

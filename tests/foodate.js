@@ -27,7 +27,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 1.1 : ate food page non premium user : Should return the premium page', async () => {
 
-        const testSession = await authNonPremiumUser()
+        const [testSession, user] = await authNonPremiumUser()
 
         const ymdDate =  '2026-03-24 00:00:00'
         const frenchDate =  'Mardi 24 mars 2024'
@@ -44,7 +44,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
      it(' 1.2 : ate food page premium user : Should return the ate food page', async () => {
 
-        const testSession = await authPremiumUser()
+        const [testSession, user] = await authPremiumUser()
 
         const ymdDate =  '2026-03-24 00:00:00';
         const frenchDate =  'Mardi 24 mars 2026';
@@ -94,7 +94,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
         const currentDateTime = getDate();
 
-        const testSession = await authNonPremiumUser()
+        const [testSession, user] = await authNonPremiumUser()
 
         const food = await Food.findOne()
         const weight = randomInt()
@@ -125,7 +125,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
         const currentDateTime = getDate();
 
-        const testSession = await authPremiumUser()
+        const [testSession, user] = await authPremiumUser()
 
         const food = await Food.findOne()
         const weight = randomInt()
@@ -179,7 +179,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 5.1 : test delete auth not premium : should return to the premium', async () => {
 
-        const testSession = await authNonPremiumUser()
+        const [testSession, user] = await authNonPremiumUser()
         const ateFood = await AteFood.findOne()
         const id = ateFood.id;
         const res = await testSession
@@ -195,7 +195,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     it(' 5.2 : test delete auth premium : should delete and return ate food page', async () => {
 
-        const testSession = await authPremiumUser();
+        const [testSession, user] = await authPremiumUser();
         const ateFood = await AteFood.findOne();
         const recoveryAteFood = ateFood.toJSON();
 
@@ -310,7 +310,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
         const currentDateTime = getDate();
 
-        const testSession = await authNonPremiumUser()
+        const [testSession, user] = await authNonPremiumUser()
         const ateFood = await AteFood.findOne({include : Food})
         const preventWeight = ateFood.weight;
         let newWieght;
@@ -345,7 +345,7 @@ const AteFoodTest = describe('Ate food tests', () => {
     it(' 7.2 : Update ate food premium user : should return premium page', async () => {
 
         const currentDateTime = getDate();
-        const testSession = await authPremiumUser();
+        const [testSession, user] = await authPremiumUser();
         const ateFood = await AteFood.findOne({include : Food})
         const preventWeight = ateFood.weight;
         let newWieght;

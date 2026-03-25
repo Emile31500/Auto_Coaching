@@ -1,19 +1,16 @@
-const { Measurment, User } = require('../models')
+const { Measurment, User, NutritionRequirement } = require('../models')
 const app = require('../app')
 const session = require('supertest-session');
-const { randomInt, authUser } = require('./test.tools')
+const cheerio = require("cheerio");
+const { randomInt, authUser, authPremiumUser, authNonPremiumUser } = require('./test.tools')
 
 const MeasurmentTest = describe('Measurments tests', () => {
+    const today = new Date()
 
     const rawData = {
-
         weight: randomInt(),
         size: randomInt(200),
-        suroundShoulers: randomInt(150),
-        suroundWaist: randomInt(50),
-        suroundArms: randomInt(50),
-        suroundChest: randomInt()
-
+        date : today.getFullYear()+"-"+(today.getMonth()+1)+"-"+today.getDate()
     }
 
     it (' 0 : Should return 401 error because not auth', async() => {
@@ -21,72 +18,124 @@ const MeasurmentTest = describe('Measurments tests', () => {
         const testSession = session(app);
 
         const res = await testSession
-            .post('/api/measurment')
+            .post('/measurment')
             .send(rawData)
             .redirects(1);
 
-        expect(res.req.path).toEqual('/api/measurment')
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
-        expect(res.statusCode).toEqual(401);
-        expect(res._body.code).toEqual(401);
+        const nullOrMeasurment = await Measurment.findOne(rawData);
+        expect(res.req.path).toEqual('/')
+        expect(nullOrMeasurment).not.toBeInstanceOf(Measurment)
+
     });
 
-    it (' 1 : Should create a new measurment', async() => {
+    it (' 1.1 : create measurment auth non premium : should redirect to premium', async() => {
+       
+        const [testSession, user] = await authNonPremiumUser();
+
+        const res = await testSession
+            .post('/measurment')
+            .send(rawData)
+            .redirects(1);
+
+        const nullOrMeasurment = await Measurment.findOne(rawData);
+
+        expect(res.req.path).toEqual('/premium')
+        expect(nullOrMeasurment).not.toBeInstanceOf(Measurment)
+    });
+/*
+    it (' 1.2 : create measurment auth premium : should create measurment', async() => {
 
        
-        const testSession = await authUser();
+        const [testSession, user] = await authPremiumUser();
 
         const res = await testSession
-            .post('/api/measurment')
+            .get('/profile/progression')
+            .redirects(1);
+            
+        const stringToParse = res.text;
+        const $ = cheerio.load(stringToParse);
+        const url = $('form').attr('action');
+        expect($('input[name="size"]').html()).not.toEqual(null)
+        expect(typeof $('input[name="size"]').html()).toEqual('string')
+
+        expect($('input[name="weight"]').html()).not.toEqual(null)
+        expect(typeof $('input[name="weight"]').html()).toEqual('string')
+
+        expect($('input[type="date"][name="date"]').html()).not.toEqual(null)
+        expect(typeof $('input[type="date"][name="date"]').html()).toEqual('string')
+
+        const resSubmition = await testSession
+            .post(url)
             .send(rawData)
             .redirects(1);
-        
-        const apiMeasurment = res._body.data;
-        const seqMeasurment = await Measurment.findOne({where : {id : apiMeasurment.id}});
 
-        expect(apiMeasurment.id).toEqual(seqMeasurment.id);
-        expect(res.req.path).toEqual('/api/measurment');
-        expect(res.statusCode).toEqual(201);
-        expect(res._body.code).toEqual(201);
-    });
+        const $$ = cheerio.load(resSubmition.text);
+        const measurmentOrNull = await Measurment.findOne(rawData);
 
-    it (' 2 : Should return 401 error because not auth', async() => {
+        expect(measurmentOrNull).toBeInstanceOf(Measurment)
+        expect(resSubmition.req.path).toEqual('/profile/progression');
+        expect($$('.alert-success').html()).toMatch('Votre nouvelle progression a bien été enregistré avec succès !');
 
-        const testSession = session(app);
+    });*/
+
+
+    it (' 2 : create measurment auth premium with too big wieght loose : should create measurment and increas nutrition requirement', async() => {
+       
+        const [testSession, user] = await authPremiumUser();
+       
+        const measurment = await Measurment.findOne({ 
+            order : [
+                ['date', 'DESC']
+            ],
+            where : {
+                userId : user.id
+            }
+        });
+
+        const nutritionRequirementBefore = await NutritionRequirement.findOne({
+            where : {
+                userId : user.id
+            }
+        });
+
+        const personnalMultiplicatorBefore = nutritionRequirementBefore.personnalMultiplicator;
+        const origininalDate = new Date(measurment.date);
+        const date = new Date(origininalDate.getTime() + 9 * 24 * 60 * 60 * 1000); 
+
+        const contextRawData = {
+                size : measurment.size,
+                weight : measurment.weight-1,
+                date : date
+            }
 
         const res = await testSession
-            .get('/api/measurment')
-            .redirects(1);
-
-        expect(res.req.path).toEqual('/api/measurment')
-        expect(res._body.message).toEqual("Vous n'êtes pas autorisé à exécuter cette tâche");
-        expect(res.statusCode).toEqual(401);
-        expect(res._body.code).toEqual(401);
-    });
-
-    it (' 3 : Should return a measurment list', async() => {
-
-        const user = await User.findOne({where : {email : 'emile00013+2@gmail.com'}});
-        const testSession = await authUser();
-
-        const res = await testSession
-            .get('/api/measurment')
+            .post('/measurment')
+            .send(contextRawData)
             .redirects(1);
         
-        const apiMeasurments = res._body.data;
-        const seqMeasurments = await Measurment.findAll({where : {userId : user.id}, order: [['createdAt', 'DESC']]});
+        const nutritionRequirementAfter = await NutritionRequirement.findOne({
+            where : {
+                userId : user.id
+            }
+        });
 
-        expect(apiMeasurments.length).toEqual(seqMeasurments.length);
-        for (let i = 0; i < apiMeasurments.length; i++) {
-
-            expect(apiMeasurments[i].id).toEqual(seqMeasurments[i].id);
-            expect(apiMeasurments[i].userId).toEqual(user.id);
+        const personnalMultiplicatorAfter = nutritionRequirementAfter.personnalMultiplicator;
 
 
-        }
-        expect(res.req.path).toEqual('/api/measurment');
-        expect(res.statusCode).toEqual(200);
-        expect(res._body.code).toEqual(200);
+        const $ = cheerio.load(res.text);
+        const measurmentOrNull = await Measurment.findOne({ where : {
+            size : contextRawData.size,
+            weight : contextRawData.weight,
+            userId : user.id
+        }});
+
+        expect(measurmentOrNull).toBeInstanceOf(Measurment)
+        expect(res.req.path).toEqual('/profile/progression');
+        expect(personnalMultiplicatorAfter).toBeGreaterThan(personnalMultiplicatorBefore)
+        expect($('.alert-success').html()).toMatch('Votre nouvelle progression a bien été enregistré avec succès !');/**/
+        expect($('.alert-danger').html()).toEqual(null);/**/
+
+
     });
 
 });

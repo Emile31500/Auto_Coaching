@@ -55,16 +55,17 @@ async function authPremiumUser() {
         if (subscriptions.data.length > 0) {
             authUser = users[index]
             index = users.length
+
+            return [
+                await auth({
+                    email : authUser.email,
+                    password : 'testpassword'
+                }), 
+                authUser
+            ];
         }
 
     }
-    
-    
-    return auth({
-        email : authUser.email,
-        password : 'testpassword'
-    });
-    
 }
 
 async function authNonPremiumUser() {
@@ -87,10 +88,10 @@ async function authNonPremiumUser() {
     }
     
     
-    return auth({
+    return [await auth({
         email : authUser.email,
         password : 'testpassword'
-    });
+    }), authUser];
     
 }
 

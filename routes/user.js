@@ -58,8 +58,6 @@ router.get('/profile/:pageName', authenticationChecker, getStripeCustomer,  asyn
         const subscriptionsPromise = await stripe.subscriptions.list({
             customer: req.stripeCustomer.id
         });
-
-        res.locals.message = req.flash();
         
         if (subscriptionsPromise.data.length > 0) {
 

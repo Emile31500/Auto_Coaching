@@ -1,17 +1,9 @@
-const jwt = require('jsonwebtoken');
-const { User } = require('../models/');
-const session = require('express-session');
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 const getStripeCustomer = async function (req, res, next) {
-        
-    const authToken = req.session.token;
-    const decodeToken = jwt.verify(authToken, process.env.JWT_SECRET);
-
-    const user = await User.findOne({where: {'email': decodeToken.email}});
 
     const customerPromise = await stripe.customers.list({
-        email: user.email,
+        email: req.user.email,
         limit: 1
     })
 
