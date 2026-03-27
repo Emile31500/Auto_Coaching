@@ -370,14 +370,16 @@ router.get('/program-draft/:idP/train-draft/:idT/put-prevent', adminChecker, asy
             order :[['ordering', 'DESC']] 
         })
 
-        const newOrdeing = preventTrainDraft.ordering
-        const preventOrdeing = trainDraft.ordering
+        if (preventTrainDraft instanceof TrainDraft) {
+            const newOrdeing = preventTrainDraft.ordering
+            const preventOrdeing = trainDraft.ordering
 
-        preventTrainDraft.ordering = preventOrdeing
-        trainDraft.ordering = newOrdeing
+            preventTrainDraft.ordering = preventOrdeing
+            trainDraft.ordering = newOrdeing
 
-        await preventTrainDraft.save()
-        await trainDraft.save()
+            await preventTrainDraft.save()
+            await trainDraft.save()
+        }
 
         res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
 
@@ -423,14 +425,16 @@ router.get('/program-draft/:idP/train-draft/:idT/put-next', adminChecker, async(
             order :[['ordering', 'ASC']] 
         })
 
-        const newOrdeing = nextTrainDraft.ordering
-        const preventOrdeing = trainDraft.ordering
+        if (nextTrainDraft instanceof TrainDraft) {
+            const newOrdeing = nextTrainDraft.ordering
+            const preventOrdeing = trainDraft.ordering
 
-        nextTrainDraft.ordering = preventOrdeing
-        trainDraft.ordering = newOrdeing
+            nextTrainDraft.ordering = preventOrdeing
+            trainDraft.ordering = newOrdeing
 
-        await nextTrainDraft.save()
-        await trainDraft.save()
+            await nextTrainDraft.save()
+            await trainDraft.save()
+        }
 
         res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
 
