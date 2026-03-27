@@ -52,7 +52,8 @@ const publishTrain = async (id) => {
             let train = await Train.create({
                 name : trainDraft.name,
                 description :  trainDraft.description,
-                programId :  program.id
+                programId :  program.id,
+                ordering : trainDraft.ordering
             }) 
 
             trainDraft.ExerciseTrainDrafts.forEach(async(exerciseTrainDraft) => {

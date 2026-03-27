@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
   TrainDraft.init({
     name: DataTypes.STRING,
     description: DataTypes.CHAR,
+    ordering: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'TrainDraft',

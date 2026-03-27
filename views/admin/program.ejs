@@ -34,10 +34,10 @@
                 </tr>
             </thead>
         </table>
-        <div class="card-group  row-cols-2 row-cols-md-4 row-cols-lg-5  g-4">
+        <div class="card-group  row-cols-2 row-cols-md-3 row-cols-lg-4  g-3">
             <% programDraft.TrainDrafts.forEach(async(train) => { %>
                 <div class="col" >
-                    <div class="card <% if (train.id === trainDraft.id ) { %> border border-dark bg-light border-opacity-50 <% } %>" style="width: 10em;">
+                    <div class="card <% if (train.id === trainDraft.id ) { %> border border-dark bg-light border-opacity-50 <% } %>" style="width: 15em;">
                         <div style="background-image: url(/media/photo/<%= train.imageUrl %>); background-size: cover;" class="card-img-top">
                             <div class="w-100 h-auto p-2 bg-light bg-opacity-75">
                             </div>
@@ -64,6 +64,10 @@
                                     <%= exercisesTrain.reps %> x <%= exercisesTrain.sets %> : <%= exercisesTrain.Exercise.name %><br>
                                 <% }) %>
                             </p>
+                            <div class="d-flex justify-content-between">
+                                <a href="/program-draft/<%= programDraft.id %>/train-draft/<%= train.id %>/put-prevent" class="btn btn-outline-secondary"><i class="fa-solid fa-angle-left"></i></a>
+                                <a href="/program-draft/<%= programDraft.id %>/train-draft/<%= train.id %>/put-next" class="btn btn-outline-secondary"><i class="fa-solid fa-angle-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>

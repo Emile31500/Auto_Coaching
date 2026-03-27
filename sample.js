@@ -67,7 +67,8 @@ async function genrateSampleData () {
                                 const trainDraft = await TrainDraft.create({
                                     name : 'Train n°' + iTrain + 'programe n°' + iProgram,
                                     description : faker.commerce.productDescription(),
-                                    programDraftId : programDraft.id
+                                    programDraftId : programDraft.id,
+                                    ordering : iTrain
 
                                 })
                                 console.log('Generate train draft : ' + trainDraft.name)
@@ -80,16 +81,13 @@ async function genrateSampleData () {
                                     const repsMode = ['sdc', 'reps']
                                     const exerciseRandomIndex = getRandomArbitrary(0, exercises.length)
 
-                                    console.log(exercises[0])
-                                    console.log(exercises.length)
-                                    console.log(exerciseRandomIndex)
-
                                     const exerciseTrainDraft =  await ExerciseTrainDraft.create({
                                         exerciseId : exercises[exerciseRandomIndex].id,
                                         trainDraftId : trainDraft.id,
                                         sets : getRandomArbitrary(1, 3),
                                         reps : getRandomArbitrary(5, 20),
-                                        repsMode : repsMode[iExerciseTrain%2]
+                                        repsMode : repsMode[iExerciseTrain%2],
+                                        ordering : iExerciseTrain
                                     })
                                     console.log('Exercise for train draft : ' + trainDraft.name)
 

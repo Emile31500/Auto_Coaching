@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     day: DataTypes.STRING(8),
     reps: DataTypes.INTEGER,
     sets: DataTypes.INTEGER,
+    ordering: DataTypes.INTEGER,
     
   }, {
     sequelize,

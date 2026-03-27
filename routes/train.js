@@ -14,7 +14,9 @@ router.get('/train', authenticationChecker, premiumChecker, async ( req, res) =>
             model : Train,
             include : {
                 model : ExerciseTrain
-            }
+            },
+            order :[['ordering', 'DESC']] 
+
         }
     })
 
@@ -67,7 +69,9 @@ router.get('/program/:id', authenticationChecker, premiumChecker, async (req, re
                 require : false
 
             },
-            require : false
+            require : false,
+            order :[['ordering', 'DESC']] 
+
         },
         where : {
             id : id
@@ -82,7 +86,7 @@ router.get('/program/:id', authenticationChecker, premiumChecker, async (req, re
     });
 })
 
-router.get('/api/train/:id', async (req, res) => {
+router.get('/api/train/:id', authenticationCheckerApi, premiumChecker, async (req, res) => {
 
     const id = req.params.id;
 

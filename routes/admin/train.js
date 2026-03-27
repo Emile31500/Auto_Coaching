@@ -7,7 +7,7 @@ const { Op } = require('sequelize');
 const multer = require('multer')
 const path = require('path');
 const adminCheckerApi = require('../../middlewares/adminCheckerApi');
-const adminChecker = require('../../middlewares/adminChecker');
+const adminChecker = require('../../middlewares/adminChecker');;
 
 const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
 const finalName = 'program-image-' + uniqueSuffix;
@@ -94,12 +94,17 @@ router.get('/program-draft/:idP/train/:idT/edit', adminChecker, async(req, res) 
                 include : {
                     model : Exercise
                 }
-            }
+            },
         },
+        order: [
+            [TrainDraft, 'ordering', 'ASC']
+        ],
         where : {
             id : idP
         }
     })
+
+    console.log(programDraft.TrainDrafts)
 
     const trainDraft = await TrainDraft.findOne({
         include : {
@@ -179,7 +184,8 @@ router.post('/admin/program-draft/create', parserJson, adminChecker, upload.sing
         })
 
         const trainDraft = await TrainDraft.create({
-            programDraftId : programDraft.id
+            programDraftId : programDraft.id,
+            ordering : 0
         });
 
         req.flash('success', `Votre programme ${porgramDraft.name} a bien été sauvegardé.`)
@@ -214,7 +220,11 @@ router.get('/admin/train', adminChecker, async (req, res) => {
             model : ExerciseTrainDraft,
             required : false
         },  
-        required : false
+        required : false,
+        order: [
+            [TrainDraft, 'ordering', 'ASC']
+        ],
+
     }});
 
     const programs = await Program.findAll({ include : {
@@ -223,7 +233,10 @@ router.get('/admin/train', adminChecker, async (req, res) => {
             model : ExerciseTrain,
             required : false
         },  
-        required : false
+        required : false,
+        order: [
+            [Train, 'ordering', 'ASC']
+        ],
     }});
 
     const exercises = await Exercise.findAll();
@@ -273,7 +286,11 @@ router.post('/program-draft/:idP/train/:idT/edit', parserJson, adminChecker, upl
         
         } else {
 
-            const newTrainDraft = await TrainDraft.create({programDraftId : programDraft.id});
+            const tranDrafts = await TrainDraft.findAll({where : { programDraftId : programDraft.id }})
+            const newTrainDraft = await TrainDraft.create({
+                programDraftId : programDraft.id,
+                ordering : tranDrafts.length
+            });
             res.redirect(`/program-draft/${programDraft.id}/train/${newTrainDraft.id}/edit`)
 
         }
@@ -312,6 +329,112 @@ router.get('/program-draft/:id/publish', adminChecker, async(req, res) => {
     
     res.redirect('/admin/train')
 
+})
+
+router.get('/program-draft/:idP/train-draft/:idT/put-prevent', adminChecker, async(req, res) => {
+
+    try {
+
+        const idT = req.params.idT
+        const idP = req.params.idP
+
+        const trainDraft = await TrainDraft.findOne({
+            include : {
+                model : ProgramDraft,
+                required : true,
+                where : {
+                    id : idP
+                }
+            },
+            where : {
+                id : idT
+            }
+        })
+
+        const preventTrainDraft = await TrainDraft.findOne({
+            include : {
+                model : ProgramDraft,
+                required : true,
+                where : {
+                    id : idP
+                }
+            },
+            where : {
+                ordering : { [Op.lt] : trainDraft.ordering},
+            },
+            order :[['ordering', 'DESC']] 
+        })
+
+        const newOrdeing = preventTrainDraft.ordering
+        const preventOrdeing = trainDraft.ordering
+
+        preventTrainDraft.ordering = preventOrdeing
+        trainDraft.ordering = newOrdeing
+
+        await preventTrainDraft.save()
+        await trainDraft.save()
+
+        res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+        res.redirect('/admin/train')
+
+    }
+})
+
+router.get('/program-draft/:idP/train-draft/:idT/put-next', adminChecker, async(req, res) => {
+
+    try {
+
+        const idT = req.params.idT
+        const idP = req.params.idP
+
+        const trainDraft = await TrainDraft.findOne({
+            include : {
+                model : ProgramDraft,
+                required : true,
+                where : {
+                    id : idP
+                }
+            },
+            where : {
+                id : idT
+            }
+        })
+
+        const nextTrainDraft = await TrainDraft.findOne({
+            include : {
+                model : ProgramDraft,
+                required : true,
+                where : {
+                    id : idP
+                }
+            },
+            where : {
+                ordering : { [Op.gt] : trainDraft.ordering},
+            },
+            order :[['ordering', 'ASC']] 
+        })
+
+        const newOrdeing = nextTrainDraft.ordering
+        const preventOrdeing = trainDraft.ordering
+
+        nextTrainDraft.ordering = preventOrdeing
+        trainDraft.ordering = newOrdeing
+
+        await nextTrainDraft.save()
+        await trainDraft.save()
+
+        res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
+
+    } catch (error) {
+
+        req.flash('danger', error.message)
+        res.redirect('/admin/train')
+
+    }
 })
 
 module.exports = router;

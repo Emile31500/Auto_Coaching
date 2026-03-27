@@ -132,7 +132,9 @@ const programTest = describe('Trains tests', () => {
                     }
                 }
             ],
-            
+            order: [
+                [TrainDraft, 'ordering', 'ASC']
+            ],
         });
         const res = await testSession.get('/program-draft/'+programDraft.id+ '/publish').redirects(1);
         const programOrNull = await Program.findOne({ include : {
@@ -142,7 +144,12 @@ const programTest = describe('Trains tests', () => {
                     required : false
                 },  
                 required : false
-            }, where : { programDraftId : programDraft.id}})
+            }, 
+            where : { programDraftId : programDraft.id},
+            order: [
+                [Train, 'ordering', 'ASC']
+            ],
+        })
         const $ = cheerio.load(res.text);
 
 
@@ -160,11 +167,13 @@ const programTest = describe('Trains tests', () => {
             
             programDraft.TrainDrafts[indexProgram];
 
+            expect(programOrNull.Trains[indexProgram].ordering).toEqual(programDraft.TrainDrafts[indexProgram].ordering);
             expect(programOrNull.Trains[indexProgram].name).toEqual(programDraft.TrainDrafts[indexProgram].name);
-            // expect(programOrNull.Trains[indexProgram].description).toEqual(programDraft.TrainDrafts[indexProgram].description);
+            expect(programOrNull.Trains[indexProgram].description).toEqual(programDraft.TrainDrafts[indexProgram].description);
 
             for (let indexTrain = 0; indexTrain < programDraft.TrainDrafts[indexProgram].ExerciseTrainDrafts.length; indexTrain++) {
 
+                // expect(programOrNull.Trains[indexProgram].ExerciseTrains[indexTrain]).toEqual(programDraft.TrainDrafts[indexProgram].ExerciseTrainDrafts[indexTrain]);
                 expect(programOrNull.Trains[indexProgram].ExerciseTrains[indexTrain].reps).toEqual(programDraft.TrainDrafts[indexProgram].ExerciseTrainDrafts[indexTrain].reps);
                 expect(programOrNull.Trains[indexProgram].ExerciseTrains[indexTrain].sets).toEqual(programDraft.TrainDrafts[indexProgram].ExerciseTrainDrafts[indexTrain].sets);
                 expect(programOrNull.Trains[indexProgram].ExerciseTrains[indexTrain].repsMode).toEqual(programDraft.TrainDrafts[indexProgram].ExerciseTrainDrafts[indexTrain].repsMode);
