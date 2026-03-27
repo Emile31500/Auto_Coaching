@@ -11,6 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      ProgramDraft.hasOne(models.Program, 
+        {
+        foreignKey: {
+          name : 'programDraftId',
+          allowNull : false
+        },
+      })
       ProgramDraft.hasMany(models.TrainDraft, {
         foreignKey: {
           name : 'programDraftId',
@@ -26,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ProgramDraft.init({
     name: DataTypes.STRING,
+    imageUrl: DataTypes.STRING,
     description: DataTypes.CHAR,
   }, {
     sequelize,

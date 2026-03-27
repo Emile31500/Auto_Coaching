@@ -22,7 +22,13 @@ const publishTrain = async (id) => {
         let program = await Program.findOne({
             include : {
                 model : Train,
-                require : false
+                require : false,
+                include : {
+                    model : ExerciseTrain,
+                    include : {
+                        model : Exercise
+                    }
+                }
             },
             where : {
                 programDraftId : id
@@ -33,10 +39,13 @@ const publishTrain = async (id) => {
 
         await program.update({
             name : programDraft.name,
+            imageUrl : programDraft.imageUrl,
             description : programDraft.description
         })
 
-        program.Trains?.forEach(train => {train.destroy()}) 
+        await program.save();
+
+        program.Trains?.forEach(async (train) => {await train.destroy()}) 
 
         programDraft.TrainDrafts.forEach(async(trainDraft) => {
 
@@ -47,7 +56,7 @@ const publishTrain = async (id) => {
             }) 
 
             trainDraft.ExerciseTrainDrafts.forEach(async(exerciseTrainDraft) => {
-                let exerciseTrain = await ExerciseTrain.create({
+                await ExerciseTrain.create({
                     exerciseId : exerciseTrainDraft.exerciseId,
                     trainId : train.id,
                     reps : exerciseTrainDraft.reps,
@@ -63,7 +72,7 @@ const publishTrain = async (id) => {
     } catch (error) {
 
         console.log(error.message)
-        return false;
+        return error.message;
 
     }
    

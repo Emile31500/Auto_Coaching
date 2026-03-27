@@ -1,7 +1,7 @@
 const app = require('../app')
 const session = require('supertest-session');
 const { Exercise } = require('../models');
-const { generateRandomString, authUser, authAdmin } = require('./test.tools');
+const { generateRandomString, authAdmin, authPremiumUser, authNonPremiumUser } = require('./test.tools');
 const cheerio = require("cheerio");
 
 const ExerciseTest = describe('Exercises tests', () => {
@@ -33,7 +33,7 @@ const ExerciseTest = describe('Exercises tests', () => {
 
     it(' 1 Test add exercise auth user : no creation', async () => {
 
-        const testSession = await authUser();
+        const testSession = await authPremiumUser();
 
         await Exercise.destroy({ where : { name : rawData.name}});
 
@@ -43,7 +43,7 @@ const ExerciseTest = describe('Exercises tests', () => {
             .redirects(2);
 
         const exercise = await Exercise.findOne({ where : { name : rawData.name}});
-        expect(res.req.path).toEqual('/profile/progression');
+        expect(res.req.path).toEqual('/');
         expect(exercise).not.toBeInstanceOf(Exercise);
     
 
@@ -85,7 +85,8 @@ const ExerciseTest = describe('Exercises tests', () => {
 
     it(' 4 Test exercise admin page index auth user : return to home page ', async () => {
 
-        const testSession = await authUser();
+        const testSession = await authPremiumUser();
+
 
         const res = await testSession
             .get('/admin/train')
@@ -130,7 +131,7 @@ const ExerciseTest = describe('Exercises tests', () => {
 
     it(' 7 Test delete exercise auth user : redirect not deleted', async () => {
 
-        const testSession = await authUser()
+        const testSession = await authPremiumUser();
         
         const exercise = await Exercise.findOne();
         const url = '/admin/exercise/' + exercise.id + '/delete';
@@ -141,7 +142,7 @@ const ExerciseTest = describe('Exercises tests', () => {
 
         const seqExercise = await Exercise.findOne({where : {id : exercise.id}});
         expect(seqExercise).toBeInstanceOf(Exercise);
-        expect(res.req.path).toEqual('/profile/progression');
+        expect(res.req.path).toEqual('/');
 
     });
 

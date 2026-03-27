@@ -7,7 +7,6 @@ const adminChecker = async function (req, res, next) {
 
         const authToken = req.session.token;
         const decodeToken = jwt.verify(authToken, process.env.JWT_SECRET);
-        console.log(decodeToken)
             
         if (!decodeToken) throw new Error
         

@@ -342,7 +342,7 @@ const AteFoodTest = describe('Ate food tests', () => {
 
     });
 
-    it(' 7.2 : Update ate food premium user : should return premium page', async () => {
+    it(' 7.2 : Update ate food premium user : should update ate food', async () => {
 
         const currentDateTime = getDate();
         const [testSession, user] = await authPremiumUser();
@@ -378,7 +378,7 @@ const AteFoodTest = describe('Ate food tests', () => {
         expect($('h2').html()).toMatch('Détails de la diette de ce jour :');
         expect($('h3').html()).toBe(frenchDate);
         expect(res.statusCode).toEqual(200);
-        expect($('.alert-success').html()).toMatch(`L'aliment : ${ateFood.Food.name} a bien été mis à jour dans votre diet.`);
+        expect($('.alert-success').text()).toMatch(`L'aliment : ${ateFood.Food.name} a bien été mis à jour dans votre diet.`);
         expect(foodOrNull).toBeInstanceOf(AteFood);
 
     });

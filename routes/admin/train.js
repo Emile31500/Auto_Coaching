@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage : storage });
 
-router.get('/program-draft/:id/delete', async(req, res) => {
+router.get('/program-draft/:id/delete', adminChecker, async(req, res) => {
 
     try {
 
@@ -47,7 +47,7 @@ router.get('/program-draft/:id/delete', async(req, res) => {
 
 })
 
-router.get('/program/:id/delete', async(req, res) => {
+router.get('/program/:id/delete', adminChecker, async(req, res) => {
 
     try {
 
@@ -70,7 +70,7 @@ router.get('/program/:id/delete', async(req, res) => {
 
 })
 
-router.get('/admin/program-draft/create', async(req, res) => {
+router.get('/admin/program-draft/create', adminChecker, async(req, res) => {
 
     res.locals.message = req.flash();
     res.render('../views/admin/program-create',  {
@@ -80,7 +80,7 @@ router.get('/admin/program-draft/create', async(req, res) => {
 
 })
 
-router.get('/program-draft/:idP/train/:idT/edit', async(req, res) => {
+router.get('/program-draft/:idP/train/:idT/edit', adminChecker, async(req, res) => {
 
 
     const idP = req.params.idP
@@ -128,7 +128,7 @@ router.get('/program-draft/:idP/train/:idT/edit', async(req, res) => {
 
 })
 
-router.get('/program-draft/:idP/train/:idT/delete', async(req, res) => {
+router.get('/program-draft/:idP/train/:idT/delete', adminChecker, async(req, res) => {
 
     try {
 
@@ -166,7 +166,7 @@ router.get('/program-draft/:idP/train/:idT/delete', async(req, res) => {
 
 })
 
-router.post('/admin/program-draft/create', parserJson,  upload.single('imageUrl'), async(req, res) => {
+router.post('/admin/program-draft/create', parserJson, adminChecker, upload.single('imageUrl'), async(req, res) => {
 
     try {
 
@@ -238,7 +238,7 @@ router.get('/admin/train', adminChecker, async (req, res) => {
 
 })
 
-router.post('/program-draft/:idP/train/:idT/edit', parserJson, upload.single('imageUrl'), async(req, res) => {
+router.post('/program-draft/:idP/train/:idT/edit', parserJson, adminChecker, upload.single('imageUrl'), async(req, res) => {
 
     try {
 
@@ -289,18 +289,19 @@ router.post('/program-draft/:idP/train/:idT/edit', parserJson, upload.single('im
 })
 
 
-router.get('/program-draft/:id/publish', async(req, res) => {
+router.get('/program-draft/:id/publish', adminChecker, async(req, res) => {
 
     try {
 
         const id = req.params.id
 
-        const programOrFalse = publishTrain(id)
+        const programOrErrorMessage = await publishTrain(id)
 
-        if (programOrFalse instanceof Program) {
-            req.flash('success', `Le programme ${program.name} a bien été publié`);
+        console.log(programOrErrorMessage)
+        if (programOrErrorMessage instanceof Program) {
+            req.flash('success', `Le programme ${programOrErrorMessage.name} a bien été publié`);
         } else {
-            throw new Error('Un problème inconu est survenu lors de la publication du program')
+            throw new Error(programOrErrorMessage)
         }
 
 

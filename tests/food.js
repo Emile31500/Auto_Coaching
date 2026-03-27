@@ -241,12 +241,10 @@ const foodTest = describe('Food tests', () => {
 
         const testSession = await authAdmin();
 
-        const foods = await Food.findAll({ 
+        const food= await Food.findOne({ 
             where : {
                 userId : null
-            },
-            limit: 1});
-        const food = foods[0]
+            }});
         
         const res = await testSession
             .delete('/api/food/' + food.id)

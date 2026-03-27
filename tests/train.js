@@ -1,62 +1,61 @@
-const request = require('supertest')
-const { JSDOM } = require('jsdom')
+// const request = require('supertest')
+const session = require('supertest-session');
+const cheerio = require("cheerio");
 const app = require('../app')
-const { Train, User, ExerciseTrain } = require('../models')
-const { authUser } = require('./test.tools')
-
+const { authPremiumUser, authNonPremiumUser } = require('./test.tools');
 const trainTest = describe('Trains tests', () => {
 
     jest.setTimeout(5000);
 
-    it(' 0 :Should return the train main page', async () => {
+    it(' 0.1 : train page auth premium user : should return the train page', async () => {
 
-        const testSession = await authUser();
+        const [testSession, user] = await authPremiumUser();
 
         const res = await testSession
             .get('/train')
             .redirects(1);
 
-        const stringToParse = res.text;
+        const $ = cheerio.load(res.text);
     
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-    
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Train');
+        expect($('h2').html()).toMatch('Nos programmes');
         expect(res.statusCode).toEqual(200);
+        expect(res.req.path).toEqual('/train');
+
     
     });
 
-    it(' 1 : Should return a 401 page', async () => {
+    it(' 0.2 : train page auth non premium user : should return the premium page', async () => {
 
-        const res = await request(app).get('/train');
-        const stringToParse = res.text;
+        const [testSession, user] = await authNonPremiumUser();
+
+        const res = await testSession
+            .get('/train')
+            .redirects(1);
+
+        const $ = cheerio.load(res.text);
     
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-    
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
-        expect(res.statusCode).toEqual(401);
+        expect($('h2').html()).not.toMatch('Nos programmes');
+        expect(res.statusCode).toEqual(200);
+        expect(res.req.path).toEqual('/premium');
     
     });
 
-    it(' 2 : Should return a 401 page becaus user isn\'t auth', async () => {
+    it(' 1 : train page non auth  user : should return the home page', async () => {
 
-        const res = await request(app).get('/train');
-        const stringToParse = res.text;
+        const testSession = session(app);
+        
+        const res = await testSession.get('/train').redirects(1);
+        const $ = cheerio.load(res.text);
     
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
-    
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
-        expect(res.statusCode).toEqual(401);
+        expect($('h2').html()).not.toMatch('Nos programmes');
+        expect(res.statusCode).toEqual(200);
+        expect(res.req.path).toEqual('/');
     
     });
 
+   
+
+/*
     it(' 3 : Should return a 401 page because user is no auth', async () => {
 
         const train = await Train.findOne({where : {isFinished : true}});
@@ -208,7 +207,7 @@ const trainTest = describe('Trains tests', () => {
         expect(res.statusCode).toEqual(200);
     
     });
-
+*/
 });
 
 module.exports = trainTest

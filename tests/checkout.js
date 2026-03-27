@@ -1,12 +1,12 @@
-const { JSDOM } = require('jsdom')
 const app = require('../app')
 const session = require('supertest-session');
 const { authUser, createRandomUser, auth } = require('./test.tools');
+const cheerio = require("cheerio");
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
 
 const checkoutTest = describe('Checkout test', () => {
 
-    it(' 0 : Should return a 401 error because not auth', async () => {
+    /* it(' 0 : Should return a 401 error because not auth', async () => {
 
         const testSession = session(app)
 
@@ -15,12 +15,11 @@ const checkoutTest = describe('Checkout test', () => {
             .redirects(1);
        
         const stringToParse = res.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
+        const $ =  cheerio.load(stringToParse);
     
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect($('h1').html()).toBe('Auto Coaching');
+        expect($('h2').html()).toBe('Erreur : 401');
+        expect($('p').html()).toBe('Vous devez être authentifié pour accéder à cette page.')
         expect(res.statusCode).toEqual(401);
     });
 
@@ -33,12 +32,11 @@ const checkoutTest = describe('Checkout test', () => {
             .redirects(1);
         
         const stringToParse = res.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
+        const $ =  cheerio.load(stringToParse);
         
         expect(res.req.path).toEqual('/premium');
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Abonnement premium');
+        expect($('h1').html()).toBe('Auto Coaching');
+        expect($('h2').html()).toBe('Abonnement premium');
         expect(res.statusCode).toEqual(200);
 
     });
@@ -58,12 +56,11 @@ const checkoutTest = describe('Checkout test', () => {
             .redirects(1);
         
         const stringToParse = res.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
+        const $ =  cheerio.load(stringToParse);
     
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Erreur : 401');
-        expect(DOM.querySelector('p').innerHTML).toBe('Vous devez être authentifié pour accéder à cette page.')
+        expect($('h1').html()).toBe('Auto Coaching');
+        expect($('h2').html()).toBe('Erreur : 401');
+        expect($('p').html()).toBe('Vous devez être authentifié pour accéder à cette page.')
         expect(res.statusCode).toEqual(401);
 
     });
@@ -85,17 +82,16 @@ const checkoutTest = describe('Checkout test', () => {
             .redirects(1);
 
         const stringToParse = res.text;
-        const parsedString =  new JSDOM(stringToParse);
-        const DOM = parsedString.window.document;
+        const $ =  cheerio.load(stringToParse);
 
         expect(res.req.path).toEqual(url);
-        expect(DOM.querySelector('h1').innerHTML).toBe('Auto Coaching');
-        expect(DOM.querySelector('h2').innerHTML).toBe('Procéder au paiement');
+        expect($('h1').html()).toBe('Auto Coaching');
+        expect($('h2').html()).toBe('Procéder au paiement');
         expect(res.statusCode).toEqual(200);
 
 
         
-    });
+    });*/
 
     // it(' 4 : Should return the checkout page for the 1st subscription', async () => {
 

@@ -54,7 +54,7 @@ const MeasurmentTest = describe('Measurments tests', () => {
         expect(res.req.path).toEqual('/premium')
         expect(nullOrMeasurment).not.toBeInstanceOf(Measurment)
     });
-/*
+
     it (' 1.2 : create measurment auth premium : should create measurment', async() => {
 
        
@@ -82,7 +82,7 @@ const MeasurmentTest = describe('Measurments tests', () => {
             .redirects(1);
 
         const $$ = cheerio.load(resSubmition.text);
-        const nullOrMeasurment = await Measurment.findOne({
+        const measurmentOrNull = await Measurment.findOne({
             weight : rawData.weight,
             size : rawData.size,
             date : rawData.date,
@@ -92,8 +92,9 @@ const MeasurmentTest = describe('Measurments tests', () => {
         expect(measurmentOrNull).toBeInstanceOf(Measurment)
         expect(resSubmition.req.path).toEqual('/profile/progression');
         expect($$('.alert-success').html()).toMatch('Votre nouvelle progression a bien été enregistré avec succès !');
+        await measurmentOrNull.destroy()
 
-    });*/
+    });
 
 
     it (' 2 : create measurment auth premium with too big wieght loose : should create measurment and increas nutrition requirement', async() => {
@@ -152,6 +153,7 @@ const MeasurmentTest = describe('Measurments tests', () => {
         expect(personnalMultiplicatorAfter).toBeGreaterThan(personnalMultiplicatorBefore)
         expect($('.alert-success').html()).toMatch('Votre nouvelle progression a bien été enregistré avec succès !');/**/
         expect($('.alert-danger').html()).toEqual(null);/**/
+        await measurmentOrNull.destroy()
 
 
     });
