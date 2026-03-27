@@ -145,7 +145,15 @@
                         <%= exerciseTrainDraft.sets %>
                     </td>
                     <td>
-                        <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexercise<%= exerciseTrainDraft.id %>"> <i class="fa-solid fa-trash"></i> </button>
+                       <div class="d-flex justify-content-center"> 
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-outline-danger block-btn" data-bs-toggle="modal" data-bs-target="#deleteExerciseModalexercise<%= exerciseTrainDraft.id %>"> <i class="fa-solid fa-trash"></i> </button>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="/program-draft/:idP/train-draft/:idT/exercise-train-draft/:idE/put-next" class="btn btn-outline-secondary"><i class="fa-solid fa-angle-up"></i></a>
+                                <a href="/program-draft/:idP/train-draft/:idT/exercise-train-draft/:idE/put-prevent" class="btn btn-outline-secondary"><i class="fa-solid fa-angle-down"></i></a>
+                            </div>
+                       </div>
                     </td>  
                 </tr>
 

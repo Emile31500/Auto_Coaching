@@ -5,13 +5,13 @@ const session = require('express-session');
 const adminChecker = async function (req, res, next) {
     try {
 
-       /* const authToken = req.session.token;
+        const authToken = req.session.token;
         const decodeToken = jwt.verify(authToken, process.env.JWT_SECRET);
             
-        if (!decodeToken) throw new Error*/
+        if (!decodeToken) throw new Error
         
-        // const user = await User.findOne({where: {'email': decodeToken.email}});
-        const user = await User.findOne({where: {id: 1}});
+        const user = await User.findOne({where: {'email': decodeToken.email}});
+        // const user = await User.findOne({where: {id: 1}});
 
         
         if(!user) {

@@ -63,6 +63,7 @@ const publishTrain = async (id) => {
                     reps : exerciseTrainDraft.reps,
                     repsMode : exerciseTrainDraft.repsMode,
                     sets : exerciseTrainDraft.sets,
+                    ordering : exerciseTrainDraft.ordering
                 })
 
             })

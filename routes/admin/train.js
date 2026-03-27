@@ -33,7 +33,12 @@ router.get('/program-draft/:id/delete', adminChecker, async(req, res) => {
             id : id
         }})
 
-        const programName = programDraft;
+        const program = await Program.findOne({where : {
+            programDraftId : id
+        }})
+
+        const programName = programDraft.name;
+        await program.destroy();
         await programDraft.destroy();
 
         req.flash('success', `Le brouillon de programme ${programName} a bien été supprimé`);
@@ -56,7 +61,7 @@ router.get('/program/:id/delete', adminChecker, async(req, res) => {
             id : id
         }})
 
-        const programName = program;
+        const programName = program.name;
         await program.destroy();
 
         req.flash('success', `Le programme ${programName} a bien été supprimé`);
