@@ -446,4 +446,146 @@ router.get('/program-draft/:idP/train-draft/:idT/put-next', adminChecker, async(
     }
 })
 
+
+router.get('/program-draft/:idP/train-draft/:idT/exercise-train-draft/:idE/put-prevent', adminChecker, async(req, res) => {
+
+    try {
+
+        const idT = req.params.idT
+        const idP = req.params.idP
+        const idE = req.params.idE
+
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({
+            include : {
+                model : TrainDraft,
+                required : true,
+                include : {
+                    model : ProgramDraft,
+                    required : true,
+                    where : {
+                        id : idP
+                    }
+                },
+                where : {
+                    id : idT
+                }
+            },
+            where : {
+                id : idE
+            }
+        })
+
+        const preventExerciseTrainDraft = await ExerciseTrainDraft.findOne({
+           include : {
+                model : TrainDraft,
+                required : true,
+                include : {
+                    model : ProgramDraft,
+                    required : true,
+                    where : {
+                        id : idP
+                    }
+                },
+                where : {
+                    id : idT
+                }
+            },
+            where : {
+                ordering : { [Op.lt] : exerciseTrainDraft.ordering},
+            },
+            order :[['ordering', 'DESC']] 
+        })
+
+        if (exerciseTrainDraft instanceof ExerciseTrainDraft) {
+            const newOrdeing = preventExerciseTrainDraft.ordering
+            const preventOrdeing = exerciseTrainDraft.ordering
+
+            preventExerciseTrainDraft.ordering = preventOrdeing
+            exerciseTrainDraft.ordering = newOrdeing
+
+            await preventExerciseTrainDraft.save()
+            await exerciseTrainDraft.save()
+        }
+
+        res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
+
+    } catch (error) {
+
+        console.log(error)
+        req.flash('danger', error.message)
+        res.redirect('/admin/train')
+
+    }
+})
+
+router.get('/program-draft/:idP/train-draft/:idT/exercise-train-draft/:idE/put-next', adminChecker, async(req, res) => {
+
+    try {
+
+        const idT = req.params.idT
+        const idP = req.params.idP
+        const idE = req.params.idE
+
+        // include : {
+        //         model : TrainDraft,
+        //         include : {
+        //             model : ProgramDraft,
+        //             where : {
+        //                 id : idP
+        //             }
+        //         },
+        //         where : {
+        //             id : idT
+        //         }
+        //     },
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({
+            where : {
+                id : idE
+            }
+        })
+
+        const nextExerciseTrainDraft = await ExerciseTrainDraft.findOne({
+           include : {
+                model : TrainDraft,
+                required : true,
+                include : {
+                    model : ProgramDraft,
+                    required : true,
+                    where : {
+                        id : idP
+                    }
+                },
+                where : {
+                    id : idT
+                }
+            },
+            where : {
+                ordering : { [Op.gt] : exerciseTrainDraft.ordering},
+            },
+            order :[['ordering', 'DESC']] 
+        })
+
+
+        if (nextExerciseTrainDraft instanceof ExerciseTrainDraft) {
+            const newOrdeing = nextExerciseTrainDraft.ordering
+            const preventOrdeing = exerciseTrainDraft.ordering
+
+            nextExerciseTrainDraft.ordering = preventOrdeing
+            exerciseTrainDraft.ordering = newOrdeing
+
+            await nextExerciseTrainDraft.save()
+            await exerciseTrainDraft.save()
+        }
+
+        res.redirect(`/program-draft/${idP}/train/${idT}/edit`)
+
+    } catch (error) {
+
+        console.log(error)
+        req.flash('danger', error.message)
+        res.redirect('/admin/train')
+
+    }
+})
+
 module.exports = router;

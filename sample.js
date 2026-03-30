@@ -50,7 +50,7 @@ async function genrateSampleData () {
                         });
                         console.log('Generate exercises')
 
-                        for (let iProgram = 0; iProgram < 10; iProgram++) {
+                        for (let iProgram = 0; iProgram < 15; iProgram++) {
 
                             const programDraft = await ProgramDraft.create({
                                 name : 'Programme n° ' + iProgram,
@@ -59,7 +59,7 @@ async function genrateSampleData () {
                             });
                             console.log('Generate program draft : ' + programDraft.name)
 
-                            const numberOfTrain = getRandomArbitrary(1, 4);
+                            const numberOfTrain = getRandomArbitrary(2, 4);
                             console.log(numberOfTrain)
 
                             for (let iTrain = 0; iTrain < numberOfTrain; iTrain++) {
@@ -74,7 +74,7 @@ async function genrateSampleData () {
                                 console.log('Generate train draft : ' + trainDraft.name)
 
 
-                                const numberOfExercise = getRandomArbitrary(1, 5);
+                                const numberOfExercise = getRandomArbitrary(3, 6);
 
                                 for (let iExerciseTrain = 0; iExerciseTrain < numberOfExercise; iExerciseTrain++) {
 

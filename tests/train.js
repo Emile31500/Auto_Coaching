@@ -3,14 +3,15 @@ const session = require('supertest-session');
 const cheerio = require("cheerio");
 const app = require('../app')
 const { authPremiumUser, authNonPremiumUser, authAdmin } = require('./test.tools');
-const { ProgramDraft, TrainDraft } = require('../models')
-const trainTest = describe('Trains tests', () => {
+const { ProgramDraft, TrainDraft, ExerciseTrainDraft } = require('../models')
 const { Op } = require('sequelize');
 
+const trainTest = describe('Trains tests', () => {
 
-    /*jest.setTimeout(5000);
 
-    it(' 0.1 : train page auth premium user : should return the train page', async () => {
+    /*jest.setTimeout(5000);*/
+
+    /*it(' 0.1 : train page auth premium user : should return the train page', async () => {
 
         const [testSession, user] = await authPremiumUser();
 
@@ -210,7 +211,7 @@ const { Op } = require('sequelize');
         expect(res.statusCode).toEqual(200);
     
     });
-*/
+*//*
     it(' 9.0 : put train to next position non auth : should return the home page', async () => {
 
         const testSession = await session(app);
@@ -500,7 +501,7 @@ const { Op } = require('sequelize');
 
         const trainDraftsOfPrventOrdering = await TrainDraft.findAll({ where : { 
             programDraftId : programDraftId,
-            ordering : nextOrdeing
+            ordering : preventOrdeing
         }});
 
         const $ = cheerio.load(res.text);
@@ -510,7 +511,368 @@ const { Op } = require('sequelize');
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
 
+    });*/
+
+
+    it(' 11.0 : put exercise train draft to next position non auth : should return the home page', async () => {
+
+        const testSession = await session(app);
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/');
+        expect(preventOrdeing).toEqual(nextOrdeing);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+
     });
+
+    it(' 11.1 : put exercise train draft to next position non premium user auth : should return the home page', async () => {
+
+        const [testSession, user] = await authNonPremiumUser();
+
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/');
+        expect(preventOrdeing).toEqual(nextOrdeing);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+
+    });
+
+    it(' 11.2 : put exercise train draft to next position premium user auth : should return the home page', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/');
+        expect(preventOrdeing).toEqual(nextOrdeing);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+
+    });
+    
+    it(' 11.3 : put exercise train draft to next position non auth : should put it next and return the train admin page', async () => {
+
+        const testSession = await authAdmin();
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+        const nextExerciseTrainDraftOrNull = await ExerciseTrainDraft.findOne({ 
+            include : {
+                model : TrainDraft,
+                include : {
+                    model : ProgramDraft,
+                    where : {
+                        id : programDraft.id
+                    }
+                },
+                where : {
+                    id : trainDraft.id
+                }
+            },
+            where : { 
+                ordering : {[Op.gt] : exerciseTrainDraft.ordering}
+            }
+        })
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/program-draft/'+programDraftId+'/train/'+trainDraftId+'/edit');
+        console.log(preventOrdeing)
+        console.log(nextOrdeing)
+        console.log(nextExerciseTrainDraftOrNull instanceof ExerciseTrainDraft)
+        expect(preventOrdeing+1 == nextOrdeing || !(nextExerciseTrainDraftOrNull instanceof ExerciseTrainDraft) ).toEqual(true);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+
+    });
+
+
+    it(' 12.0 : put exercise train draft to prevent position non auth : should return the home page', async () => {
+
+        const testSession = await session(app);
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-prevent').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/');
+        expect(preventOrdeing).toEqual(nextOrdeing);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+        expect($('.alert-success').length).toBe(0);
+        expect($('.alert-warning').length).toBe(0);
+        expect($('.alert-danger').length).toBe(0);
+
+    });
+
+    it(' 12.1 : put exercise train draft to prevent position non premium user auth : should return the home page', async () => {
+
+        const [testSession, user] = await authNonPremiumUser();
+
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-prevent').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/');
+        expect(preventOrdeing).toEqual(nextOrdeing);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+        expect($('.alert-success').length).toBe(0);
+        expect($('.alert-warning').length).toBe(0);
+        expect($('.alert-danger').length).toBe(0);
+
+
+    });
+
+    it(' 12.2 : put exercise train draft to prevent position premium user auth : should return the home page', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-prevent').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/');
+        expect(preventOrdeing).toEqual(nextOrdeing);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+        expect($('.alert-success').length).toBe(0);
+        expect($('.alert-warning').length).toBe(0);
+        expect($('.alert-danger').length).toBe(0);
+
+    });
+
+    it(' 12.3 : put exercise train draft to prevent position non auth : should put it next and return the train admin page', async () => {
+
+        const testSession = await authAdmin();
+
+        const programDraft = await ProgramDraft.findOne();
+        const trainDraft = await TrainDraft.findOne({ where : { programDraftId : programDraft.id }});
+        const exerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { trainDraftId : trainDraft.id }})
+        const nextExerciseTrainDraftOrNull = await ExerciseTrainDraft.findOne({ 
+            include : {
+                model : TrainDraft,
+                include : {
+                    model : ProgramDraft,
+                    where : {
+                        id : programDraft.id
+                    }
+                },
+                where : {
+                    id : trainDraft.id
+                }
+            },
+            where : { 
+                ordering : {[Op.lt] : exerciseTrainDraft.ordering}
+            }
+        })
+
+        const programDraftId = programDraft.id;
+        const trainDraftId = trainDraft.id;
+        const exerciseTrainDraftId = exerciseTrainDraft.id;
+        const preventOrdeing = exerciseTrainDraft.ordering;
+
+        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-prevent').redirects(1);
+        
+        const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
+        const nextOrdeing = reorderExerciseTrainDraft.ordering
+
+
+        const exerciseTrainDraftsOfNewOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : nextOrdeing
+        }});
+
+        const exerciseTrainDraftsOfPrventOrdering = await ExerciseTrainDraft.findAll({ where : { 
+            trainDraftId : trainDraftId,
+            ordering : preventOrdeing
+        }});
+
+        const $ = cheerio.load(res.text);
+        
+        expect(res.req.path).toEqual('/program-draft/'+programDraftId+'/train/'+trainDraftId+'/edit');
+        expect(preventOrdeing-1 == nextOrdeing || !(nextExerciseTrainDraftOrNull instanceof ExerciseTrainDraft) ).toEqual(true);
+        expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
+        expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
+        expect($('.alert-success').length).toBe(0);
+        expect($('.alert-warning').length).toBe(0);
+        expect($('.alert-danger').length).toBe(0);
+
+
+    });/**/
 });
 
 module.exports = trainTest

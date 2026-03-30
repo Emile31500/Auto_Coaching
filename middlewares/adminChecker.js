@@ -11,7 +11,6 @@ const adminChecker = async function (req, res, next) {
         if (!decodeToken) throw new Error
         
         const user = await User.findOne({where: {'email': decodeToken.email}});
-        // const user = await User.findOne({where: {id: 1}});
 
         
         if(!user) {
