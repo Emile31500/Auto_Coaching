@@ -211,7 +211,7 @@ const trainTest = describe('Trains tests', () => {
         expect(res.statusCode).toEqual(200);
     
     });
-*//*
+*/
     it(' 9.0 : put train to next position non auth : should return the home page', async () => {
 
         const testSession = await session(app);
@@ -511,7 +511,7 @@ const trainTest = describe('Trains tests', () => {
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
 
-    });*/
+    });
 
 
     it(' 11.0 : put exercise train draft to next position non auth : should return the home page', async () => {
@@ -787,7 +787,9 @@ const trainTest = describe('Trains tests', () => {
         const exerciseTrainDraftId = exerciseTrainDraft.id;
         const preventOrdeing = exerciseTrainDraft.ordering;
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-prevent').redirects(1);
+        const res = await testSession
+            .get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-prevent')
+            .redirects(1);
         
         const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
         const nextOrdeing = reorderExerciseTrainDraft.ordering

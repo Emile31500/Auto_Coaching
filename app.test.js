@@ -7,6 +7,7 @@
 // require('./tests/nutrition.js');
 // require('./tests/performance.js');
 // require('./tests/profile.js');
-require('./tests/train.js');
+// require('./tests/train.js');
 // require('./tests/program.js');
 // require('./test/exercise-train.js')
+require('./tests/curse.js')

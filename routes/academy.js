@@ -291,7 +291,7 @@ router.post('/admin/curse/create', parserJson, adminChecker, async (req, res) =>
 
 
         req.flash('success', `Le cours ${curseDraft.libele} a bien été créé`)
-        res.redirect('/admin/curse');
+        res.redirect('/admin/curse/'+curseDraft.id+'/session/'+sessionDraft.id);
 
 
     } catch (error) {

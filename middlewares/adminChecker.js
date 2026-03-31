@@ -30,7 +30,9 @@ const adminChecker = async function (req, res, next) {
         
     } catch (e) {
   
-        res.redirect('/');
+        // res.redirect('/');
+        res.status(404).send();
+
   
     }
 }
