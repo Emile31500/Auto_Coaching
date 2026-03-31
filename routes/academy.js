@@ -223,6 +223,7 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
     
     } catch (error) {
 
+        console.log(error)
         req.flash('danger', error.message)
         res.redirect(`/academy`)
 
@@ -274,9 +275,6 @@ router.post('/admin/curse/create', parserJson, adminChecker, async (req, res) =>
 
         const upload = multer({ storage: storage })
 
-        console.log(User);
-        console.log(Curse);
-
         const rawData = req.body;
         const curseDraft = await CurseDraft.create({
             libele : rawData.libele,
@@ -286,7 +284,8 @@ router.post('/admin/curse/create', parserJson, adminChecker, async (req, res) =>
 
         const sessionDraft = await SessionDraft.create({
             curseDraftId : curseDraft.id,
-            libele : 'First session sample'
+            libele : 'First session sample',
+            ordering : 0
         })
 
 
@@ -296,6 +295,7 @@ router.post('/admin/curse/create', parserJson, adminChecker, async (req, res) =>
 
     } catch (error) {
 
+        console.log(error)
         req.flash('danger', error.message)
         res.redirect('/admin/curse/create');
     }
@@ -317,6 +317,10 @@ router.get('/admin/curse/:idC/session/:idS', adminChecker, async (req, res) => {
                     isDeleted : {
                         [Op.not] : true
                     }
+                },
+                include :{
+                    model : SessionBibliographyDraft,
+                    required : false,
                 }
             }],
             where :  {
@@ -352,8 +356,8 @@ router.get('/admin/curse/:idC/session/:idS', adminChecker, async (req, res) => {
 
         const isTherePrevious = previousSessionDraftOrNull instanceof SessionDraft;
 
-        if (sessionDraft.id != idS) throw 'Session invalide';
-        if (sessionDraft.curseDraftId != idC) throw 'Session invalide';
+        if (sessionDraft.id != idS) throw new Error('Session invalide');
+        if (sessionDraft.curseDraftId != idC) throw new Error('Session invalide');
 
 
         res.locals.message = req.flash();
@@ -368,6 +372,7 @@ router.get('/admin/curse/:idC/session/:idS', adminChecker, async (req, res) => {
 
     } catch(error) {
 
+        console.log(error)
         req.flash('danger', error.message)
         res.redirect('/admin/curse')
     }
@@ -381,10 +386,14 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
 
         const rawData = req.body
 
+        if (rawData.bibliography_urls != undefined && rawData.bibliography_libeles != undefined) {
+            if (rawData.bibliography_urls.length != rawData.bibliography_libeles.length) {
+                throw new Error(`Le nombre d'url (${rawData.bibliography_libeles.length}) et le nombre de titre (${rawData.bibliography_urls.length}) sont différent.`);
+            }
+        }
+
         const idC = parseInt(req.params.idC)
         const idS = parseInt(req.params.idS)
-
-        console.log(idS)
 
         const sessionDraft = await SessionDraft.findOne({
             where : {
@@ -400,49 +409,67 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
             }
         })
 
-        console.log(sessionDraft.id)
-
         await sessionDraft.update({
             libele : rawData.libele,
             videoUrl : rawData.videoUrl
         })
 
-        // rawData.bibliographies.forEach(async(bibliographyUrl) =>  {
-        for (let index = 0; index < rawData.bibliographies.length; index++) {
+        console.log(rawData.bibliography_urls != undefined);
+        console.log(rawData.bibliography_libeles != undefined);
+        console.log('y')
+        // return false;
 
-            sessionBibliographyDraftOrNull = await SessionBibliographyDraft.findOne({
-                where : {
-                    sessionDraftId : sessionDraft.id,
-                    url : rawData.bibliographies[index],
-                }
-            })
+        if (rawData.bibliography_urls != undefined && rawData.bibliography_libeles != undefined) {
 
-            if (sessionBibliographyDraftOrNull instanceof SessionBibliographyDraft){
+            console.log(rawData.bibliography_urls.length);
+            console.log(rawData.bibliography_libeles.length);
+           
+            for (let index = 0; index < rawData.bibliography_urls.length; index++) {
 
-                if (sessionBibliographyDraftOrNull.isDeleted) {
+                const sessionBibliographyDraftOrNull = await SessionBibliographyDraft.findOne({
+                    where : {
+                        sessionDraftId : sessionDraft.id,
+                        url : rawData.bibliography_urls[index],
+                    }
+                })
+
+                if (sessionBibliographyDraftOrNull instanceof SessionBibliographyDraft){
+
                     await sessionBibliographyDraftOrNull.update({
-                        libele :  rawData.libele[index],
-                        isDeleted : null
+                        libele :  rawData.bibliography_libeles[index],
                     });
+
+                    if (rawData.bibliography_isDeleted[index] == 'true') {
+                        sessionBibliographyDraftOrNull.isDeleted = true;
+                    } else {
+                        sessionBibliographyDraftOrNull.isDeleted = null;
+                    }
+
+                    await sessionBibliographyDraftOrNull.save()
+
+                } else {
+                    console.log('Is deleted : ')
+
+                    if (rawData.bibliography_isDeleted[index] != 'true') {
+                        await SessionBibliographyDraft.create({
+                            sessionDraftId : sessionDraft.id,
+                            libele :  rawData.bibliography_libeles[index],
+                            url : rawData.bibliography_urls[index],
+                        });
+                    } 
                 }
 
-            } else {
-                await SessionBibliographyDraft.create({
-                    sessionDraftId : sessionDraft.id,
-                    libele :  rawData.libele[index],
-                    url : rawData.bibliographies[index],
-                });
             }
 
-        }//);
+            // console.log('y')
+            // return false;
+        }
 
         if (rawData.buttonSelected == 'Sauvegarder & Suivant') {
 
             const nextDraftOrNull = await SessionDraft.findOne({
                     where : {
-                        id : { 
-                        [Op.gt] : sessionDraft.id 
-                    },
+                    id : { [Op.gt] : sessionDraft.id  },
                     curseDraftId : sessionDraft.curseDraftId,
                     isDeleted : null
                 }
@@ -453,9 +480,20 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
                 nextDraft = nextDraftOrNull
 
             } else {
+
+                orderingSession = await SessionDraft.findOne({
+                    attributes: ['ordering'],
+                    where : {
+                        curseDraftId : curseDraft.id,
+                    },
+                    order : [['ordering', 'DESC']]
+                });
+                // console.log(orderingSession)
+
                 nextDraft = await SessionDraft.create({
                     libele : 'Nouvelle session',
-                    curseDraftId : sessionDraft.curseDraftId
+                    curseDraftId : sessionDraft.curseDraftId,
+                    ordering : orderingSession.ordering+1
                 });
             }
 
@@ -494,6 +532,7 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
 
     } catch(error) {
 
+        console.log(error)
         req.flash('danger', error.message)
         res.redirect(`/admin/curse`)
         
@@ -596,6 +635,7 @@ router.get('/admin/curse/:id/publish', adminChecker, async (req, res) => {
 
     } catch (error) {
 
+        console.log(error)
         req.flash('danger', error.message)
 
     }
@@ -649,6 +689,7 @@ router.get('/admin/session/:id/delete', adminChecker, async (req, res) => {
 
     } catch(error) {
 
+        console.log(error)
         req.flash('danger', error.message)
         res.redirect('/admin/curse')
 
@@ -691,6 +732,7 @@ router.get('/admin/curse/:id/delete', adminChecker, async (req, res) => {
 
     } catch (error) {
 
+        console.log(error)
         req.flash('danger', error.message)
 
     }

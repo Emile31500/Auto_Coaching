@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   SessionBibliographyDraft.init({
     // sessionDraftId: DataTypes.INTEGER,
     url: DataTypes.STRING,
+    libele : DataTypes.STRING,
     isDeleted: DataTypes.BOOLEAN
   }, {
     sequelize,

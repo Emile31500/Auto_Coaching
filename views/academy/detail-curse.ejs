@@ -145,12 +145,16 @@
                         <% if (isAdmin === true) { %>
 
                             <% session.SessionBibliographyDrafts.forEach(biblioGraphy => {%> 
-                                <div class="row my-1">
-                                    <div class="col">
-                                        <input type="text" name="libele" class="form-control col-auto" placeholder="titre" value="<%= biblioGraphy.libele %>">
+                                <div class="d-flex my-1">
+                                    <div class="w-100">
+                                        <input type="hidden" name="bibliography_isDeleted">
+                                        <input type="text" name="bibliography_libeles" class="form-control w-100" placeholder="titre" value="<%= biblioGraphy.libele %>">
                                     </div>
-                                    <div class="col">
-                                        <input type="text" name="bibliographies" class="form-control col-auto" placeholder="url" value="<%= biblioGraphy.url %>">
+                                    <div class="w-100">
+                                        <input type="text" name="bibliography_urls" class="form-control w-100" placeholder="url" value="<%= biblioGraphy.url %>">
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-danger mx-3" name="delete_bibliography">Supprimer</button>
                                     </div>
                                 </div>
                             <%}) %>

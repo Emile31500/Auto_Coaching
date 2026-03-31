@@ -32,7 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     curseDraftId: DataTypes.INTEGER,
     libele: DataTypes.STRING,
     videoUrl: DataTypes.STRING,
-    isDeleted: DataTypes.BOOLEAN
+    isDeleted: DataTypes.BOOLEAN,
+    ordering: DataTypes.INTEGER
+
   }, {
     sequelize,
     modelName: 'SessionDraft',

@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     libele: DataTypes.STRING,
     videoUrl: DataTypes.STRING,
     isDeleted: DataTypes.BOOLEAN,
+    ordering: DataTypes.INTEGER
     // curseId: DataTypes.INTEGER
   }, {
     sequelize,

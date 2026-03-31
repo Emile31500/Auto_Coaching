@@ -1,4 +1,4 @@
-const { User, Dish, DishFood, Food, AteFood, Exercise, ExerciseTrain, ExerciseTrainDraft, ProgramDraft, Program, Train, TrainDraft, sequelize} = require('./models')
+const { User, CurseDraft, Dish, DishFood, Food, AteFood, Exercise, ExerciseTrain, ExerciseTrainDraft, ProgramDraft, Program, Train, TrainDraft, SessionDraft, SessionBibliographyDraft, sequelize} = require('./models')
 const { faker } = require('@faker-js/faker');
 const { publishTrain } = require('./services/train');
 const {generateStripeUser} = require('./services/user');
@@ -151,6 +151,47 @@ async function genrateSampleData () {
                         console.log('Generate users');
                     }
 
+                    async function generateCurse(){
+
+                        const numberOfCurse = 8;
+
+                        for (let idxCurse = 0; idxCurse < numberOfCurse; idxCurse++) {
+                            
+                            
+                            const curse = await CurseDraft.create({
+                                libele :  'Curse : '+  getRandomArbitrary(100, 999),
+                                imageUrl : faker.image.url(),
+                                description : faker.commerce.productDescription(),
+                            });
+                            
+                            // const numberOfSession =  getRandomArbitrary(5, 10)
+
+                            for (let idxSession = 0; idxSession < numberOfCurse; idxSession++) {
+
+                                const uIdSrg = getRandomArbitrary(100, 999) 
+                                const sessionDraft = await SessionDraft.create({
+                                    libele : 'Session draft : ' + uIdSrg,
+                                    videoUrl : 'viedo_'+ uIdSrg +'.mp4',
+                                    curseDraftId : curse.id,
+                                    ordering : idxSession
+
+                                })
+
+                                for (let idxBiblio = 0; idxBiblio < numberOfCurse; idxBiblio++) {
+                                    
+                                    const sessionDraftBibliograpgy = await SessionBibliographyDraft.create({
+                                        libele : 'Biliographie n°' +getRandomArbitrary(100, 999) + ' : '+sessionDraft.libele,
+                                        url : faker.internet.url(),
+                                        sessionDraftId : sessionDraft.id
+                                    })
+                                }
+                            }
+
+                            console.log(`Curse : ${curse.libele} is generated`)
+                        }
+                    }
+                    
+                    generateCurse()
                     generateUsers();
                     generateExercise();
                     generateFoodNDish();
