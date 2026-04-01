@@ -2,8 +2,8 @@ const session = require('supertest-session');
 const cheerio = require("cheerio");
 const app = require('../app')
 const { authPremiumUser, authNonPremiumUser, authAdmin, generateRandomString } = require('./test.tools');
-const { Curse, CurseDraft, SessionDraft, SessionBibliographyDraft } = require('../models')
-const { Op } = require('sequelize');
+const { Curse, CurseDraft, Session, SessionDraft, SessionBibliographyDraft } = require('../models')
+const { Op, fn, col, Sequelize } = require('sequelize');
 
 const curseTest = describe('Curse tests', () => {
      
@@ -34,7 +34,36 @@ const curseTest = describe('Curse tests', () => {
         buttonSelected : 'Sauvegarder & Suivant'
     }
 
-    it(' 1.0: test create curse with non auth user : should return 404', async () => {
+    function generateRawDataSessionDraft(typeSUbmit) {
+
+        const uIdNBiblio = generateRandomString(5)
+
+        const rawDataSessionDraft = {
+            libele : 'Libele curse : '+generateRandomString(5),
+            videoUrl : 'video_'+generateRandomString(5)+ '.mp4',
+            bibliography_urls : [
+                'https://name.dom/'+uIdNBiblio+'/1',
+                'https://name.dom/'+uIdNBiblio+'/2',
+                'https://name.dom/'+uIdNBiblio+'/3'
+            ],
+            bibliography_libeles : [
+                'Libele biblio : '+uIdNBiblio+' n° 1',
+                'Libele biblio : '+uIdNBiblio+' n° 2',
+                'Libele biblio : '+uIdNBiblio+' n° 3'
+            ],
+            bibliography_isDeleted : [
+                'true',
+                null,
+                null
+            ],
+            buttonSelected : typeSUbmit ?? 'Sauvegarder & Suivant'
+        }
+
+        return rawDataSessionDraft
+
+    }
+
+   /* it(' 1.0: test create curse with non auth user : should return 404', async () => {
         
         const testSession = session(app);
 
@@ -345,6 +374,209 @@ const curseTest = describe('Curse tests', () => {
         // expect(newCountsessionDrafts.length +1).toEqual(sessionDraftslLength);
         // newSessionDraft.SessionBibliographyDrafts.forEach(sessionBibliographyDraft => {expect(sessionBibliographyDraft).toBeInstanceOf(SessionBibliographyDraft);});
 
+    });*/
+
+    it(' 3 : save and prevent session draft auth admin : should save the session and return to prevent', async () => {
+
+
+        const testSession = await authAdmin();
+
+        const curseDraft = await CurseDraft.findOne({
+            include: [
+                {
+                    model: SessionDraft,
+                    required: true,
+                    having: Sequelize.where(
+                        fn('COUNT', col('SessionDrafts.id')),
+                        { [Op.gt]: 1 }
+                    )
+                },
+                
+            ],
+            order : [[{model : SessionDraft}, 'ordering', 'ASC']]
+           
+        });
+
+        const idC = curseDraft.id;
+        const sessionDrafts = curseDraft.SessionDrafts;
+        const initialSessionDraftLength = sessionDrafts.length
+        const sessionDraftLibele = sessionDrafts[1].libele
+
+        const newRawData = generateRawDataSessionDraft('Sauvegarder & Précédent')
+
+        const resGet = await testSession
+            .get(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[1].id}`)
+            .redirects(1);
+
+        const resPost = await testSession
+            .post(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[1].id}`)
+            .send(newRawData)
+            .redirects(1);
+        
+        const $Post = cheerio.load(resPost.text);
+        const $Get = cheerio.load(resGet.text);
+
+
+        const newCurseDraft = await CurseDraft.findOne({
+            include: [
+                {
+                    model: SessionDraft,
+                    required: true
+                }
+            ],
+            order : [[{model : SessionDraft}, 'ordering', 'ASC']],
+            where : {
+                id : idC
+            }
+           
+        });
+
+        const newSessionDraftLength = newCurseDraft.SessionDrafts.length
+        expect(resPost.req.path).toMatch(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[0].id}`);
+        expect(curseDraft.id).toEqual(newCurseDraft.id);
+        expect(initialSessionDraftLength).toEqual(newSessionDraftLength);
+        expect($Post('.alert-success').text()).toMatch((`La session "${newRawData.libele}" a bien été enregistré`))
+        expect(sessionDraftLibele).not.toEqual(newRawData.libele)
+        expect($Post('.alert-danger').length).toBe(0)
+        expect($Post('.alert-warning').length).toBe(0)
+        expect($Get('input[type="submit"][value="Sauvegarder & Précédent"]').length).toBe(1)
+
+
+    });
+
+    it(' 4.0 : get detail session auth premium user : test presence of element', async () => {
+
+
+        const [testSession, user] = await authPremiumUser();
+
+        const curse = await Curse.findOne({
+            include: [
+                {
+                    model: SessionDraft,
+                    required: true,
+                    having: Sequelize.where(
+                        fn('COUNT', col('Sessions.id')),
+                        { [Op.gt]: 1 }
+                    )
+                },
+                
+            ],
+            order : [[{model : Session}, 'ordering', 'ASC']],
+            where : {
+                dependantCurseId : null
+            }
+           
+        });
+
+        const sessions = curse.Sessions;
+        const res = await testSession
+            .get(`/curse/${curse.id}/session/${sessions[0].id}`)
+            .redirects(1);
+        
+        const $ = cheerio.load(res.text);
+
+        expect(res.req.path).toMatch(`/curse/${curse.id}/session/${sessions[0].id}`);
+        expect($(`form[action="/curse/${curse.id}/session/${sessions[0].id}"][method="POST"]`).length).toBe(0)
+        expect($('input[name="isThisSessionViewed"]').length).toBe(1)
+        expect($('input[type="submit"][value="Sauvegarder & Précédent"]').length).toBe(1)
+        expect($('input[type="submit"][value="Sauvegarder"]').length).toBe(0)
+        expect($('input[type="submit"][value="Sauvegarder & Suivant"]').length).toBe(0)
+    });
+
+    it(' 4.1 : get detail session auth admin : test if precedent button is hidden on curse ', async () => {
+
+
+        const testSession = await authAdmin();
+
+        const curseDraft = await CurseDraft.findOne({
+            include: [
+                {
+                    model: SessionDraft,
+                    required: true,
+                    having: Sequelize.where(
+                        fn('COUNT', col('SessionDrafts.id')),
+                        { [Op.gt]: 1 }
+                    )
+                },
+                
+            ],
+            order : [[{model : SessionDraft}, 'ordering', 'ASC']]
+           
+        });
+        
+        const sessionDrafts = curseDraft.SessionDrafts;
+        const res = await testSession
+            .get(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[0].id}`)
+            .redirects(1);
+        
+        const $ = cheerio.load(res.text);
+
+        expect(res.req.path).toMatch(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[0].id}`);
+        expect($(`form[action="/admin/curse/${curseDraft.id}/session/${sessionDrafts[0].id}"][method="POST"]`).length).toBe(1)
+        expect($('input[name="isThisSessionViewed"]').length).toBe(0)
+        expect($('input[type="submit"][value="Sauvegarder & Précédent"]').length).toBe(0)
+        expect($('input[type="submit"][value="Sauvegarder"]').length).toBe(1)
+        expect($('input[type="submit"][value="Sauvegarder & Suivant"]').length).toBe(1)
+    });
+
+    it(' 5 : save session draft auth admin : should save the session', async () => {
+
+
+        const testSession = await authAdmin();
+
+        const curseDraft = await CurseDraft.findOne({
+            include: [
+                {
+                    model: SessionDraft,
+                    required: true,
+                    having: Sequelize.where(
+                        fn('COUNT', col('SessionDrafts.id')),
+                        { [Op.gt]: 1 }
+                    )
+                },
+                
+            ],
+            order : [[{model : SessionDraft}, 'ordering', 'ASC']]
+           
+        });
+
+        const idC = curseDraft.id;
+        const sessionDrafts = curseDraft.SessionDrafts;
+        const initialSessionDraftLength = sessionDrafts.length
+        const sessionDraftLibele = sessionDrafts[1].libele
+
+        const newRawData = generateRawDataSessionDraft('Sauvegarder')
+
+        const res = await testSession
+            .post(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[0].id}`)
+            .send(newRawData)
+            .redirects(1);
+        
+        const $ = cheerio.load(res.text);
+
+
+        const newCurseDraft = await CurseDraft.findOne({
+            include: [
+                {
+                    model: SessionDraft,
+                    required: true
+                }
+            ],
+            order : [[{model : SessionDraft}, 'ordering', 'ASC']],
+            where : {
+                id : idC
+            }
+           
+        });
+
+        const newSessionDraftLength = newCurseDraft.SessionDrafts.length
+        expect(res.req.path).toMatch(`/admin/curse/${curseDraft.id}/session/${sessionDrafts[0].id}`);
+        expect(curseDraft.id).toEqual(newCurseDraft.id);
+        expect(initialSessionDraftLength).toEqual(newSessionDraftLength);
+        expect($('.alert-success').text()).toMatch((`La session "${newRawData.libele}" a bien été enregistré`))
+        expect(sessionDraftLibele).not.toEqual(newRawData.libele)
+        expect($('.alert-danger').length).toBe(0)
+        expect($('.alert-warning').length).toBe(0)
     });
 
 });

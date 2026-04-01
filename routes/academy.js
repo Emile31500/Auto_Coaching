@@ -397,6 +397,7 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
 
         const sessionDraft = await SessionDraft.findOne({
             where : {
+                curseDraftId : idC,
                 id : idS,
                 isDeleted : null
             }
@@ -414,15 +415,7 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
             videoUrl : rawData.videoUrl
         })
 
-        console.log(rawData.bibliography_urls != undefined);
-        console.log(rawData.bibliography_libeles != undefined);
-        console.log('y')
-        // return false;
-
         if (rawData.bibliography_urls != undefined && rawData.bibliography_libeles != undefined) {
-
-            console.log(rawData.bibliography_urls.length);
-            console.log(rawData.bibliography_libeles.length);
            
             for (let index = 0; index < rawData.bibliography_urls.length; index++) {
 
@@ -448,8 +441,6 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
                     await sessionBibliographyDraftOrNull.save()
 
                 } else {
-                    console.log('Is deleted : ')
-
                     if (rawData.bibliography_isDeleted[index] != 'true') {
                         await SessionBibliographyDraft.create({
                             sessionDraftId : sessionDraft.id,
@@ -458,11 +449,7 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
                         });
                     } 
                 }
-
             }
-
-            // console.log('y')
-            // return false;
         }
 
         if (rawData.buttonSelected == 'Sauvegarder & Suivant') {
@@ -516,18 +503,18 @@ router.post('/admin/curse/:idC/session/:idS', parserJson, adminChecker, async (r
                 previousDraft = previousDraftOrNull
 
             } else {
-                previousDraft = await SessionDraft.create();
+                previousDraft = sessionDraft;
             }
 
             redirectUrl = `/admin/curse/${idC}/session/${previousDraft.id}`
 
         } else if (rawData.buttonSelected == 'Sauvegarder') {
             
-            redirectUrl = `/admin/curse`
+            redirectUrl = `/admin/curse/${idC}/session/${sessionDraft.id}`
 
         } else throw 'Nous ne savons pas comment traiter cette soumission';
 
-        req.flash('success', `La session n°${sessionDraft.libele} a bien été enregistré`)
+        req.flash('success', `La session "${sessionDraft.libele}" a bien été enregistré`)
         res.redirect(redirectUrl)
 
     } catch(error) {
@@ -648,14 +635,14 @@ router.get('/admin/session/:id/delete', adminChecker, async (req, res) => {
         
         const id = req.params.id;
 
-        const sessionDraft =  await SessionDraft.findOne({
+        const sessionDraft = await SessionDraft.findOne({
             where : {
                 id : id,
                 isDeleted : null
             }
         })
 
-        const sessionDraftOrNull =  await SessionDraft.findOne({
+        const sessionDraftOrNull = await SessionDraft.findOne({
             where : {
                 id : {
                     [Op.lt] : id

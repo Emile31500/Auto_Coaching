@@ -6,3 +6,4 @@ tests/.env.test
 public/media/audio*
 public/media/photo*
 public/media/video*
+config/config.json
