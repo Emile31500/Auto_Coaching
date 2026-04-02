@@ -579,6 +579,194 @@ const curseTest = describe('Curse tests', () => {
         expect($('.alert-warning').length).toBe(0)
     });
 
+    it(' 6.0 : test publish curse non auth : should return a 404 error', async () => {
+
+        const testSession = await session(app);
+
+        const curseDraft = await findCurseDraftNotPublished()
+
+        const url = `/admin/curse/${curseDraft.id}/publish`
+
+        const res = await testSession
+            .get(url)
+            .redirects(1);
+
+        const $ = cheerio.load(res.text)
+
+         const curse = await Curse.findOne({ 
+            where : {
+                curseDraftId : curseDraft.id
+            }
+        })
+
+        expect(curseDraft).toBeInstanceOf(CurseDraft);
+        expect(curse).not.toBeInstanceOf(Curse);
+        expect(res.req.path).toMatch(url);
+        expect(res.statusCode).toEqual(404);
+        expect($('.alert-success').length).toEqual(0);
+        expect($('.alert-warning').length).toEqual(0);
+        expect($('.alert-danger').length).toEqual(0);
+
+    });
+
+    it(' 6.1 : test publish curse non premium user auth : should return a 404 error', async () => {
+
+        const [testSession, user] = await authNonPremiumUser();
+
+        const curseDraft = await findCurseDraftNotPublished()
+
+        const url = `/admin/curse/${curseDraft.id}/publish`
+
+        const res = await testSession
+            .get(url)
+            .redirects(1);
+
+        const $ = cheerio.load(res.text)
+
+         const curse = await Curse.findOne({ 
+            where : {
+                curseDraftId : curseDraft.id
+            }
+        })
+
+        expect(curseDraft).toBeInstanceOf(CurseDraft);
+        expect(curse).not.toBeInstanceOf(Curse);
+        expect(res.req.path).toMatch(url);
+        expect(res.statusCode).toEqual(404);
+        expect($('.alert-success').length).toEqual(0);
+        expect($('.alert-warning').length).toEqual(0);
+        expect($('.alert-danger').length).toEqual(0);
+
+    });
+
+    it(' 6.2 : test publish curse premium user auth : should return a 404 error', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+        const curseDraft = await findCurseDraftNotPublished()
+
+        const url = `/admin/curse/${curseDraft.id}/publish`
+
+        const res = await testSession
+            .get(url)
+            .redirects(1);
+
+        const $ = cheerio.load(res.text)
+
+         const curse = await Curse.findOne({ 
+            where : {
+                curseDraftId : curseDraft.id
+            }
+        })
+
+        expect(curseDraft).toBeInstanceOf(CurseDraft);
+        expect(curse).not.toBeInstanceOf(Curse);
+        expect(res.req.path).toMatch(url);
+        expect(res.statusCode).toEqual(404);
+        expect($('.alert-success').length).toEqual(0);
+        expect($('.alert-warning').length).toEqual(0);
+        expect($('.alert-danger').length).toEqual(0);
+
+    });
+
+    it(' 6.3 : test publish curse premium user auth : should publish', async () => {
+
+        const testSession = await authAdmin();
+        const curseDraft = await findCurseDraftNotPublished()
+
+        const nullOrCurse = await Curse.findOne({ 
+            where : {
+                curseDraftId : curseDraft.id
+            }
+        })
+
+        expect(nullOrCurse).not.toBeInstanceOf(Curse);
+
+        const url = `/admin/curse/${curseDraft.id}/publish`
+        const res = await testSession
+            .get(url)
+            .redirects(1);
+
+        const $ = cheerio.load(res.text)
+
+        const curse = await Curse.findOne({ 
+            where : {
+                curseDraftId : curseDraft.id
+            }
+        })
+
+        expect($('.alert-success').text()).toMatch(`Le cours ${curse.libele} est maintenant visible de tous`);
+        expect($('.alert-warning').length).toEqual(0);
+        expect($('.alert-danger').length).toEqual(0);
+        expect(curseDraft).toBeInstanceOf(CurseDraft);
+        expect(curse).toBeInstanceOf(Curse);
+        expect(res.req.path).toMatch('/admin/curse');
+        expect(res.statusCode).toEqual(200);
+
+    });
+
+
+    async function findCurseDraftNotPublished() {
+
+
+        const curseDraftId = await CurseDraft.findOne({ 
+            attributes : ['id'],
+            include: [
+                {
+                    model: Curse,
+                    required: false, // LEFT JOIN
+                },
+            ], 
+            where: {
+                '$Curse.id$':  {
+                    [Op.is]: null
+                } // no related Program
+            }
+        })
+
+        const curseDraft = await CurseDraft.findOne({ 
+            include: [
+                {
+                    model: SessionDraft,
+                    required: false, 
+                    include : {
+                        model : SessionBibliographyDraft,
+                        required: false, 
+                    }
+                },
+            ],
+            where: {
+                id :  curseDraftId.id
+            }
+            
+        })
+
+        return curseDraft
+    }
+
+    async function findCurseDraftPublished() {
+
+        const curseDraft = await CurseDraft.findOne({ 
+            include : [
+                {
+                    model : Curse,
+                    required : true,
+                }, 
+                {
+                    model : SessionDraft,
+                    required : true,
+                    include : {
+                        model : SessionBibliographyDraft,
+                        required : true
+                    }
+                }   
+            ]
+        })
+
+        return curseDraft
+        
+    }
+
 });
 
 // test creation cours

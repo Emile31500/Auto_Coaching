@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       CurseDraft.hasMany(models.SessionDraft, {
           foreignKey: 'curseDraftId'
       })
+      CurseDraft.hasOne(models.Curse, {
+          foreignKey: 'curseDraftId'
+      })
       
     }
   }

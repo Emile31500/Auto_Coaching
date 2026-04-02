@@ -29,6 +29,7 @@ app.use(session({
   }),
 }));
 
+const adminAcademy = require('./routes/admin/academy');
 const adminFood = require('./routes/admin/food');
 const adminExercise = require('./routes/admin/exercise');
 const adminTrain = require('./routes/admin/train');
@@ -77,6 +78,7 @@ app.use(performance);
 app.use(train);
 app.use(user);
 
+app.use(adminAcademy);
 app.use(adminExercise);
 app.use(adminFood)
 app.use(adminTrain);

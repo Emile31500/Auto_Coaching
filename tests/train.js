@@ -878,3 +878,4 @@ const trainTest = describe('Trains tests', () => {
 });
 
 module.exports = trainTest
+`Le cours ${curseOrErrorMessage.libele} est maintenant visible de tous`
