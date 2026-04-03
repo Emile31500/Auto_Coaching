@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
       Curse.hasMany(models.ViewedCurse,{
-         foreignKey : {
+        foreignKey : {
           name : 'curseId',
           allowNull : false
         }

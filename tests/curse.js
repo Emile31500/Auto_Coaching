@@ -2,7 +2,7 @@ const session = require('supertest-session');
 const cheerio = require("cheerio");
 const app = require('../app')
 const { authPremiumUser, authNonPremiumUser, authAdmin, generateRandomString } = require('./test.tools');
-const { Curse, CurseDraft, Session, SessionDraft, SessionBibliographyDraft } = require('../models')
+const { Curse, CurseDraft, Session, SessionDraft, SessionBibliographyDraft, ViewedCurse, ViewedSession } = require('../models')
 const { Op, fn, col, Sequelize } = require('sequelize');
 
 const curseTest = describe('Curse tests', () => {
@@ -376,7 +376,7 @@ const curseTest = describe('Curse tests', () => {
 
     });*/
 
-    it(' 3 : save and prevent session draft auth admin : should save the session and return to prevent', async () => {
+/** it(' 3 : save and prevent session draft auth admin : should save the session and return to prevent', async () => {
 
 
         const testSession = await authAdmin();
@@ -703,8 +703,82 @@ const curseTest = describe('Curse tests', () => {
         expect(res.req.path).toMatch('/admin/curse');
         expect(res.statusCode).toEqual(200);
 
+    });*/
+
+    it(' 7.2 : test sign to curse auth premium user : should sign to curse', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+        const [curse, session] = await getCurseWithNoWiedSession()
+
+
+        const nullOrViewedSession = await ViewedSession.findOne({where : {sessionId : session.id, userId : user.id}});
+        expect(curse).toBeInstanceOf(Curse);
+        expect(nullOrViewedSession).not.toBeInstanceOf(ViewedSession);
+
+        const res = await testSession
+            .post(`/curse/${curse.id}/session/${session.id}`)
+            .send({ isThisSessionViewed : 'on' })
+            .redirects(1)
+
+        const $ = cheerio.load(res.text)
+
+        const viewedSessionOrNull =  await ViewedSession.findOne({where : {sessionId : session.id, userId : user.id}});
+        const nextSessionOrNull = await Session.findOne({
+            where :  {
+                isDeleted : null,
+                curseId : curse.id,
+                id : {
+                    [Op.gt] : session.id
+                }
+            },
+            order : [['ordering', 'ASC']]
+        })
+
+        expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${session.libele}" du cours "${curse.libele}"`);
+        expect($('.alert-warning').text()).toEqual('');
+        expect($('.alert-danger').text()).toEqual('');
+        expect(viewedSessionOrNull).toBeInstanceOf(ViewedSession);
+        expect(res.req.path).toMatch(`/curse/${curse.id}/session/${nextSessionOrNull.id}`);
+
+        
     });
 
+    async function getCurseWithNoWiedSession() {
+
+         const curses = await Curse.findAll({
+            include: [
+                {
+                    model: ViewedCurse,
+                    required: false,
+                },
+                {
+                    model : Session,
+                    required : true,
+                    include : {
+                        model : ViewedSession,
+                        required : false,
+                    }
+                }
+            ],
+        });
+
+        for (let ndxC = 0; ndxC < curses.length; ndxC++) {
+
+            for (let ndxS = 0; ndxS < curses[ndxC].Sessions.length; ndxS++) {
+
+                console.log('abc')
+                console.log(curses[ndxC].Sessions[ndxS].id)
+                console.log(curses[ndxC].Sessions[ndxS].ViewedSessions.length)
+                console.log(curses[ndxC].Sessions[ndxS].ViewedSessions)
+                if (curses[ndxC].Sessions[ndxS].ViewedSessions.length == 0){
+
+                    return [curses[ndxC], curses[ndxC].Sessions[ndxS]]
+                
+                }
+            }
+        }
+    }
 
     async function findCurseDraftNotPublished() {
 

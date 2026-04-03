@@ -1,6 +1,7 @@
 const { User, CurseDraft, Dish, DishFood, Food, AteFood, Exercise, ExerciseTrain, ExerciseTrainDraft, ProgramDraft, Program, Train, TrainDraft, SessionDraft, SessionBibliographyDraft, sequelize} = require('./models')
 const { faker } = require('@faker-js/faker');
 const { publishTrain } = require('./services/train');
+const { publishCurseDraft } = require('./services/academy');
 const {generateStripeUser} = require('./services/user');
 const foodsDataJson = require('./sample_data_json/food.json')
 const exerisesDataJson = require('./sample_data_json/exercise.json')
@@ -153,7 +154,7 @@ async function genrateSampleData () {
 
                     async function generateCurse(){
 
-                        const numberOfCurse = 8;
+                        const numberOfCurse = 10;
 
                         for (let idxCurse = 0; idxCurse < numberOfCurse; idxCurse++) {
                             
@@ -164,9 +165,9 @@ async function genrateSampleData () {
                                 description : faker.commerce.productDescription(),
                             });
                             
-                            // const numberOfSession =  getRandomArbitrary(5, 10)
+                            const numberOfSession =  getRandomArbitrary(5, 10)
 
-                            for (let idxSession = 0; idxSession < numberOfCurse; idxSession++) {
+                            for (let idxSession = 0; idxSession < numberOfSession; idxSession++) {
 
                                 const uIdSrg = getRandomArbitrary(100, 999) 
                                 const sessionDraft = await SessionDraft.create({
@@ -177,7 +178,8 @@ async function genrateSampleData () {
 
                                 })
 
-                                for (let idxBiblio = 0; idxBiblio < numberOfCurse; idxBiblio++) {
+                                const numberBiblioGraphy =  getRandomArbitrary(5, 10)
+                                for (let idxBiblio = 0; idxBiblio < numberBiblioGraphy; idxBiblio++) {
                                     
                                     const sessionDraftBibliograpgy = await SessionBibliographyDraft.create({
                                         libele : 'Biliographie n°' +getRandomArbitrary(100, 999) + ' : '+sessionDraft.libele,
@@ -187,8 +189,29 @@ async function genrateSampleData () {
                                 }
                             }
 
+                            
                             console.log(`Curse : ${curse.libele} is generated`)
                         }
+
+
+                        const curseDrafts = await CurseDraft.findAll({
+                            include : {
+                                model : SessionDraft,
+                                required : true,
+                                include : {
+                                    model : SessionBibliographyDraft,
+                                    required : false
+                                }
+                            }
+                        })
+
+                        for (let i = 0; i < curseDrafts.length; i++) {
+
+                            console.log(`Curse draft ${curseDrafts[i].libele} : published`)
+                            if (i % 2 == 1) await publishCurseDraft(curseDrafts[i]);
+                        
+                        }
+
                     }
                     
                     generateCurse()

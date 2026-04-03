@@ -1,5 +1,5 @@
 const express = require('express');
-const { Curse, SessionBibliography, Session, ViewedCurse, ViewedSession } = require('../models')
+const { Curse, SessionBibliography, Session, ViewedCurse, ViewedSession, User } = require('../models')
 const router = express.Router()
 const authenticationChecker = require('../middlewares/authenticationChecker');
 
@@ -30,7 +30,7 @@ router.get('/academy', authenticationChecker, premiumChecker, async (req, res) =
         }, {
             model : ViewedCurse,
             where : {
-                userId : req.user?.id || 1
+                userId : req.user.id
             },
             required : false,
         }],
@@ -43,7 +43,7 @@ router.get('/academy', authenticationChecker, premiumChecker, async (req, res) =
     })
 
     const viewedCurses = await ViewedCurse.findAll({where : {
-        userId : req.user?.id || 1
+        userId : req.user.id
     }})
 
     const viewedCursesMapped = viewedCurses.map((viewedCurse) => viewedCurse.Curse);
@@ -63,7 +63,7 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, as
 
     const idC = req.params.idC
     const idS = req.params.idS
-
+    req.user = await User.findOne({ where : {id : 2}});
 
     const curseOrNull = await Curse.findOne({
         include : [{
@@ -71,7 +71,7 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, as
             include : {
                 model : ViewedSession,
                 where : {
-                    userId : req.user?.id || 1
+                    userId : req.user.id
                 },
                 required : false
             },
@@ -122,6 +122,8 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
         const idS = req.params.idS
         const rawData = req.body
 
+        req.user = await User.findOne({ where : {id : 2}});
+
         const actCurse = await Curse.findOne({
                 include : [{
                     model : Session,
@@ -130,8 +132,9 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
                     },
                     include : [{
                         model : ViewedSession,
+                        required : false,
                         where : {
-                            userId : req.user?.id || 1
+                            userId : req.user.id
                         }
                     }]
 
@@ -147,64 +150,68 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
             include : [SessionBibliography],
             where :  {
                 isDeleted : null,
-                curseId : idC,
+                curseId : actCurse.id,
                 id : idS
             }
         })
 
-        const viewedSessionOrNull = await ViewedSession.findOne({
-            userId : req.user?.id || 1,
-            sessionId : actSession.id 
-        })
+        const viewedSessionOrNull = await ViewedSession.findOne({where : { 
+            userId : req.user.id,
+            sessionId : actSession.id
+        }})
 
         const nextSessionOrNull = await Session.findOne({
             where :  {
                 isDeleted : null,
-                id : {
-                    [Op.gt] : idS
+                ordering : {
+                    [Op.gt] : actSession.ordering
                 }
-            }
+            },
+            order : [['ordering', 'ASC']]
         })
 
+        if (rawData.isThisSessionViewed == 'on') {
 
-        if (!(viewedSessionOrNull instanceof ViewedSession)) {
+            console.log(viewedSessionOrNull)
+            if (viewedSessionOrNull instanceof ViewedSession) {
             
-            if (rawData.isThisSessionViewed) {
+                req.flash('warning', `Le cours "${actSession.libele}" est déjà terminé."`)
 
-                const viewedSession = await ViewedSession.create({
-                    sessionId : actSession.id,
-                    userId : req.user?.id || 1
-                })
+            } else {
 
-                req.flash('success', `Vous avez terminé la partie "${actSession.libele}" du cours "${actCurse.libele}"`)
+                if (rawData.isThisSessionViewed) {
+
+                    const viewedSession = await ViewedSession.create({
+                        sessionId : actSession.id,
+                        userId : req.user.id
+                    })
+
+                    req.flash('success', `Vous avez terminé la partie "${actSession.libele}" du cours "${actCurse.libele}"`)
+                }
             }
-        } else {
-
-            req.flash('warning', `Le cours "${actSession.libele}" est déjà terminé."`)
-
         }
 
+
         areAllCursesRead = true;
-        actCurse.Sessions.forEach(session => {areAllCursesRead = areAllCursesRead && (session.ViewedSessions.length > 0)})
+        actCurse.Sessions.forEach(session => {areAllCursesRead = (areAllCursesRead && (session.ViewedSessions.length > 0))})
 
         if (areAllCursesRead) {
 
-            const viewedCurseOrNull = await ViewedCurse.findOne({ userId : req.user?.id || 1, curseId : actCurse.id});
+            const viewedCurseOrNull = await ViewedCurse.findOne({ userId : req.user.id, curseId : actCurse.id});
 
             if (!(viewedCurseOrNull instanceof ViewedCurse)) {
                 await ViewedCurse.create({
                     curseId : actCurse.id,
-                    userId : req.user?.id || 1
+                    userId : req.user.id
                 })
             }
 
         } else {
 
-            await ViewedCurse.delete({where : {
-                userId : req.user?.id || 1,
+            await ViewedCurse.destroy({where : {
+                userId : req.user.id,
                 curseId : actCurse.id
             }})
-
         }
         
 
