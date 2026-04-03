@@ -63,29 +63,31 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, as
 
     const idC = req.params.idC
     const idS = req.params.idS
-    req.user = await User.findOne({ where : {id : 2}});
 
     const curseOrNull = await Curse.findOne({
         include : [{
             model : Session,
-            include : {
+            include : [{
                 model : ViewedSession,
                 where : {
                     userId : req.user.id
                 },
                 required : false
-            },
+            }],
         }],
         where :  {
             isDeleted : null,
             id : idC
         },
-        order: [[Session, 'id', 'ASC']]
+        order: [[{ model : Session }, 'id', 'ASC']]
     })
 
     const sessionOrNull  = await Session.findOne({
         include : [
-            SessionBibliography,
+            {
+                model : SessionBibliography,
+                required : false
+            }
         ],
         where :  {
             isDeleted : null,
@@ -121,8 +123,6 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
         const idC = req.params.idC
         const idS = req.params.idS
         const rawData = req.body
-
-        req.user = await User.findOne({ where : {id : 2}});
 
         const actCurse = await Curse.findOne({
                 include : [{

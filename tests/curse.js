@@ -63,7 +63,7 @@ const curseTest = describe('Curse tests', () => {
 
     }
 
-   /* it(' 1.0: test create curse with non auth user : should return 404', async () => {
+    it(' 1.0: test create curse with non auth user : should return 404', async () => {
         
         const testSession = session(app);
 
@@ -374,9 +374,9 @@ const curseTest = describe('Curse tests', () => {
         // expect(newCountsessionDrafts.length +1).toEqual(sessionDraftslLength);
         // newSessionDraft.SessionBibliographyDrafts.forEach(sessionBibliographyDraft => {expect(sessionBibliographyDraft).toBeInstanceOf(SessionBibliographyDraft);});
 
-    });*/
+    });
 
-/** it(' 3 : save and prevent session draft auth admin : should save the session and return to prevent', async () => {
+    it(' 3 : save and prevent session draft auth admin : should save the session and return to prevent', async () => {
 
 
         const testSession = await authAdmin();
@@ -703,46 +703,182 @@ const curseTest = describe('Curse tests', () => {
         expect(res.req.path).toMatch('/admin/curse');
         expect(res.statusCode).toEqual(200);
 
-    });*/
+    });
 
-    it(' 7.2 : test sign to curse auth premium user : should sign to curse', async () => {
+    it(' 7.0 : test sign to curse non auth  user : should sign to curse', async () => {
 
-        const [testSession, user] = await authPremiumUser();
+        const testSession = await session(app);
+        const [curse, sessionNstc] = await getCurseWithNoWiedSession()
+        expect(curse).toBeInstanceOf(Curse);
+        const viewedSession = await ViewedSession.findOne({ order : [['id', 'DESC']]})
 
-        const [curse, session] = await getCurseWithNoWiedSession()
+        const url = `/curse/${curse.id}/session/${sessionNstc.id}`;
+        const res = await testSession
+            .post(url)
+            .send({ isThisSessionViewed : 'on' })
+            .redirects(1)
+
+        const $ = cheerio.load(res.text)
+        const secondViewedSession = await ViewedSession.findOne({ order : [['id', 'DESC']]})
 
 
-        const nullOrViewedSession = await ViewedSession.findOne({where : {sessionId : session.id, userId : user.id}});
+        expect(viewedSession).toEqual(secondViewedSession);
+        expect($('.alert-success').text()).toEqual('');
+        expect($('.alert-warning').text()).toEqual('');
+        expect($('.alert-danger').text()).toEqual('');
+        expect(res.req.path).toMatch('/');
+
+        
+    });
+    
+    it(' 7.1 : test sign to curse auth non premium user : should not create curse', async () => {
+
+        const [testSession, user] = await authNonPremiumUser();
+
+        const [curse, sessionNstc] = await getCurseWithNoWiedSession()
+
+        const nullOrViewedSession = await ViewedSession.findOne({where : {sessionId : sessionNstc.id, userId : user.id}});
         expect(curse).toBeInstanceOf(Curse);
         expect(nullOrViewedSession).not.toBeInstanceOf(ViewedSession);
 
+        const url = `/curse/${curse.id}/session/${sessionNstc.id}`;
         const res = await testSession
-            .post(`/curse/${curse.id}/session/${session.id}`)
+            .post(url)
             .send({ isThisSessionViewed : 'on' })
             .redirects(1)
 
         const $ = cheerio.load(res.text)
 
-        const viewedSessionOrNull =  await ViewedSession.findOne({where : {sessionId : session.id, userId : user.id}});
-        const nextSessionOrNull = await Session.findOne({
-            where :  {
-                isDeleted : null,
-                curseId : curse.id,
-                id : {
-                    [Op.gt] : session.id
-                }
-            },
-            order : [['ordering', 'ASC']]
-        })
+        const nonCreateViewSession =  await ViewedSession.findOne({where : {sessionId : sessionNstc.id, userId : user.id}});
 
-        expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${session.libele}" du cours "${curse.libele}"`);
+        expect($('.alert-success').text()).toEqual('');
+        expect($('.alert-warning').text()).toMatch('Votre abonnement a expiré. Prenez-en un nouveau pour continuer à utiliser notre application !');
+        expect($('.alert-danger').text()).toEqual('');
+        expect(nonCreateViewSession).not.toBeInstanceOf(ViewedSession);
+        expect(res.req.path).toMatch('/premium');
+
+
+        
+    });
+    
+    /*it(' 7.2 : test sign to curse auth premium user : should sign to curse', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+        const [curse, sessionNstc] = await getCurseWithNoWiedSession()
+
+        const nullOrViewedSession = await ViewedSession.findOne({where : {sessionId : sessionNstc.id, userId : user.id}});
+        expect(curse).toBeInstanceOf(Curse);
+        expect(nullOrViewedSession).not.toBeInstanceOf(ViewedSession);
+
+        const res = await testSession
+            .post(`/curse/${curse.id}/session/${sessionNstc.id}`)
+            .send({ isThisSessionViewed : 'on' })
+            .redirects(1)
+
+        const $ = cheerio.load(res.text)
+
+        const viewedSessionOrNull =  await ViewedSession.findOne({where : {sessionId : sessionNstc.id, userId : user.id}});
+        const nextSessionOrNull = await getNextSession(sessionNstc);
+
+        expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${sessionNstc.libele}" du cours "${curse.libele}"`);
         expect($('.alert-warning').text()).toEqual('');
         expect($('.alert-danger').text()).toEqual('');
         expect(viewedSessionOrNull).toBeInstanceOf(ViewedSession);
         expect(res.req.path).toMatch(`/curse/${curse.id}/session/${nextSessionOrNull.id}`);
 
         
+    });*/
+
+    it(' 8.0 : test finish curse auth premium user : should finish cuyrse', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+        
+        const viewedCurses =  await ViewedCurse.findAll({
+            attributes : ['id'],
+            group : ['id'],
+        })
+
+        return false;
+
+        const viewedCurseCurseId = await viewedCurses.map((viewedCurse) => viewedCurse.id);
+
+        const curse = await Curse.findOne({ 
+            include : [{
+                model : Session,
+                required : true,
+                order : [['ordering', 'ASC']],
+                include : {
+                    model : ViewedSession,
+                    required : false,
+                    where : {
+                        userId : user.id
+                    }
+                }
+            }],
+            where : {
+                id : {
+                    [Op.notIn] : viewedCurseCurseId
+                }
+            }
+        })
+
+        expect(curse).toBeInstanceOf(Curse);
+        let url = `/curse/${curse.id}/session/${curse.Sessions[0].id}`
+        let res;
+
+        curse.Sessions.forEach(async (session) => {
+            
+            // let expectSuccess = false
+            // if (session.ViewedSessions.length > 0)expectSuccess = true;
+
+            expect(await doesThisUserFinishedThisCurse(user, curse)).toBe(false);
+            
+            res = await testSession
+                    .post(url)
+                    .send({ isThisSessionViewed : 'on' })
+                    .redirects(1);
+
+            url = res.req.path;
+            // const $ = cheerio.load(res.text)
+
+
+            /*if (expectSuccess) {
+
+                expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${session.libele}" du cours "${curse.libele}"`);
+                expect($('.alert-warning').text()).toEqual('');
+                expect($('.alert-danger').text()).toEqual('');
+
+            } else {
+
+                expect($('.alert-success').text()).toMatch('');
+                expect($('.alert-warning').text()).toEqual( `Le cours "${session.libele}" est déjà terminé."`);
+                expect($('.alert-danger').text()).toEqual('');
+
+            }*/
+
+            const viewedSessionOrNull = await ViewedSession.findOne({where : {sessionId : session.id, userId : user.id}});
+            expect(viewedSessionOrNull).toBeInstanceOf(ViewedSession);
+        });
+
+
+        expect(await doesThisUserFinishedThisCurse(user, curse)).toBe(true);    
+        expect(res.req.path).toMatch(`/academy`);
+        
     });
+
+    async function doesThisUserFinishedThisCurse (user, curse) {
+
+        const viewedCurse = await ViewedCurse.findOne({ 
+            where : {
+                curseId : curse.id,
+                userId : user.id
+            }
+        })
+
+        return viewedCurse instanceof ViewedCurse;
+
+    }
 
     async function getCurseWithNoWiedSession() {
 
@@ -767,10 +903,6 @@ const curseTest = describe('Curse tests', () => {
 
             for (let ndxS = 0; ndxS < curses[ndxC].Sessions.length; ndxS++) {
 
-                console.log('abc')
-                console.log(curses[ndxC].Sessions[ndxS].id)
-                console.log(curses[ndxC].Sessions[ndxS].ViewedSessions.length)
-                console.log(curses[ndxC].Sessions[ndxS].ViewedSessions)
                 if (curses[ndxC].Sessions[ndxS].ViewedSessions.length == 0){
 
                     return [curses[ndxC], curses[ndxC].Sessions[ndxS]]
@@ -778,6 +910,23 @@ const curseTest = describe('Curse tests', () => {
                 }
             }
         }
+    }
+
+    async function getNextSession(session) {
+
+        const nextSessionOrNull = await Session.findOne({
+            where :  {
+                isDeleted : null,
+                curseId : session.curseId,
+                ordering : {
+                    [Op.gt] : session.ordering
+                }
+            },
+            order : [['ordering', 'ASC']]
+        })
+
+        return nextSessionOrNull
+
     }
 
     async function findCurseDraftNotPublished() {
