@@ -43,30 +43,43 @@ router.get('/dish', authenticationChecker, parserJson, async(req, res, next) => 
     const food = await FoodService.getFoodsForMainPage(parsedUrl.query, req.user)
     const countFilter = await FoodService.countFilters(parsedUrl.query)
     const rawDishFoods = String(parsedUrl.query.dishFoodsFilter);
-    let myDishFoods = [];
+    console.log(rawDishFoods)
+    const myDishFoods = [];
+    console.log('rawDishFoods')
+    console.log(rawDishFoods)
 
-   if (rawDishFoods !== 'undefined') {
+    if (rawDishFoods.includes('spl1t3r')) {
 
         splitedDishFoods = rawDishFoods.split(',')
+      
 
-        for (let index = 0; index < splitedDishFoods.length; index++) {
+        // await splitedDishFoods.forEach(async (splitedDishFood) => {
+        console.log('splitedDishFoods')
+        console.log(splitedDishFoods)
+        for (const splitedDishFood of splitedDishFoods) {
 
-            splitedDishFood = splitedDishFoods[index].split('spl1t3r');
+            spitdTwiceDishFood = splitedDishFood.split('spl1t3r');
+            console.log(spitdTwiceDishFood[0])
+            console.log(spitdTwiceDishFood[1])
 
             myFood = await Food.findOne({where : {
-                id :  splitedDishFood[0],
+                id :  spitdTwiceDishFood[0],
                 [Op.or] : [
                     { userId : req.user.id },
                     { userId : null }
                 ]
             }})
 
-            myDishFoods[index] = { 
+            myDishFoods.push({ 
                 food : myFood,
-                weight : splitedDishFood[1]
-            };
-        }
+                weight : spitdTwiceDishFood[1]
+            });
+        };
+
     }
+
+    console.log('myDishFoods : ')
+    console.log(myDishFoods)
 
     res.render('../views/dish',  {
         page : '/nutrition',
@@ -94,6 +107,7 @@ router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) =
             
             const jsonSafe = rawData.foodsDish.replace(/(\w+):/g, '"$1":');
             const foodsDish = JSON.parse(jsonSafe);
+            console.log(foodsDish)
 
             const dish = await Dish.create({
                 name : rawData.name,
@@ -101,7 +115,7 @@ router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) =
                 imageUrl : rawData.imageUrl,
             })    
             
-            finitFoodDish(foodsDish, dish, user)
+            await finitFoodDish(foodsDish, dish, user)
 
             const date = new Date()
             req.flash('success', 'Votre plat a bien été créé')
@@ -110,13 +124,13 @@ router.post('/dish', authenticationChecker, parserJson,  async(req, res, next) =
 
 
         } else {
-            throw  'soumission du formulaire non valide';
+            throw new Error('soumission du formulaire non valide');
         }
 
     
     } catch (error) {
 
-        req.flash('danger', error)
+        req.flash('danger', error.message)
         res.locals.message = req.flash();
         res.redirect('/dish')
     }   
@@ -147,24 +161,27 @@ router.post('/dish/edit/:id', authenticationChecker, parserJson, async(req, res,
 
         
             const rawData = req.body;
+            if (0 <  rawData.imageUrl.length ) dish.imageUrl = rawData.imageUrl;
+            if (0 <  rawData.name.length ) dish.name = rawData.name;
+            await dish.save();
             const jsonSafe = rawData.foodsDish.replace(/(\w+):/g, '"$1":');
             const foodsDish = JSON.parse(jsonSafe);
 
             for (let index = 0; index < dish.DishFoods.length; index++) await dish.DishFoods[index].destroy();
-            finitFoodDish(foodsDish, dish, user)
+            await finitFoodDish(foodsDish, dish, user)
             req.flash('success', 'Votre plat a bien été édité')
             res.locals.message = req.flash();
         
         } else {
 
-            throw  'soumission du formulaire non valide';
+            throw  new Error('soumission du formulaire non valide');
 
         }
         
     } catch (error) {
 
-        req.flash('danger', error)
-        res.locals.message = req.flash();
+        console.log(error)
+        req.flash('danger', error.message)
         res.redirect('/dish/edit/'+req.params.id)
     }
 
@@ -249,10 +266,14 @@ router.delete('/dish/delete/:id', authenticationChecker, parserJson,  async(req,
     
 })
 
-function finitFoodDish (foodsDish, dish, user) {
+async function finitFoodDish (foodsDish, dish, user) {
 
-
-    foodsDish.forEach(async(foodDish) => {
+    
+    dish.sumKcalorie = 0;	
+    dish.sumCarbohydrate = 0; 	
+    dish.sumProtein = 0; 	
+    dish.sumFat = 0;
+    await foodsDish.forEach(async(foodDish) => {
 
         const food = await Food.findOne({where : {
                 id : foodDish.foodId,
@@ -263,12 +284,18 @@ function finitFoodDish (foodsDish, dish, user) {
             }
         });
 
-        const dishFood = DishFood.create({
+        const dishFood = await DishFood.create({
             foodId : food.id,
             dishId : dish.id,
             weight : foodDish.weight
         });
-        
+
+        dish.sumKcalorie = food.kcalorie * (foodsDish.weight / 100);	
+        dish.sumCarbohydrate = food.carbohydrate * (foodsDish.weight / 100); 	
+        dish.sumProtein = food.proteine * (foodsDish.weight / 100); 	
+        dish.sumFat = food.fat * (foodsDish.weight / 100);
+        await dish.save();
+
     });
 }
 

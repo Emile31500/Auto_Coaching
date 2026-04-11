@@ -31,11 +31,15 @@
             <% [
                 'fish-dish',
                 'redmeat-dish',
+                'meat-sweat-potato',
+                'spaghetti-tomato-sauce-ham',
+                'onget-pomme-de-terre',
+                'break-fast-egg'
                ].forEach(image => { %>
                 <div class="w-auto mx-2 d-inline-block my-0 py-0">
                     <img src="/media/photo/<%= image %>-placeholder.png" class="rounded" style="max-width: 107px;"/>
                     </br>
-                    <input type="radio" name="imageUrl my-0" value="<%= image %>-placeholder.png"/>
+                    <input type="radio" name="imageUrl" class="my-0" value="<%= image %>-placeholder.png"/>
                 </div>
             <% }) %>
         </div>
@@ -52,13 +56,14 @@
             </tr>
         </thead>
         <tbody id="addedFood">
-            <% for(var i=0; i < myDishFoods.length; i++) {%> 
+            <%= console.log(myDishFoods) %> 
+            <% myDishFoods.forEach( myDishFood => {%> 
                 <tr>
                     <th scope="row">
-                        <%= myDishFoods[i].food.name %>
+                        <%= myDishFood.food.name %>
                     </th>
                     <td>
-                        <input type="number" foodId='<%= myDishFoods[i].food.id %>' value='<%= myDishFoods[i].weight %>' class="form-control foodWeight" placeholder="g / ml"/>
+                        <input type="number" foodId='<%= myDishFood.food.id %>' value='<%= myDishFood.weight %>' class="form-control foodWeight" placeholder="g / ml"/>
                     </td>
                     <td>
                         <button class="btn btn-outline-danger deleteFoodButton">
@@ -66,7 +71,7 @@
                         </button>
                     </td>
                 </tr>
-            <% } %>
+            <% }) %>
         </tbody> 
     </table>
 </div>

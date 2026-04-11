@@ -44,19 +44,27 @@ dishFilterFoodForm.addEventListener('submit', function (event) {
 
 function initDelete() {
 
-    const deleteFoodButtons = document.querySelectorAll('.deleteFoodButton');
-    deleteFoodButtons.forEach(deleteFoodButton => {
-        
-        deleteFoodButton.addEventListener('click', function (event) {
-
-            event.preventDefault();
-            this.parentElement.parentElement.remove();
-            
-        });
-
+    const btnsDelete = document.querySelectorAll('.deleteFoodButton');
+    btnsDelete.forEach(btnDelete => {
+        btnDelete.removeEventListener('click', deleteFoodWrapper)
+        btnDelete.addEventListener('click', deleteFoodWrapper)
     });
 
 }
+
+function deleteFoodWrapper(event){
+    
+    deleteFood.call(this, event)
+}
+
+
+function deleteFood (e){
+    
+    e.preventDefault();
+    this.parentElement.parentElement.remove()
+
+}
+
 initDelete();
 
 
@@ -77,14 +85,43 @@ addFoodToDishs.forEach(addFoodToDish => {
         .then(data => {
             if (data.data !== undefined) {
                 const tr = document.createElement('tr')
-                tr.innerHTML = '<th scope="row">'+data.data.name+'</th><td><input type="number" foodId='+data.data.id+' class="form-control foodWeight" placeholder="g / ml"/></td><td><button class="btn btn-outline-danger deleteFoodButton"><i class="fa-regular fa-trash-can"></i> Supprimer</button></td>';
+                // tr.innerHTML = '<th scope="row">'+data.data.name+'</th>'
+
+                const th = document.createElement('th')
+                th.setAttribute('scope', 'row')
+                th.innerHTML = data.data.name;
+                
+                const firstTd = document.createElement('td')
+                const foodIdEl =  document.createElement('input')
+                foodIdEl.setAttribute('type', 'number')
+                foodIdEl.setAttribute('foodId', data.data.id)
+                foodIdEl.setAttribute('class', "form-control foodWeight")
+                foodIdEl.setAttribute('placeholder', "g / ml")
+                firstTd.appendChild(foodIdEl)
+
+                const scdTd = document.createElement('td')
+                const btnDelete = document.createElement('button')
+                btnDelete.setAttribute('class', "btn btn-outline-danger deleteFoodButton")
+                const faIcon = document.createElement('i')
+                faIcon.setAttribute('class', "fa-solid fa-trash")
+                const supprimer = document.createElement('span')
+                supprimer.innerHTML = 'Supprimer'
+                btnDelete.appendChild(faIcon)
+                btnDelete.appendChild(supprimer)
+
+                scdTd.appendChild(btnDelete)
+
+                tr.appendChild(th)
+                tr.appendChild(firstTd)
+                tr.appendChild(scdTd)
                 
                 addedFood.appendChild(tr)
+
+                initDelete()
 
             }
         });
 
-        initDelete()
 
     });
     

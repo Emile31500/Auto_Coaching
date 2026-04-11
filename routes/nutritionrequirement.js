@@ -46,17 +46,33 @@ router.post('/nutritionrequirement', authenticationChecker, parserJson, async (r
         kcalorie += (rawData.step / 10000 * 496 * rawData.weight/70);
         kcalorie += rawData.crafts/60 / 510 * rawData.weight/70/7;
 
-        const nutritionRequirement = await NutritionRequirement.create({
-            kcalorie : parseInt(kcalorie),
-            metabolismMultiplicator : rawData.metabolismMultiplicator,
-            proteine : parseInt(protein),
-            fat : parseInt(fat),
-            personnalMultiplicator : 1.0,
-            proteinMultiplicator : 1.0,
-            fatMultiplicator : 1.0,
-            userId : id
-        })
+        const nutritionRequirement = await NutritionRequirement.findOne({ where : { userId : req.user.id}})
 
+        if (nutritionRequirement instanceof NutritionRequirement) {
+
+            await NutritionRequirement.destroy({where : {
+                id : {
+                    [Op.not] : nutritionRequirement.id 
+                },
+                userId : req.user.id
+            }})
+            newNutritionRequirement = nutritionRequirement
+
+
+        } else  {
+            
+            newNutritionRequirement = await NutritionRequirement.create({userId : req.user.id});
+            
+        }
+        
+        newNutritionRequirement.kcalorie = parseInt(kcalorie),
+        newNutritionRequirement.metabolismMultiplicator = rawData.metabolismMultiplicator,
+        newNutritionRequirement.proteine = parseInt(protein),
+        newNutritionRequirement.fat = parseInt(fat),
+        newNutritionRequirement.personnalMultiplicator = 1.0,
+        newNutritionRequirement.proteinMultiplicator = 1.0,
+        newNutritionRequirement.fatMultiplicator = 1.0,
+        await newNutritionRequirement.save()
 
         req.flash('success', 'Vos besoin nutritionnel ont bien été calculé. Vous pourves maintenant gérer votre diète. Notez qu\'ils sont amené à être cahnger automatiquement par l\' application selon vos résultat')
         const toDay = new Date()
@@ -90,10 +106,11 @@ function calculateMultiplicatorOfNormalActivite(doSport, craft, setp, rawMeasurm
     let ttlSlowKcalorieBurningActivites = 7 * 16;
     const ttlHouseAwakeWeekly = 7 * 16;
     const setpByHoursEstimated = ((8/5)*1000) * rawMeasurment.size/1.8;
-    const hoursMArching = (setp / setpByHoursEstimated)*7
+    const hoursMarching = (setp / setpByHoursEstimated)*7
+    console.log(hoursMarching)
 
     ttlSlowKcalorieBurningActivites -= (craft/60)
-    ttlSlowKcalorieBurningActivites -= hoursMArching
+    ttlSlowKcalorieBurningActivites -= hoursMarching
     if (doSport) ttlSlowKcalorieBurningActivites -= 1.5; 
 
 

@@ -22,7 +22,8 @@ const exerciseTrainTest = describe('Trains tests', () => {
                 }
             });
 
-        const res = await testSession.get('/program-draft/'+programDraft.id+ '/publish').redirects(1);
+        const url = '/program-draft/'+programDraft.id+ '/publish';
+        const res = await testSession.get(url).redirects(1);
         const nullOrProgram = await Program.findOne({ where : { programDraftId : programDraft.id}});
         const $ = cheerio.load(res.text);
         
@@ -34,8 +35,8 @@ const exerciseTrainTest = describe('Trains tests', () => {
         console.log($('.alert-danger').text())
         console.log($('.alert-success').text());
 
-        ///expect(res.statusCode).toEqual(200);
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toEqual(404);
+        expect(res.req.path).toEqual(url);
         expect(nullOrProgram).not.toBeInstanceOf(Program);
     
     });
@@ -57,7 +58,8 @@ const exerciseTrainTest = describe('Trains tests', () => {
                 }
             });
 
-        const res = await testSession.get('/program-draft/'+programDraft.id+ '/publish').redirects(1);
+        const url = '/program-draft/'+programDraft.id+ '/publish';
+        const res = await testSession.get(url).redirects(1);
         const nullOrProgram = await Program.findOne({ where : { programDraftId : programDraft.id}})
         const $ = cheerio.load(res.text);
         
@@ -69,8 +71,8 @@ const exerciseTrainTest = describe('Trains tests', () => {
         console.log($('.alert-danger').text())
         console.log($('.alert-success').text());
 
-        ///expect(res.statusCode).toEqual(200);
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toEqual(404);
+        expect(res.req.path).toEqual(url);
         expect(nullOrProgram).not.toBeInstanceOf(Program);
     
     }); 
@@ -92,7 +94,8 @@ const exerciseTrainTest = describe('Trains tests', () => {
                 }
             });
 
-        const res = await testSession.get('/program-draft/'+programDraft.id+ '/publish').redirects(1);
+        const url = '/program-draft/'+programDraft.id+ '/publish';
+        const res = await testSession.get(url).redirects(1);
         const nullOrProgram = await Program.findOne({ where : { programDraftId : programDraft.id}})
         const $ = cheerio.load(res.text);
     
@@ -104,8 +107,8 @@ const exerciseTrainTest = describe('Trains tests', () => {
         console.log($('.alert-danger'))
         console.log($('.alert-success'));
 
-        ///expect(res.statusCode).toEqual(200);
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toEqual(404);
+        expect(res.req.path).toEqual(url);
         expect(nullOrProgram).not.toBeInstanceOf(Program);
     
     });

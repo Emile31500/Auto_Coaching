@@ -9,7 +9,8 @@
 <%}%>
 <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4 mb-5 my-5">
     <% curses.forEach(curse => { %>
-        <% haveToBeHidden = (false === false/*si les cours dépendant n'est pas lu*/)  %>
+        <%= console.log(curse) %>   
+        <% haveToBeHidden = (false === false) /*si les cours dépendant n'est pas lu*/  %>
         <% if (isAdmin === true) { %>
             <div class="col">
                 <div class="card  <% if (curse.isPublished) %> border border-warning<%;%>" style="width: 18rem;">
@@ -32,7 +33,7 @@
 
                 } else {
 
-                    if (curse.DependantCurse.includes(viewedCursesMapped)) {
+                    if (viewedCursesMapped.includes(curse.dependantCurseId)) {
                         haveToBeHidden = false 
                     } else {
                         haveToBeHidden = true 
@@ -52,7 +53,7 @@
                             
 
                             <% if (haveToBeHidden) { %>
-                                Requier d'avoir vu le cours : <a href=""> Apprendre à gérer sa diète</a>
+                                Requier d'avoir vu le cours : <a href="/curse/<%= curse.dependantCurseId %>/session/<%= curse.parent.Sessions[0].id %>"> <%= curse.parent.libele %></a>
                             <% } else { %>
                                 <%= curse.description %>
                             <% } %>

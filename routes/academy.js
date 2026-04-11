@@ -24,16 +24,37 @@ const storage = multer.diskStorage({
 
 router.get('/academy', authenticationChecker, premiumChecker, async (req, res) => {
 
-    curses = await Curse.findAll({
-        include : [{
-            model : Session
-        }, {
-            model : ViewedCurse,
-            where : {
-                userId : req.user.id
+    const curses = await Curse.findAll({
+        include : [
+            {
+                model : Session,
+                where : {
+                    isDeleted  : {
+                        [Op.not] : true
+                    }
+                }
+            }, 
+            {
+                model : ViewedCurse,
+                where : {
+                    userId : req.user.id
+                },
+                required : false,
             },
-            required : false,
-        }],
+            {
+                model : Curse,
+                as : 'parent',
+                required : false,
+                include : {
+                    model : Session,
+                    where : {
+                        isDeleted  : {
+                            [Op.not] : true
+                        }
+                    }
+                }
+            } 
+        ],
         where : {
             isDeleted : {
                 [Op.not] : true
@@ -50,6 +71,7 @@ router.get('/academy', authenticationChecker, premiumChecker, async (req, res) =
 
     res.locals.message = req.flash();
     res.render('../views/academy/index',  { 
+        curses : curses,
         user : req.user, 
         viewedCurses : viewedCurses,
         viewedCursesMapped : viewedCursesMapped,
@@ -82,6 +104,18 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, as
         order: [[{ model : Session }, 'id', 'ASC']]
     })
 
+    let noDepedanntCureOrCurseViewed = true
+
+    if ( curseOrNull.dependantCurseId != null) {
+
+        const viewedCurse = await ViewedCurse.findOne({ where : { id : curseOrNull.dependantCurseId, userId : req.user.id }})
+        if (!(viewedCurse instanceof ViewedCurse)) {
+            noDepedanntCureOrCurseViewed = false;
+            console.log('Dépendance non suivit')
+
+        }
+    }
+
     const sessionOrNull  = await Session.findOne({
         include : [
             {
@@ -96,7 +130,7 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, as
         }
     })
 
-    if (curseOrNull instanceof Curse && sessionOrNull instanceof Session) {
+    if (curseOrNull instanceof Curse && sessionOrNull instanceof Session && noDepedanntCureOrCurseViewed) {
 
         res.locals.message = req.flash();
         res.render('../views/academy/detail-curse',  { 
@@ -110,7 +144,6 @@ router.get('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, as
 
     } else {
         res.redirect('/academy')
-
     }
 
     
@@ -144,10 +177,9 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
                     isDeleted : null,
                     id : idC
                 }
-            })
+        })
 
         const actSession = await Session.findOne({
-            include : [SessionBibliography],
             where :  {
                 isDeleted : null,
                 curseId : actCurse.id,
@@ -165,17 +197,17 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
                 isDeleted : null,
                 ordering : {
                     [Op.gt] : actSession.ordering
-                }
+                },
+                curseId : actCurse.id
             },
             order : [['ordering', 'ASC']]
         })
 
         if (rawData.isThisSessionViewed == 'on') {
 
-            console.log(viewedSessionOrNull)
             if (viewedSessionOrNull instanceof ViewedSession) {
-            
-                req.flash('warning', `Le cours "${actSession.libele}" est déjà terminé."`)
+
+                req.flash('warning', `Le cours "${actSession.libele}" est déjà terminé."`);
 
             } else {
 
@@ -193,17 +225,20 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
 
 
         areAllCursesRead = true;
-        actCurse.Sessions.forEach(session => {areAllCursesRead = (areAllCursesRead && (session.ViewedSessions.length > 0))})
+        actCurse.Sessions.forEach((session) => {
+            areAllCursesRead = (areAllCursesRead && (session.ViewedSessions.length > 0)) 
+        })
 
         if (areAllCursesRead) {
 
-            const viewedCurseOrNull = await ViewedCurse.findOne({ userId : req.user.id, curseId : actCurse.id});
-
-            if (!(viewedCurseOrNull instanceof ViewedCurse)) {
-                await ViewedCurse.create({
+            const viewedCurses =  await ViewedCurse.findAll({ where : { curseId : actCurse.id, userId : req.user.id }})
+            
+            if (0 >= viewedCurses.length ){
+                const curseView =  await ViewedCurse.create({
                     curseId : actCurse.id,
                     userId : req.user.id
                 })
+                await curseView.save()
             }
 
         } else {
@@ -213,13 +248,12 @@ router.post('/curse/:idC/session/:idS', authenticationChecker, premiumChecker, p
                 curseId : actCurse.id
             }})
         }
-        
 
         if (nextSessionOrNull instanceof Session){
 
             res.redirect(`/curse/${actCurse.id}/session/${nextSessionOrNull.id}`) 
 
-        } else {
+        } else {    
 
             res.redirect(`/academy`)
 

@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       Food.belongsTo(models.User, {
         foreignKey : 'userId',
       })
+      Food.hasMany(models.DishFood, {
+        foreignKey : 'foodId',
+      })
     
     }
   }
@@ -28,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     is_egg: DataTypes.BOOLEAN,
     is_milk: DataTypes.BOOLEAN,
     is_veggie: DataTypes.BOOLEAN,
+    is_deleted: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Food',

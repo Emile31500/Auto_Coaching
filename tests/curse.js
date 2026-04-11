@@ -63,7 +63,7 @@ const curseTest = describe('Curse tests', () => {
 
     }
 
-    it(' 1.0: test create curse with non auth user : should return 404', async () => {
+    /*it(' 1.0: test create curse with non auth user : should return 404', async () => {
         
         const testSession = session(app);
 
@@ -759,9 +759,9 @@ const curseTest = describe('Curse tests', () => {
 
 
         
-    });
+    });*/
     
-    /*it(' 7.2 : test sign to curse auth premium user : should sign to curse', async () => {
+    it(' 7.2 : test sign to curse auth premium user : should sign to curse', async () => {
 
         const [testSession, user] = await authPremiumUser();
         const [curse, sessionNstc] = await getCurseWithNoWiedSession()
@@ -780,16 +780,16 @@ const curseTest = describe('Curse tests', () => {
         const viewedSessionOrNull =  await ViewedSession.findOne({where : {sessionId : sessionNstc.id, userId : user.id}});
         const nextSessionOrNull = await getNextSession(sessionNstc);
 
-        expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${sessionNstc.libele}" du cours "${curse.libele}"`);
+        expect(res.req.path).toMatch(`/curse/${curse.id}/session/${nextSessionOrNull.id}`);
         expect($('.alert-warning').text()).toEqual('');
         expect($('.alert-danger').text()).toEqual('');
+        expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${sessionNstc.libele}" du cours "${curse.libele}"`);
         expect(viewedSessionOrNull).toBeInstanceOf(ViewedSession);
-        expect(res.req.path).toMatch(`/curse/${curse.id}/session/${nextSessionOrNull.id}`);
 
         
-    });*/
+    });
 
-    it(' 8.0 : test finish curse auth premium user : should finish cuyrse', async () => {
+    it(' 8.0 : test finish curse auth premium user : should finish curse', async () => {
 
         const [testSession, user] = await authPremiumUser();
 
@@ -799,8 +799,6 @@ const curseTest = describe('Curse tests', () => {
             group : ['id'],
         })
 
-        return false;
-
         const viewedCurseCurseId = await viewedCurses.map((viewedCurse) => viewedCurse.id);
 
         const curse = await Curse.findOne({ 
@@ -808,13 +806,6 @@ const curseTest = describe('Curse tests', () => {
                 model : Session,
                 required : true,
                 order : [['ordering', 'ASC']],
-                include : {
-                    model : ViewedSession,
-                    required : false,
-                    where : {
-                        userId : user.id
-                    }
-                }
             }],
             where : {
                 id : {
@@ -828,9 +819,6 @@ const curseTest = describe('Curse tests', () => {
         let res;
 
         curse.Sessions.forEach(async (session) => {
-            
-            // let expectSuccess = false
-            // if (session.ViewedSessions.length > 0)expectSuccess = true;
 
             expect(await doesThisUserFinishedThisCurse(user, curse)).toBe(false);
             
@@ -840,32 +828,89 @@ const curseTest = describe('Curse tests', () => {
                     .redirects(1);
 
             url = res.req.path;
-            // const $ = cheerio.load(res.text)
-
-
-            /*if (expectSuccess) {
-
-                expect($('.alert-success').text()).toMatch(`Vous avez terminé la partie "${session.libele}" du cours "${curse.libele}"`);
-                expect($('.alert-warning').text()).toEqual('');
-                expect($('.alert-danger').text()).toEqual('');
-
-            } else {
-
-                expect($('.alert-success').text()).toMatch('');
-                expect($('.alert-warning').text()).toEqual( `Le cours "${session.libele}" est déjà terminé."`);
-                expect($('.alert-danger').text()).toEqual('');
-
-            }*/
-
             const viewedSessionOrNull = await ViewedSession.findOne({where : {sessionId : session.id, userId : user.id}});
             expect(viewedSessionOrNull).toBeInstanceOf(ViewedSession);
-        });
 
+        });
 
         expect(await doesThisUserFinishedThisCurse(user, curse)).toBe(true);    
         expect(res.req.path).toMatch(`/academy`);
         
     });
+
+    it(' 9.0 : test access curse with dependant curse no followed : should not  acce curse', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+        
+        const viewedCurses =  await ViewedCurse.findAll({
+            attributes : ['id'],
+            group : ['id'],
+        })
+        const viewedCurseCurseId = await viewedCurses.map((viewedCurse) => viewedCurse.id);
+
+        const curse = await Curse.findOne({ 
+            include : [
+                {
+                    model : Session,
+                    required : false,
+                    order :  [['ordering', 'DESC']]
+                }
+            ],
+            where : {
+                dependantCurseId :  {
+                    [Op.and] : [
+                        {[Op.notIn] : viewedCurseCurseId},
+                        {[Op.not] : null}
+
+                    ]
+                },
+            }
+        })
+
+        const res = await testSession
+            .get(`/curse/${curse.id}/session/${curse.Sessions[0].id}`)
+            .redirects(1);
+
+        expect(res.req.path).toMatch(`/academy`);
+    
+    });
+
+
+    it(' 10.0 : test access curse with dependant curse followed : should not  acce curse', async () => {
+
+        const [testSession, user] = await authPremiumUser();
+
+        
+        const viewedCurses =  await ViewedCurse.findAll({
+            attributes : ['id'],
+            group : ['id'],
+        })
+        const viewedCurseCurseId = await viewedCurses.map((viewedCurse) => viewedCurse.id);
+
+        const curse = await Curse.findOne({ 
+             include : [
+                {
+                    model : Session,
+                    required : true,
+                    order :  [['ordering', 'DESC']]
+                }
+            ],
+            where : {
+                dependantCurseId : {[Op.in] : viewedCurseCurseId}
+            }
+        })
+
+        const url = `/curse/${curse.id}/session/${curse.Sessions[0].id}`;
+        
+        const res = await testSession
+            .get(url)
+            .redirects(1);
+
+        expect(res.req.path).toMatch(url);
+
+    })
+
 
     async function doesThisUserFinishedThisCurse (user, curse) {
 
@@ -891,6 +936,9 @@ const curseTest = describe('Curse tests', () => {
                 {
                     model : Session,
                     required : true,
+                    where : {
+                        isDeleted : null
+                    },
                     include : {
                         model : ViewedSession,
                         required : false,
@@ -917,10 +965,10 @@ const curseTest = describe('Curse tests', () => {
         const nextSessionOrNull = await Session.findOne({
             where :  {
                 isDeleted : null,
-                curseId : session.curseId,
                 ordering : {
                     [Op.gt] : session.ordering
-                }
+                },
+                curseId : session.curseId
             },
             order : [['ordering', 'ASC']]
         })

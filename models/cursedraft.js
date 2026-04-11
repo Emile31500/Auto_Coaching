@@ -10,14 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      /*CurseDraft.belongsTo(models.CurseDraft, 
+      CurseDraft.belongsTo(models.CurseDraft, 
         {
           foreignKey: {
             allowNull: true,
             name : 'dependantCurseDraftId'
           },
         }
-      )*/
+      )
       CurseDraft.hasMany(models.SessionDraft, {
           foreignKey: 'curseDraftId'
       })
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   CurseDraft.init({
     libele: DataTypes.STRING,
-    // dependantCurseDraftId: DataTypes.INTEGER,
+    dependantCurseDraftId: DataTypes.INTEGER,
     imageUrl: DataTypes.STRING,
     description: DataTypes.TEXT,
     isPublished: DataTypes.BOOLEAN,

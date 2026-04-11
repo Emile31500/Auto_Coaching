@@ -4,6 +4,7 @@ const { fn, Op, col } = require('sequelize');
 async function getAllFitlerParameters (parsedUrlQuery) {
 
     const orderParameter = parsedUrlQuery.orderParameter ?? 'name';
+    const foodOrderParameter = parsedUrlQuery.foodOrderParameter ?? 'name';
     const orderBy = parsedUrlQuery.orderBy ?? "ASC";
     const kcalFilterMin = parsedUrlQuery.kcalFilterMin ?? 0;
     const proteinFilterMin = parsedUrlQuery.proteinFilterMin ?? 0;
@@ -52,6 +53,7 @@ async function getAllFitlerParameters (parsedUrlQuery) {
 
     const result = {
         orderParameter : orderParameter,
+        foodOrderParameter : foodOrderParameter,
         orderBy : orderBy,
         kcalFilterMin : parseInt(kcalFilterMin) || 0,
         proteinFilterMin : parseInt(proteinFilterMin) || 0,
@@ -81,7 +83,8 @@ const getFoodsForMainPage = async (parsedUrlQuery, user) => {
         name : { 
             [Op.or] : Filters.nameSelector
         },
-        userId : {[Op.or] : [ user.id, null]}
+        userId : {[Op.or] : [ user.id, null]},
+        is_deleted : null
     });
 
     console.log(where);
@@ -89,7 +92,17 @@ const getFoodsForMainPage = async (parsedUrlQuery, user) => {
     console.log(where);
 
     let food = await Food.findAll({
-        order: [[Filters.orderParameter, Filters.orderBy]],
+        order: [[Filters.foodOrderParameter, Filters.orderBy]],
+        include : [
+            {
+                model : DishFood,
+                required : false,
+                include : {
+                    model : Dish,
+                    required : false
+                }
+            }
+        ],
         where : where
     }); 
 

@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ViewedCurse.init({
     userId: DataTypes.INTEGER,
-    // curseId: DataTypes.INTEGER
+    curseId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'ViewedCurse',

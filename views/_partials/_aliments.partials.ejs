@@ -3,11 +3,36 @@
 <table class="table table-striped">
   <thead class="table-dark">
     <tr>
-      <th scope="col"><a href="#" class="link-light orderByButton text-responsive" data-parameter="name">Nom</a> </th>
-      <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light">Kcalorie</a></th>
-      <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="carbohydrate">Glucide</a></th>
-      <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton" data-parameter="protein">Proteine</a></th>
-      <th scope="col" class="d-none d-xl-table-cell" ><a href="#" class="link-light orderByButton " data-parameter="fat">Lipide</a></th>
+      <% 
+
+        function getOrderinkForParameter(foodOrderParameter) {
+
+          let linkUrl = currentUrl
+
+          const params = new URLSearchParams(linkUrl);
+          const orderBy = params.get("orderBy");
+          let newOrdeBy = 'ASC'
+
+          if (orderBy == 'ASC') {
+            newOrdeBy = 'DESC'
+          }
+
+          const urlObj = new URL(linkUrl);
+          urlObj.searchParams.set('foodOrderParameter', foodOrderParameter);
+          urlObj.searchParams.set('orderBy', newOrdeBy);
+
+          linkUrl = urlObj.toString();
+          return linkUrl;
+
+        }
+
+      %>
+    
+      <th scope="col"><a href="<%= getOrderinkForParameter('name') %>" class="link-light orderByButton text-responsive" data-parameter="name">Nom</a> </th>
+      <th scope="col" class="d-none d-xl-table-cell" ><a href="<%= getOrderinkForParameter('kcalorie') %>" class="link-light">Kcalorie</a></th>
+      <th scope="col" class="d-none d-xl-table-cell" ><a href="<%= getOrderinkForParameter('carbohydrate') %>" class="link-light orderByButton" data-parameter="carbohydrate">Glucide</a></th>
+      <th scope="col" class="d-none d-xl-table-cell" ><a href="<%= getOrderinkForParameter('proteine') %>" class="link-light orderByButton" data-parameter="protein">Proteine</a></th>
+      <th scope="col" class="d-none d-xl-table-cell" ><a href="<%= getOrderinkForParameter('fat') %>" class="link-light orderByButton " data-parameter="fat">Lipide</a></th>
       <th scope="col" class="d-xl-none d-print-table-cell  text-responsive" >Valeurs nutritionelle</td>
       <th scope="col">
         <div class="row w-auto p-0 m-0">
@@ -41,9 +66,9 @@
           <button class="btn btn-outline-secondary get-detail" data-bs-toggle="modal" data-bs-target="#detailFoodModal">...</button> 
         </td>
         <td>
-          <form action="/food/ate" class="alimentForms" method="post">
             <div class="d-flex">
-                <div>
+              <div>
+                <form action="/food/ate" class="alimentForms" method="post">
                   <input type="number" name="foodId" hidden value=<%= food[i].id %> />
                   <input class="form-control text-responsive" type="number" name="weight" placeholder="g / ml" required />
                 </div>
@@ -57,11 +82,95 @@
                     <i class="fa-solid fa-utensils"></i>
                     Mangé 
                 </button>
+                </form>
+                 <% if (food[i].userId == user.id) { %> 
+                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCustomFood<%= food[i].id %>" ><i class="fa-solid fa-trash"></i></button>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editCustomFood<%= food[i].id %>" ><i class="fa-solid fa-pen"></i></button>
+                    <div class="modal" tabindex="-1" id="deleteCustomFood<%= food[i].id %>">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Supprimmer l'aliement : <%= food[i].name %></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p> <strong> Attention !</p>
+                            <p> 
+                              Vous vous appréter à supprimer l'aliment : <%= food[i].name %>
+                              <br>
+                              <% console.log(food[i]) %>
+                              <% if (food[i].DishFoods.length > 0 ) { %>
+
+                                Ces aliments seront supprimé des plats :
+                                <ul>
+                                  <% food[i].DishFoods.forEach(dishFood => { %>
+                                    <li><%= dishFood.Dish.name %></li>
+                                  <% }) %>
+                                </ul>
+                              <% } %>
+
+                            </p>
+
+                            
+                          </div>
+                          <div class="modal-footer">
+                            <a href="/food/<%= food[i].id %>/delete" class="btn btn-outline-danger" ><i class="fa-solid fa-trash"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="modal" tabindex="-1" id="editCustomFood<%= food[i].id %>">
+                      <div class="modal-dialog modal-xl-down">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addFoodModalLabel">Ajouter un nouvel aliment</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="/food/<%= food[i].id %>/edit" method="POST">
+                              <div class="my-2">
+                                <label class="my-1">Nom : </label>
+                                <input type="text" class="form-control" name="name" value="<%= food[i].name %>" required/>
+                              </div> 
+                              <div class="my-2">
+                                <label class="my-1">Kcalorie : </label>
+                                <input type="number" step="0.1" class="form-control" name="kcalorie" value="<%= parseFloat(food[i].kcalorie) %>" required/>
+                              </div> 
+                              <div class="my-2">
+                                <label class="my-1">Protéine : </label>
+                                <input type="number" step="0.1" class="form-control" name="proteine" value="<%= parseFloat(food[i].proteine) %>" required/>
+                              </div> 
+                              <div class="my-2">
+                                <label class="my-1">Glucide, dont sucre : </label>
+                                <div class="input-group ">
+                                  <input type="number" step="0.1" class="form-control" name="carbohydrate" value="<%= parseFloat(food[i].carbohydrate) %>" required/>
+                                  <input type="number" step="0.1" class="form-control" name="sugar" value="<%= parseFloat(food[i].sugar) %>" required/>
+                                </div>
+                              </div> 
+                              <div class="my-2">
+                                <label class="my-1">Lipide, dont saturé : </label> 
+                                <div class="input-group ">
+                                  <input type="number" step="0.1" class="form-control" name="fat" value="<%= parseFloat(food[i].fat) %>" required/>
+                                  <input type="number" step="0.1" class="form-control" name="trans_fat" value="<%= parseFloat(food[i].trans_fat) %>" required/>
+                                </div>
+                              </div> 
+                              <div>
+                                <input type="submit" class="btn btn-outline-primary"/>
+                              </div>
+                            </form>
+                          </div>  
+                        </div>
+                      </div>
+                    </div>
+
+                  <% } %>     
+                
               </div>
             </div>
-          </form>
         </td>
       </tr>
     <% } %>
   </tbody>
 </table>
+

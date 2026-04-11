@@ -4,14 +4,76 @@ const FoodService = require('../services/food');
 
 var parserJson = require('../middlewares/parserJson');
 var authenticationCheckerApi = require('../middlewares/authenticationCheckerApi')
-
+const authenticationChecker = require('../middlewares/authenticationChecker');
 const { Op } = require('sequelize');
 const session = require('express-session');
 const adminCheckerApi = require('../middlewares/adminCheckerApi');
 
+
 const url = require('url');
 const premiumChecker = require('../middlewares/premiumChecker');
 const router = express.Router();
+
+router.get('/food/:id/delete', authenticationChecker, premiumChecker, parserJson, async(req, res, next) => {
+
+    try {
+
+        const id = req.params.id;
+        const food = await Food.findOne({ 
+            where : {
+                id : id,
+                userId : req.user.id
+            }
+        })
+
+        food.is_deleted = true;
+
+        await food.save();
+        
+ 
+    } catch (error) {
+
+        console.log(error)
+        req.flash('danger', error.message)
+
+    }
+
+    const date = new Date()
+    res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
+
+
+});
+
+router.post('/food/:id/edit', authenticationChecker, premiumChecker, parserJson, async(req, res, next) => {
+
+    try {
+
+        const id = req.params.id;
+
+        const rawData = req.body
+
+        const food = await Food.findOne({ 
+            where : {
+                id : id,
+                userId : req.user.id
+            }
+        })
+
+        await food.update(rawData);
+        
+ 
+    } catch (error) {
+
+        console.log(error)
+        req.flash('danger', error.message)
+
+    }
+
+    const date = new Date()
+    res.redirect('/nutrition/'+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
+
+
+});
 
 router.delete('/api/food/:id_food', authenticationCheckerApi, parserJson, async(req, res, next) => {
 

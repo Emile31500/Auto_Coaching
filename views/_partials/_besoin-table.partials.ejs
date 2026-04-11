@@ -30,9 +30,19 @@
         <td> <span id="fatAteAbs"></span> <span class="text-responsive"><%= Math.round(sumFat) %> G</span> </td>
       </tr>
       <tr>
-        <td> <span id="kcalAtePrct"></span> <span class="text-responsive"><%= Math.round(sumKcalorie / nutritionRequirement.kcalorie * 100) %> %</span> </td>
-        <td> <span id="protAtePrct"></span> <span class="text-responsive"><%= Math.round(sumProtein / nutritionRequirement.proteine * 100) %> %</span> </td>
-        <td> <span id="fatAtePrct"></span> <span class="text-responsive"><%= Math.round(sumFat / nutritionRequirement.fat * 100) %> %</span> </td>
+        <%
+          let prcntKcalorie = (sumKcalorie / nutritionRequirement.kcalorie * 100)
+          let prcntProtein = (sumProtein / nutritionRequirement.proteine * 100)
+          let prcntFat = (sumFat / nutritionRequirement.fat * 100) 
+
+          if (isNaN(prcntKcalorie)) prcntKcalorie = 0; 
+          if (isNaN(prcntProtein)) prcntProtein = 0;
+          if (isNaN(prcntFat)) prcntFat = 0;
+
+        %>  
+        <td> <span id="kcalAtePrct"></span> <span class="text-responsive"><%= Math.round(prcntKcalorie) %> %</span> </td>
+        <td> <span id="protAtePrct"></span> <span class="text-responsive"><%= Math.round(prcntProtein) %> %</span> </td>
+        <td> <span id="fatAtePrct"></span> <span class="text-responsive"><%= Math.round(prcntFat) %> %</span> </td>
       </tr>
       <tr>
         <td colspan="3" class="p-2" style="max-height: 130px;">

@@ -6,6 +6,7 @@ const {generateStripeUser} = require('./services/user');
 const foodsDataJson = require('./sample_data_json/food.json')
 const exerisesDataJson = require('./sample_data_json/exercise.json')
 const dishesDataJson  = require('./sample_data_json/dish.json')/**/
+const dishFoodsDataJson  = require('./sample_data_json/dishFood.json')/**/
 const dotenv = require('dotenv').config();
 const pbkdf2 = require("hash-password-pbkdf2")
 const stripe = require('stripe')(process.env.STRIPE_API_SECRET_KEY)
@@ -109,13 +110,13 @@ async function genrateSampleData () {
                         }
                     }
 
-                    function generateFoodNDish() {
+                    async function generateFoodNDish() {
 
-                        foodsDataJson.forEach(async (foodJson) => {await Food.create(foodJson)});
+                        await foodsDataJson.forEach(async (foodJson) => {await Food.create(foodJson)});
                         console.log('Generate foods')
-                        dishesDataJson.forEach(async (dishJson) => {await Dish.create(dishJson)});
+                        await dishesDataJson.forEach(async (dishJson) => {await Dish.create(dishJson)});
                         console.log('Generate dishes')
-                        dishFoodsDataJson.forEach(async (dishFoodJson) => {await DishFood.create(dishFoodJson)});
+                        await dishFoodsDataJson.forEach(async (dishFoodJson) => {await DishFood.create(dishFoodJson)});
                         console.log('Generate dishFoods')
                         console.log('Generate foods and dishes')
 
@@ -156,14 +157,23 @@ async function genrateSampleData () {
 
                         const numberOfCurse = 10;
 
+                        let curseDependancyId = 1
                         for (let idxCurse = 0; idxCurse < numberOfCurse; idxCurse++) {
                             
                             
                             const curse = await CurseDraft.create({
                                 libele :  'Curse : '+  getRandomArbitrary(100, 999),
                                 imageUrl : faker.image.url(),
-                                description : faker.commerce.productDescription(),
+                                description : faker.commerce.productDescription()
                             });
+
+                            if (idxCurse % 4 === 3) {
+                                
+                                curse.dependantCurseDraftId = curseDependancyId;
+                                curseDependancyId++;
+                                await curse.save();
+
+                            }
                             
                             const numberOfSession =  getRandomArbitrary(5, 10)
 
@@ -214,10 +224,10 @@ async function genrateSampleData () {
 
                     }
                     
-                    generateCurse()
-                    generateUsers();
-                    generateExercise();
-                    generateFoodNDish();
+                    await generateCurse()
+                    await generateUsers();
+                    await generateExercise();
+                    await generateFoodNDish();
                     console.log('TODO : \n\n S\'abonner à un compte premium sur au moins 2 deux comptes. \n Créer un profession qui date de 6 à 15 jours sur deux comptes.')
                     
                 } else throw new Error('Il faut être en environnement de test.');

@@ -19,7 +19,17 @@ module.exports = (sequelize, DataTypes) => {
         }
       )
       Curse.belongsTo(models.Curse, 
-          {
+        {
+          as : 'parent', 
+          foreignKey: {
+            allowNull: true,
+            name : 'dependantCurseId'
+          },
+        }
+      )//,
+      Curse.hasMany(models.Curse, 
+        {
+          as : 'children', 
           foreignKey: {
             allowNull: true,
             name : 'dependantCurseId'

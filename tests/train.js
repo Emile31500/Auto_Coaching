@@ -223,7 +223,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -241,7 +242,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.req.path).toEqual(url);
+        expect(res.statusCode).toEqual(404);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
@@ -260,7 +262,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -278,7 +281,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.req.path).toEqual(url);
+        expect(res.statusCode).toEqual(404);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
@@ -297,7 +301,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -315,7 +320,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.req.path).toEqual(url);
+        expect(res.statusCode).toEqual(404);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
@@ -336,7 +342,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -373,7 +380,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent').redirects(1);
+       const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -391,7 +399,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
@@ -410,7 +419,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent').redirects(1);
+       const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -428,7 +438,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
@@ -448,7 +459,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent').redirects(1);
+       const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -466,7 +478,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(trainDraftsOfNewOrdering.length).toEqual(1);
         expect(trainDraftsOfPrventOrdering.length).toEqual(1);
@@ -488,7 +501,8 @@ const trainTest = describe('Trains tests', () => {
         const tranDraftId = trainDraft.id;
         const preventOrdeing = trainDraft.ordering
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent').redirects(1);
+       const url = '/program-draft/'+programDraftId+'/train-draft/'+tranDraftId+'/put-prevent'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderTrainDraft = await TrainDraft.findOne({ where : { id : tranDraftId}});
         const nextOrdeing = reorderTrainDraft.ordering
@@ -527,7 +541,8 @@ const trainTest = describe('Trains tests', () => {
         const exerciseTrainDraftId = exerciseTrainDraft.id;
         const preventOrdeing = exerciseTrainDraft.ordering;
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
         const nextOrdeing = reorderExerciseTrainDraft.ordering
@@ -545,7 +560,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
         expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
@@ -566,7 +582,8 @@ const trainTest = describe('Trains tests', () => {
         const exerciseTrainDraftId = exerciseTrainDraft.id;
         const preventOrdeing = exerciseTrainDraft.ordering;
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
         const nextOrdeing = reorderExerciseTrainDraft.ordering
@@ -584,7 +601,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
         expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
@@ -605,7 +623,8 @@ const trainTest = describe('Trains tests', () => {
         const exerciseTrainDraftId = exerciseTrainDraft.id;
         const preventOrdeing = exerciseTrainDraft.ordering;
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
         const nextOrdeing = reorderExerciseTrainDraft.ordering
@@ -623,7 +642,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
         expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
@@ -660,7 +680,8 @@ const trainTest = describe('Trains tests', () => {
         const exerciseTrainDraftId = exerciseTrainDraft.id;
         const preventOrdeing = exerciseTrainDraft.ordering;
 
-        const res = await testSession.get('/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next').redirects(1);
+        const url = '/program-draft/'+programDraftId+'/train-draft/'+trainDraftId+'/exercise-train-draft/'+exerciseTrainDraftId+'/put-next'
+        const res = await testSession.get(url).redirects(1);
         
         const reorderExerciseTrainDraft = await ExerciseTrainDraft.findOne({ where : { id : exerciseTrainDraftId}});
         const nextOrdeing = reorderExerciseTrainDraft.ordering
@@ -720,7 +741,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
         expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
@@ -762,7 +784,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
         expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
@@ -807,7 +830,8 @@ const trainTest = describe('Trains tests', () => {
 
         const $ = cheerio.load(res.text);
         
-        expect(res.req.path).toEqual('/');
+        expect(res.statusCode).toBe(404)
+        expect(res.req.path).toEqual(url);
         expect(preventOrdeing).toEqual(nextOrdeing);
         expect(exerciseTrainDraftsOfNewOrdering.length).toEqual(1);
         expect(exerciseTrainDraftsOfPrventOrdering.length).toEqual(1);
@@ -878,4 +902,3 @@ const trainTest = describe('Trains tests', () => {
 });
 
 module.exports = trainTest
-`Le cours ${curseOrErrorMessage.libele} est maintenant visible de tous`

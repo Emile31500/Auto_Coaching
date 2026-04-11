@@ -22,10 +22,11 @@ const publishCurseDraft = async (curseDraft) => {
             })
         }
 
-        curse.libele=curseDraft.libele,
-        curse.description=curseDraft.description,
-        curse.imageUrl=curseDraft.imageUrl, 
-        curse.isDeleted=null
+        curse.libele=curseDraft.libele;
+        curse.description=curseDraft.description;
+        curse.imageUrl=curseDraft.imageUrl;
+        curse.dependantCurseId=curseDraft.dependantCurseDraftId;
+        curse.isDeleted=null;
         await curse.save();
 
         curseDraft.SessionDrafts.forEach(async(sessionDraft) => {

@@ -16,7 +16,6 @@ const url = require('url')
     await FoodService.getDishesForMainPage(parsedUrl.query, user)
 })*/
 
-// router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req, res) => {
 router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req, res) => {
 
 
@@ -65,6 +64,7 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
 
     res.locals.message = req.flash();
     res.render('../views/nutrition',  { 
+        user : req.user,
         page : '/nutrition',
         nutritionRequirement : nutritionRequirement,
         sumKcalorie : sumKcalorie,
@@ -76,7 +76,8 @@ router.get('/nutrition/:date', authenticationChecker, premiumChecker, async (req
         ateFood : ateFood,
         parsedUrlQuery : parsedUrl.query,
         countFilter : countFilter,
-        layout: '../views/main'
+        layout: '../views/main',
+        currentUrl:  `${req.protocol}://${req.get('host')}` + req.originalUrl
     });
 
 })
@@ -89,6 +90,7 @@ router.post('/nutrition', parserJson, authenticationChecker, premiumChecker, asy
 
             const rawData = req.body
             const food = await Food.create(rawData);
+            food.userId = req.user.id
             req.flash('success', 'Cet aliment a bien été créé')
 
         } else {
@@ -161,7 +163,7 @@ router.patch('/api/nutrition/requirement', authenticationChecker, premiumChecker
 
 router.get('/admin/nutrition', adminChecker, async (req, res) => {
     
-    var food = await Food.findAll();
+    var food = await Food.findAll({ where : { is_deleted : null}});
     res.locals.message = req.flash();
     res.render('../views/admin/nutrition',  { food: food, layout: '../views/main-admin' });
 
